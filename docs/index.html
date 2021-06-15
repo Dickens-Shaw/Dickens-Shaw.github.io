@@ -3,7 +3,7 @@
  * @Date: 1985-10-26 16:15:00
  * @Description: 我的文档
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-15 14:43:53
+ * @LastEditTime: 2021-06-15 15:56:37
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +15,17 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <style>
+    .mask {
+      display: none;
+    }
+
+    img[alt="logo"] {
+      margin-bottom: 250px;
+      width: 150px;
+      border-radius: 50%;
+    }
+  </style>
 </head>
 
 <body>
@@ -22,7 +33,9 @@
   <script>
     window.$docsify = {
       name: '',
-      repo: '',
+      repo: 'https://github.com/Dickens-Shaw/Documents',
+      coverpage: true,
+      onlyCover: true,
       loadSidebar: true,
       subMaxLevel: 2,
       search: 'auto',

@@ -3,11 +3,11 @@
  * @Date: 2021-06-15 14:38:24
  * @Description: 侧边栏
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-15 14:43:04
+ * @LastEditTime: 2021-06-15 15:49:19
 -->
 
 - Index
-  - [首页](README.md '首页')
+  - [首页](index.md '首页')
 - JavaScript
 
   - [闭包](closure.md '闭包')
