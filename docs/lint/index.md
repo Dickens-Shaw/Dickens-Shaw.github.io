@@ -3,7 +3,7 @@
  * @Date: 2021-06-16 10:31:03
  * @Description: 前端代码规范
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-16 18:19:56
+ * @LastEditTime: 2021-06-17 11:46:32
 -->
 
 # 前端代码规范 Front Standard Guide
@@ -23,8 +23,7 @@
 - [百度](https://github.com/ecomfe/spec)
 - [腾讯](http://alloyteam.github.io/CodeGuide) ✅
 - [Airbnb](https://github.com/lin-123/javascript)
-- [腾讯游戏](https://tgideas.qq.com/doc/frontend/spec/common/)
 - [凹凸实验室](https://guide.aotu.io/index.html)
-- [转转前端开发规范](https://zhuanlan.zhihu.com/p/350580943)
 - [前端开发规范](https://juejin.cn/post/6844903479698259975) ✅
+- [转转前端开发规范](https://zhuanlan.zhihu.com/p/350580943)
 - [阿里前端开发规范-转载](https://www.cnblogs.com/suwanbin/p/13200530.html) ✅

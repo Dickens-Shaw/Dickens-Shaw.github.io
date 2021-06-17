@@ -3,7 +3,7 @@
  * @Date: 1985-10-26 16:15:00
  * @Description: 我的文档
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-17 11:10:49
+ * @LastEditTime: 2021-06-17 15:38:42
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -26,11 +26,6 @@
       width: 150px;
       border-radius: 50%;
     }
-
-    .markdown-section footer {
-      margin-top: 40px;
-      border-top: 1px solid #eee;
-    }
   </style>
 </head>
 
@@ -47,9 +42,13 @@
       onlyCover: true,
       loadSidebar: true,
       alias: {
-        '/.*/_sidebar.md': '/_sidebar.md'
+        // '/.*/_sidebar.md': '/_sidebar.md',
+        '/lint/_sidebar.md': '/_sidebar.md',
+        '/css/_sidebar.md': '/_sidebar.md',
+        '/js/_sidebar.md': '/_sidebar.md',
+        '/aotu/.*/_sidebar.md': '/aotu/_sidebar.md',
       },
-      subMaxLevel: 2,
+      subMaxLevel: 3,
       search: 'auto',
       auto2top: true,
       copyCode: {
