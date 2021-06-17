@@ -3,7 +3,7 @@
  * @Date: 2021-06-16 10:31:03
  * @Description: CSS规范
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-16 15:32:23
+ * @LastEditTime: 2021-06-17 10:26:44
 -->
 
 # CSS 规范
@@ -178,6 +178,20 @@ $colorBlack: #000;
 ## 属性声明顺序
 
 相关的属性声明按右边的顺序做分组处理，组之间需要有一个空行。
+
+作为最佳实践，我们应该遵循以下顺序（应该按照下表的顺序）：
+
+结构性属性：
+
+1. display
+2. position, left, top, right etc.
+3. overflow, float, clear etc.
+4. margin, padding
+
+表现性属性：
+
+1. background, border etc.
+2. font, text
 
 ```css
 .declaration-order {
