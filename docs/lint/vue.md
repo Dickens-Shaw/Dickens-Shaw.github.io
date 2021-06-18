@@ -3,9 +3,9 @@
  * @Date: 2021-06-16 10:31:03
  * @Description: Vue规范
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-16 13:56:30
+ * @LastEditTime: 2021-06-18 15:10:52
 -->
 
-# Vue 规范
+## 风格指南
 
-点击跳转[Vue 风格指南](https://cn.vuejs.org/v2/style-guide/index.html)
+[点击跳转](https://cn.vuejs.org/v2/style-guide/index.html)
