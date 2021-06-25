@@ -3,7 +3,7 @@
  * @Date: 2021-06-15 14:38:24
  * @Description: 侧边栏
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-18 15:28:08
+ * @LastEditTime: 2021-06-25 15:23:38
 -->
 
 - Index
@@ -25,9 +25,8 @@
 
 - CSS
 
-  - [布局](css/layout.md '布局')
+  - [基础](css/index.md 'CSS基础')
 
 - JavaScript
 
-  - [闭包](js/closure.md '闭包')
-  - [原型](js/prototype.md '原型')
+  - [基础](js/index.md 'JS基础')
