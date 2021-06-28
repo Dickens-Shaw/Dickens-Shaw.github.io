@@ -3,16 +3,13 @@
  * @Date: 2021-06-15 14:38:24
  * @Description: 侧边栏
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-25 15:23:38
+ * @LastEditTime: 2021-06-25 17:54:30
 -->
-
-- Index
-
-  - [首页](index.md '首页')
 
 - Lint
 
-  - [前端代码规范](lint/index.md '前端代码规范')
+  <!-- - [前端代码规范](lint/index.md '前端代码规范') -->
+
   - [命名规范](lint/name.md '命名规范')
   - [HTML 规范](lint/html.md 'HTML规范')
   - [CSS 规范](lint/css.md 'CSS规范')

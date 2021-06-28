@@ -3,7 +3,7 @@
  * @Date: 2021-06-16 10:31:03
  * @Description: 前端代码规范
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-18 15:19:36
+ * @LastEditTime: 2021-06-25 17:57:15
 -->
 
 # 前端代码规范 Front Standard Guide
@@ -18,4 +18,4 @@
 - [京东 凹凸实验室](https://guide.aotu.io/index.html)
 - [转转前端开发规范](https://zhuanlan.zhihu.com/p/350580943)
 - [前端开发规范-掘金](https://juejin.cn/post/6844903479698259975)
-- [阿里前端开发规范-转载](https://www.cnblogs.com/suwanbin/p/13200530.html)
+- [阿里前端开发规范](https://www.cnblogs.com/suwanbin/p/13200530.html)
