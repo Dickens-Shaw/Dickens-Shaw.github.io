@@ -3,7 +3,7 @@
  * @Date: 2021-06-15 14:40:04
  * @Description: 布局
  * @LastEditors: Shaw
- * @LastEditTime: 2021-06-25 15:27:26
+ * @LastEditTime: 2021-07-01 11:06:18
 -->
 
 ## 盒模型(box-sizing)
@@ -26,3 +26,25 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 如果优先级相同，则选择最后出现的样式。<br/>
 继承得到的样式的优先级最低。
+
+## BFC
+
+> BFC 全称 Block Formatting Context 即块级格式上下文，简单的说，BFC 是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
+
+触发方式：
+
+- float 的值不为 none（默认）
+
+- overflow 的值不为 visible（默认）
+
+- display 的值为 inline-block、table-cell、table-caption、grid
+
+- position 的值为 absolute 或 fixed
+
+应用场景:
+
+- 清除浮动：BFC 内部的浮动元素会参与高度计算，因此可用于清除浮动，防止高度塌陷
+
+- 避免某元素被浮动元素覆盖：BFC 的区域不会与浮动元素的区域重叠
+
+- 阻止外边距重叠：属于同一个 BFC 的两个相邻 Box 的 margin 会发生折叠，不同 BFC 不会发生折叠
