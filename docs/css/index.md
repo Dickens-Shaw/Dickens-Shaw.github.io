@@ -3,7 +3,7 @@
  * @Date: 2021-06-15 14:40:04
  * @Description: 布局
  * @LastEditors: Shaw
- * @LastEditTime: 2021-07-01 11:06:18
+ * @LastEditTime: 2021-07-06 11:43:43
 -->
 
 ## 盒模型(box-sizing)
@@ -48,3 +48,15 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 - 避免某元素被浮动元素覆盖：BFC 的区域不会与浮动元素的区域重叠
 
 - 阻止外边距重叠：属于同一个 BFC 的两个相邻 Box 的 margin 会发生折叠，不同 BFC 不会发生折叠
+
+# css Modules
+
+应用：Webpack 的 css-loader 插件： style-loader!css-loader?modules
+
+原理：生成唯一的类名
+
+优势：
+
+- 解决全局命名冲突问题 css modules 只关心组件本身 命名唯一
+- 模块化 可以使用 composes 来引入自身模块中的样式以及另一个模块的样式
+- 解决嵌套层次过深的问题 使用扁平化的类名
