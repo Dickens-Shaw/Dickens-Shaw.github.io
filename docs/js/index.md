@@ -3,7 +3,7 @@
  * @Date: 2021-06-15 14:40:04
  * @Description: 闭包
  * @LastEditors: Shaw
- * @LastEditTime: 2021-07-16 14:28:14
+ * @LastEditTime: 2021-07-16 14:29:15
 -->
 
 ## 数据类型
@@ -90,6 +90,26 @@ function debounce(func, wait) {
     timeout = setTimeout(() => {
       func.apply(context, args)
     }, wait)
+  }
+}
+```
+
+## 节流
+
+防抖是延迟执行，而节流是间隔执行，函数节流即每隔一段时间就执行一次，实现原理为设置一个定时器，约定 xx 毫秒后执行事件，如果时间到了，那么执行函数并重置定时器，和防抖的区别在于，防抖每次触发事件都重置定时器，而节流在定时器到时间后再清空定时器
+
+```js
+function throttle(func, wait) {
+  let timeout = null
+  return function () {
+    let context = this
+    let args = arguments
+    if (!timeout) {
+      timeout = setTimeout(() => {
+        timeout = null
+        func.apply(context, args)
+      }, wait)
+    }
   }
 }
 ```
