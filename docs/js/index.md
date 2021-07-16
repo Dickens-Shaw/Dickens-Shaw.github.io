@@ -3,7 +3,7 @@
  * @Date: 2021-06-15 14:40:04
  * @Description: 闭包
  * @LastEditors: Shaw
- * @LastEditTime: 2021-07-06 11:45:02
+ * @LastEditTime: 2021-07-16 14:28:14
 -->
 
 ## 数据类型
@@ -74,3 +74,22 @@
 在生成执行环境时，会有两个阶段。第一个阶段是创建的阶段，JS 解释器会找出需要提升的变量和函数，并且给他们提前在内存中开辟好空间，函数的话会将整个函数存入内存中，变量只声明并且赋值为 undefined，所以在第二个阶段，也就是代码执行阶段，我们可以直接提前使用。
 
 在提升的过程中，相同的函数会覆盖上一个函数，并且函数优先于变量提升
+
+## 防抖
+
+即短时间内大量触发同一事件，只会执行一次函数，实现原理为设置一个定时器，约定在 xx 毫秒后再触发事件处理，每次触发事件都会重新设置计时器，直到 xx 毫秒内无第二次操作。
+常用于搜索框/滚动条的监听事件处理，如果不做防抖，每输入一个字/滚动屏幕，都会触发事件处理，造成性能浪费。
+
+```js
+function debounce(func, wait) {
+  let timeout = null
+  return function () {
+    let context = this
+    let args = arguments
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      func.apply(context, args)
+    }, wait)
+  }
+}
+```
