@@ -3,7 +3,7 @@
  * @Date: 2021-06-15 14:40:04
  * @Description: 布局
  * @LastEditors: Shaw
- * @LastEditTime: 2021-07-20 10:17:11
+ * @LastEditTime: 2021-07-22 16:42:06
 -->
 
 ## 盒模型(box-sizing)
@@ -78,3 +78,4 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 距离单位：px、百分比、vw、vh、rem 等
 
 媒体查询：`@media only screen and (max-device-width:480px)` {/css 样式/} // 页面头部必须有 meta 声明的 viewport
+
