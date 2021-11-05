@@ -1,17 +1,9 @@
-<!--
- * @Author: Shaw
- * @Date: 1985-10-26 16:15:00
- * @Description: 我的文档
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-30 14:11:44
--->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
-  <meta name="baidu-site-verification" content="code-OwstiVgx1L" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
@@ -27,6 +19,9 @@
       width: 150px;
       border-radius: 50%;
     }
+    #live2dcanvas {
+      border: 0 !important;
+    }
   </style>
   <script>
     var _hmt = _hmt || [];
@@ -41,7 +36,26 @@
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div id="live2d-widget">
+      <canvas
+        id="live2dcanvas"
+        width="100"
+        height="200"
+        style="
+          position: fixed;
+          width: 100px;
+          height: 200;
+          opacity: 0.8;
+          right: 0px;
+          bottom: 0px;
+          z-index: 99999;
+          pointer-events: none;
+          border: 0;
+        "
+      ></canvas>
+    </div>
+  </div>
   <script>
     window.$docsify = {
       name: '',
@@ -88,5 +102,26 @@
   <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
   <!-- <script src="//cdn.jsdelivr.net/npm/@alertbox/docsify-footer/dist/docsify-footer.min.js"></script> -->
 </body>
+
+  <script
+    type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/live2d-widget@3.0.4/lib/L2Dwidget.min.js?_=1557308476616"
+  ></script>
+  <script type="text/javascript">
+    L2Dwidget.init({
+      model: {
+        jsonPath:
+          "https://unpkg.com/live2d-widget-model-hijiki/assets/hijiki.model.json",
+      },
+      display: {
+        superSample: 2,
+        width: 100,
+        height: 200,
+        position: "right",
+        hOffset: 0,
+        vOffset: 0,
+      },
+    });
+  </script>
 
 </html>
