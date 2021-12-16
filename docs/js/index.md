@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-15 14:40:04
- * @Description: 闭包
- * @LastEditors: Shaw
- * @LastEditTime: 2021-07-16 14:30:50
--->
-
 ## 数据类型
 
 > JavaScript 共有七种基本数据类型，分别是 Undefined、Null、Boolean、Number、String，还有在 ES6 中新增的 Symbol 和 BigInt 类型

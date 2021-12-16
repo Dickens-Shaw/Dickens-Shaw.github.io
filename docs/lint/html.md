@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-16 10:31:03
- * @Description: HTML规范
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-16 16:17:34
--->
-
 # HTML 规范
 
 ## HTML 类型

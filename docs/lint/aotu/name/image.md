@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-17 15:05:45
- * @Description:
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-17 15:43:19
--->
-
 ## 命名顺序
 
 图片命名建议以以下顺序命名：

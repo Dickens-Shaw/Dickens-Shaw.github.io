@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-16 10:31:03
- * @Description: JS规范
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-16 15:57:47
--->
-
 # JS 规范
 
 ## 命名

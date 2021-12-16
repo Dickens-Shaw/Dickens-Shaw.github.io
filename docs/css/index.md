@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-15 14:40:04
- * @Description: 布局
- * @LastEditors: Shaw
- * @LastEditTime: 2021-07-22 16:42:06
--->
-
 ## 盒模型(box-sizing)
 
 - 标准盒子模型(content-box)：宽度=内容的宽度（content）+ border + padding + margin

@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-16 10:31:03
- * @Description: 命名规范
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-16 14:09:21
--->
-
 # 命名规范
 
 ## 项目命名

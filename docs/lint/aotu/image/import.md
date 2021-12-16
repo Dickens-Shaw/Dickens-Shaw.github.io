@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-17 15:05:45
- * @Description:
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-17 16:02:17
--->
-
 ## 图片引入
 
 测试内容图应该写上表明图片尺寸的占位图，可以用线上占位图生成服务，如：

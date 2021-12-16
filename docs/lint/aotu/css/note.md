@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-17 15:05:45
- * @Description:
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-17 16:01:41
--->
-
 ## 注释规范
 
 > Comments begin with the characters `/*` and end with the characters `*/`. They may occur anywhere outside other tokens, and their contents have no influence on the rendering. Comments may not be nested.

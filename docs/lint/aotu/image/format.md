@@ -1,11 +1,3 @@
-<!--
- * @Author: Shaw
- * @Date: 2021-06-17 15:05:45
- * @Description:
- * @LastEditors: Shaw
- * @LastEditTime: 2021-06-17 16:02:43
--->
-
 > 常见的图片格式有 GIF、PNG8、PNG24、JPEG、WEBP，根据图片格式的特性和场景需要选取适合的图片格式。
 
 ### GIF
