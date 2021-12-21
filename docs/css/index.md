@@ -1,8 +1,8 @@
 ## 盒模型(box-sizing)
 
-- 标准盒子模型(content-box)：宽度=内容的宽度（content）+ border + padding + margin
+- 标准盒子模型(`content-box`)：宽度=内容的宽度（content）+ border + padding + margin
 
-- 低版本 IE 盒子模型(border-box)：宽度=内容宽度（content+border+padding）+ margin
+- 低版本 IE 盒子模型(`border-box`)：宽度=内容宽度（content+border+padding）+ margin
 
 ## 选择器
 
@@ -41,16 +41,18 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 - 阻止外边距重叠：属于同一个 BFC 的两个相邻 Box 的 margin 会发生折叠，不同 BFC 不会发生折叠
 
-## css Modules
+## CSS Modules
 
-应用：Webpack 的 css-loader 插件： style-loader!css-loader?modules
+应用：Webpack 的 `css-loader` 插件： `style-loader!css-loader?modules`
 
 原理：生成唯一的类名
 
 优势：
 
-- 解决全局命名冲突问题 css modules 只关心组件本身 命名唯一
-- 模块化 可以使用 composes 来引入自身模块中的样式以及另一个模块的样式
+- 解决全局命名冲突问题 `css modules` 只关心组件本身 命名唯一
+
+- 模块化 可以使用 `composes` 来引入自身模块中的样式以及另一个模块的样式
+
 - 解决嵌套层次过深的问题 使用扁平化的类名
 
 ## Sass
@@ -71,3 +73,12 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 媒体查询：`@media only screen and (max-device-width:480px)` {/css 样式/} // 页面头部必须有 meta 声明的 viewport
 
+## Viewport
+
+`width/height`，宽高，默认宽度980px
+
+`initial-scale`，初始缩放比例，1~10
+
+`maximum-scale/minimum-scale`，允许用户缩放的最大/小比例
+
+`user-scalable`，用户是否可以缩放 (yes/no)
