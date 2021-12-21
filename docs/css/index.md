@@ -75,7 +75,7 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 ## Viewport
 
-`width/height`，宽高，默认宽度980px
+`width/height`，宽高，默认宽度 980px
 
 `initial-scale`，初始缩放比例，1~10
 
@@ -85,21 +85,21 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 ## 初始化
 
-> 由于浏览器的兼容问题，不同浏览器对有些标签的默认值是不同的，如果没对CSS初始化往往会出现浏览器之间的页面显示差异。
+> 由于浏览器的兼容问题，不同浏览器对有些标签的默认值是不同的，如果没对 CSS 初始化往往会出现浏览器之间的页面显示差异。
 
-`Normalize.css`是一种`CSS reset`的替代方案，`Normalize.css` 保护了有价值的默认值、 修复了浏览器的bug、不会让你的调试工具变的杂乱
+`Normalize.css`是一种`CSS reset`的替代方案，`Normalize.css` 保护了有价值的默认值、 修复了浏览器的 bug、不会让你的调试工具变的杂乱
 
 ## 清除浮动
 
-- 父级div定义height
+- 父级 div 定义 height
 
-- 最后一个浮动元素后加空div标签 并添加样式`clear:both`
+- 最后一个浮动元素后加空 div 标签 并添加样式`clear:both`
 
 - 对父元素添加伪元素`clear:both`
 
-- 触发父元素BFC
+- 触发父元素 BFC
 
-## Fixed定位
+## Fixed 定位
 
 什么时候会不相对于浏览器定位？
 
@@ -108,25 +108,27 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 ## 文本溢出
 
 - 单行
+
 ```css
 .ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 ```
 
 - 多行
+
 ```css
 .ellipsis-2 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 ```
 
-## Canvas和SVG
+## Canvas 和 SVG
 
 `Canvas`：是一种通过 JavaScript 来绘制 2D 图形的方法。Canvas 是逐像素来进行渲染的，因此当我们对 Canvas 进行缩放时，会出现锯齿或者失真的情况，特点：
 
@@ -144,3 +146,25 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 - 能够以 .png 或 .jpg 格式保存结果图像
 - 最适合图像密集型的游戏，其中的许多对象会被频繁重绘
 
+## rAF
+
+> 全称requestAnimationFrame
+
+实现动画效果的方法比较多，Javascript 中可以通过定时器 `setTimeout` 来实现，css3 可以使用 `transition` 和 `animation` 来实现，HTML5 中的 canvas 也可以实现。除此之外，HTML5 还提供一个专门用于请求动画的 API，那就是 `requestAnimationFrame` ，顾名思义就是请求动画帧
+
+`window.requestAnimationFrame()` 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行
+
+优势：
+
+CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小化时， `setTInterval` 仍然在后台执行动画任务，由于此时页面处于不可见或不可用状态，刷新动画是没有意义的，完全是浪费 CPU 资源。而 `requestAnimationFrame` 则完全不同，当页面处理未激活的状态下，该页面的屏幕刷新任务也会被系统暂停，因此跟着系统步伐走的 `requestAnimationFrame` 也会停止渲染，当页面被激活时，动画就从上次停留的地方继续执行，有效节省了 CPU 开销。
+
+函数节流：在高频率事件( resize, scroll 等)中，为了防止在一个刷新间隔内发生多次函数执行， `requestAnimationFrame` 可保证每个刷新间隔内，函数只被执行一次，这样既能保证流畅性，也能更好的节省函数执行的开销，一个刷新间隔内函数执行多次时没有意义的，因为显示器每 16.7ms 刷新一次，多次绘制并不会在屏幕上体现出来。
+
+减少 DOM 操作： `requestAnimationFrame` 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒 60 帧。
+
+`setTimeout` 执行动画的缺点：
+
+它通过设定间隔时间来不断改变图像位置，达到动画效果。但是容易出现卡顿、抖动的现象；原因是：
+
+`setTimeout` 任务被放入异步队列，只有当主线程任务执行完后才会执行队列中的任务，因此实际执行时间总是比设定时间要晚；
+`setTimeout` 的固定时间间隔不一定与屏幕刷新时间相同，会引起丢帧。
