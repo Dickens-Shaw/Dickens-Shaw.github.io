@@ -148,7 +148,7 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 ## rAF
 
-> 全称requestAnimationFrame
+> 全称requestAnimationFrame，请求桢动画。
 
 实现动画效果的方法比较多，Javascript 中可以通过定时器 `setTimeout` 来实现，css3 可以使用 `transition` 和 `animation` 来实现，HTML5 中的 canvas 也可以实现。除此之外，HTML5 还提供一个专门用于请求动画的 API，那就是 `requestAnimationFrame` ，顾名思义就是请求动画帧
 
@@ -168,3 +168,16 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 
 `setTimeout` 任务被放入异步队列，只有当主线程任务执行完后才会执行队列中的任务，因此实际执行时间总是比设定时间要晚；
 `setTimeout` 的固定时间间隔不一定与屏幕刷新时间相同，会引起丢帧。
+
+## 层叠顺序
+
+> 层叠顺序，英文称作 stacking order，表示元素发生层叠时有着特定的垂直显示顺序。
+
+盒模型的层叠规则：
+1. 背景和边框：建立当前层叠上下文元素的背景和边框。
+2. 负的z-index：当前层叠上下文中，z-index属性值为负的元素。
+3. 块级盒：文档流内非行内级非定位后代元素。
+4. 浮动盒：非定位浮动元素。
+5. 行内盒：文档流内行内级非定位后代元素。
+6. z-index:0：层叠级数为0的定位元素。
+7. 正z-index：z-index属性值为正的定位元素。
