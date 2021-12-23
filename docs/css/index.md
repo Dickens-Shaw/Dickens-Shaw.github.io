@@ -148,7 +148,7 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 ## rAF
 
-> 全称requestAnimationFrame，请求桢动画。
+> 全称 requestAnimationFrame，请求桢动画。
 
 实现动画效果的方法比较多，Javascript 中可以通过定时器 `setTimeout` 来实现，css3 可以使用 `transition` 和 `animation` 来实现，HTML5 中的 canvas 也可以实现。除此之外，HTML5 还提供一个专门用于请求动画的 API，那就是 `requestAnimationFrame` ，顾名思义就是请求动画帧
 
@@ -174,10 +174,224 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 > 层叠顺序，英文称作 stacking order，表示元素发生层叠时有着特定的垂直显示顺序。
 
 盒模型的层叠规则：
+
 1. 背景和边框：建立当前层叠上下文元素的背景和边框。
-2. 负的z-index：当前层叠上下文中，z-index属性值为负的元素。
+2. 负的 z-index：当前层叠上下文中，z-index 属性值为负的元素。
 3. 块级盒：文档流内非行内级非定位后代元素。
 4. 浮动盒：非定位浮动元素。
 5. 行内盒：文档流内行内级非定位后代元素。
-6. z-index:0：层叠级数为0的定位元素。
-7. 正z-index：z-index属性值为正的定位元素。
+6. z-index:0：层叠级数为 0 的定位元素。
+7. 正 z-index：z-index 属性值为正的定位元素。
+
+## 两栏布局
+
+```html
+<div class="wrap">
+  <div class="left">左侧固定内容</div>
+  <div class="right">右侧内容自适应</div>
+</div>
+```
+
+### 浮动
+
+```css
+.wrap {
+  overflow: hidden;
+}
+.left {
+  float: left;
+  width: 200px;
+}
+.right {
+  margin-left: 200px;
+}
+```
+
+### 绝对定位
+
+```css
+.wrap {
+  position: relative;
+}
+.left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+}
+.right {
+  margin-left: 200px;
+}
+```
+
+### Table
+
+```css
+.wrap {
+  display: table;
+  width: 100%;
+}
+.left {
+  display: table-cell;
+  width: 200px;
+}
+.right {
+  display: table-cell;
+}
+```
+
+### calc 函数
+
+```css
+/* 也可结合display:inline-block, wrap需设置font-size:0*/
+.wrap {
+  overflow: hidden;
+}
+.left {
+  float: left;
+  width: 200px;
+}
+.right {
+  float: left;
+  width: calc(100% - 200px);
+}
+```
+
+### flex
+
+```css
+.wrap {
+  display: flex;
+}
+.left {
+  width: 200px;
+}
+.right {
+  flex: 1;
+}
+```
+
+### grid
+
+```css
+.wrap {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+}
+```
+
+## 三栏布局
+
+```html
+<div class="wrap">
+  <!-- float实现：DOM顺序为 左右中 -->
+  <div class="left">左侧固定内容</div>
+  <div class="center">中间自适应</div>
+  <div class="right">右侧固定内容</div>
+</div>
+```
+
+### 浮动
+
+```css
+.wrap {
+  overflow: hidden;
+}
+.left {
+  float: left;
+  width: 200px;
+}
+.center {
+  margin-left: 300px;
+  margin-right: 300px;
+}
+.right {
+  float: right;
+  margin-left: 200px;
+}
+```
+
+### 绝对定位
+
+```css
+.wrap {
+  position: relative;
+}
+.left {
+  position: absolute;
+  left: 0;
+  width: 200px;
+}
+.center {
+  position: absolute;
+  left: 200px;
+  right: 200px;
+}
+.right {
+  position: absolute;
+  right: 0;
+  width: 200px;
+}
+```
+
+### Table
+
+```css
+.wrap {
+  display: table;
+  width: 100%;
+}
+.left {
+  display: table-cell;
+  width: 200px;
+}
+.center {
+  display: table-cell;
+}
+.right {
+  display: table-cell;
+  width: 200px;
+}
+```
+
+### flex
+
+```css
+.wrap {
+  display: flex;
+}
+.left {
+  width: 200px;
+}
+.center {
+  flex: 1;
+}
+.right {
+  width: 200px;
+}
+```
+
+### grid
+
+```css
+.wrap {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+}
+```
+
+## 水平垂直居中
+
+- 居中元素定宽高
+  - absolute + 负margin
+  - absolute + margin auto
+  - absolute + calc
+
+- 居中元素不定宽高
+  - absolute + transform
+  - line-height
+  - writing-mode
+  - table
+  - css-table
+  - flex
+  - grid

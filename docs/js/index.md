@@ -110,13 +110,13 @@ function throttle(func, wait) {
 
 ## this 
 
+> new > 显示 > 隐示
+
 1. 默认绑定：全局环境中，this 默认绑定到 window。
 2. 隐式绑定：一般地，被直接对象所包含的函数调用时，也称为方法调用，this 隐式绑定到该直接对象。
    隐式丢失：隐式丢失是指被隐式绑定的函数丢失绑定对象，从而默认绑定到 window。
 3. 显式绑定：通过 call()、apply()、bind()方法把对象绑定到 this 上，叫做显式绑定。
 4. new 绑定：如果函数或者方法调用之前带有关键字 new，它就构成构造函数调用。对于 this 绑定来说，称为 new 绑定。
-
-> new > 显示 > 隐示
 
 ## 改变this指向
 ### call
@@ -200,3 +200,4 @@ Function.prototype.myBind = function (context) {
     return self.apply(context, args.concat(...arguments))
   }
 }
+```
