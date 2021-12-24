@@ -361,3 +361,56 @@ var p = new Person('张三')
 console.log(p._name) // undefined
 console.log(p.getName()) // '张三'
 ```
+
+## 类型判断
+
+### typeof
+
+对于基本类型，除了 null 都可以显示正确的类型
+
+```js
+typeof 1 // 'number'
+typeof '1' // 'string'
+typeof undefined // 'undefined'
+typeof true // 'boolean'
+typeof Symbol() // 'symbol'
+typeof b // b 没有声明，但是还会显示 undefined
+```
+
+对于对象，除了函数都会显示 object
+
+```js
+typeof [] // 'object'
+typeof {} // 'object'
+typeof console.log // 'function'
+```
+
+对于 null 来说，虽然它是基本类型，但是会显示 object，这是一个存在很久了的 Bug
+
+```js
+typeof null // 'object'
+```
+
+
+### instanceof
+
+> 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
+
+- 实现分析
+  1. 首先获取类型的原型
+  2. 然后获得对象的原型
+  3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
+
+- 手撕
+```js
+function instanceOf(left, right) {
+  let proto = right.prototype // 获取类型的原型
+  left = left.__proto__ // 获取对象的原型
+  // 判断对象的类型是否等于类型的原型  
+  while (true) {
+    if (left === null || left === undefined) return false
+    if (left === proto) return true
+    left = left.__proto__
+  }
+}
+```
