@@ -192,7 +192,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 </div>
 ```
 
-### 浮动
+- 浮动
 
 ```css
 .wrap {
@@ -207,7 +207,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### 绝对定位
+- 绝对定位
 
 ```css
 .wrap {
@@ -224,7 +224,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### Table
+- Table
 
 ```css
 .wrap {
@@ -240,7 +240,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### calc 函数
+- calc 函数
 
 ```css
 /* 也可结合display:inline-block, wrap需设置font-size:0*/
@@ -257,7 +257,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### flex
+- flex
 
 ```css
 .wrap {
@@ -271,7 +271,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### grid
+- grid
 
 ```css
 .wrap {
@@ -291,7 +291,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 </div>
 ```
 
-### 浮动
+- 浮动
 
 ```css
 .wrap {
@@ -311,7 +311,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### 绝对定位
+- 绝对定位
 
 ```css
 .wrap {
@@ -334,7 +334,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### Table
+- Table
 
 ```css
 .wrap {
@@ -354,7 +354,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### flex
+- flex
 
 ```css
 .wrap {
@@ -371,7 +371,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 }
 ```
 
-### grid
+- grid
 
 ```css
 .wrap {

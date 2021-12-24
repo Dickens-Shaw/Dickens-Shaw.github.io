@@ -32,13 +32,13 @@
 
 所有的函数都是闭包，因为有全局环境，所有的函数都可以访问全局变量
 
-意义：让我们可以间接访问函数内部的变量
+- 意义：让我们可以间接访问函数内部的变量
 
-特性：
+- 特性：
 
-1. 闭包可以访问当前函数以外的变量
-2. 即使外部函数已经返回，闭包仍能访问外部函数定义的变量
-3. 闭包可以更新外部变量的值
+  1. 闭包可以访问当前函数以外的变量
+  2. 即使外部函数已经返回，闭包仍能访问外部函数定义的变量
+  3. 闭包可以更新外部变量的值
 
 ## 作用域、作用域链
 
@@ -72,7 +72,8 @@
 即短时间内大量触发同一事件，只会执行一次函数，实现原理为设置一个定时器，约定在 xx 毫秒后再触发事件处理，每次触发事件都会重新设置计时器，直到 xx 毫秒内无第二次操作。
 常用于搜索框/滚动条的监听事件处理，如果不做防抖，每输入一个字/滚动屏幕，都会触发事件处理，造成性能浪费。
 
-手撕：
+- 手撕：
+
 ```js
 function debounce(func, wait) {
   let timeout = null
@@ -91,7 +92,8 @@ function debounce(func, wait) {
 
 防抖是延迟执行，而节流是间隔执行，函数节流即每隔一段时间就执行一次，实现原理为设置一个定时器，约定 xx 毫秒后执行事件，如果时间到了，那么执行函数并重置定时器，和防抖的区别在于，防抖每次触发事件都重置定时器，而节流在定时器到时间后再清空定时器
 
-手撕：
+- 手撕：
+
 ```js
 function throttle(func, wait) {
   let timeout = null
@@ -108,7 +110,7 @@ function throttle(func, wait) {
 }
 ```
 
-## this 
+## this
 
 > 绑定优先级 new > 显示 > 隐示
 
@@ -121,18 +123,21 @@ function throttle(func, wait) {
 ### call
 
 > `call()` 方法使用一个指定的 `this` 值和单独给出的一个或多个参数来调用一个函数。
-  
-应用：
+
+- 应用：
+
   1. 对象的继承
   2. 借用方法：类数组使用`Array`原型链上的方法
 
-实现分析：
+- 实现分析：
+
   1. 首先 `context` 为可选参数，如果不传的话默认上下文为 `window`
   2. 接下来给 `context` 创建一个 `fn` 属性，并将值设置为需要调用的函数
   3. 因为 `call` 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
   4. 然后调用函数并将对象上的函数删除
 
-手撕：
+- 手撕：
+
 ```js
 Function.prototype.myCall = function (context) {
   if (typeof this !== 'function') {
@@ -148,14 +153,16 @@ Function.prototype.myCall = function (context) {
 ```
 
 ### apply
-  
-> `apply()` 方法调用一个具有给定this值的函数，以及作为一个数组（或类似数组对象）提供的参数。
 
-应用：
+> `apply()` 方法调用一个具有给定 this 值的函数，以及作为一个数组（或类似数组对象）提供的参数。
+
+- 应用：
+
   1. `Math.max`。用它来获取数组中最大的一项
   2. 实现两个数组合并。在 ES6 的扩展运算符出现之前，我们可以用`Array.prototype.push`来实现。
 
-手撕：
+- 手撕：
+
 ```js
 Function.prototype.myApply = function (context) {
   if (typeof this !== 'function') {
@@ -173,18 +180,20 @@ Function.prototype.myApply = function (context) {
   return result
 }
 ```
-  
-### bind
-    
-> `bind()` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
-    
-实现分析：
-  1. 前几步和之前的实现差不多，就不赘述了
-  2. bind 返回了一个函数，对于函数来说有两种方式调用，一种是直接调用，一种是通过 `new` 的方式，我们先来说直接调用的方式
-  3. 对于直接调用来说，这里选择了 `apply` 的方式实现，但是对于参数需要注意以下情况：因为 `bind` 可以实现类似这样的代码 `f.bind(obj, 1)(2)`，所以我们需要将两边的参数拼接起来，于是就有了这样的实现 `args.concat(...arguments)`
-  4. 最后来说通过 `new` 的方式，在之前的章节中我们学习过如何判断 `this`，对于 `new` 的情况来说，不会被任何方式改变 `this`，所以对于这种情况我们需要忽略传入的 `this`
 
-手撕：
+### bind
+
+> `bind()` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
+
+- 实现分析：
+
+1. 前几步和之前的实现差不多，就不赘述了
+2. bind 返回了一个函数，对于函数来说有两种方式调用，一种是直接调用，一种是通过 `new` 的方式，我们先来说直接调用的方式
+3. 对于直接调用来说，这里选择了 `apply` 的方式实现，但是对于参数需要注意以下情况：因为 `bind` 可以实现类似这样的代码 `f.bind(obj, 1)(2)`，所以我们需要将两边的参数拼接起来，于是就有了这样的实现 `args.concat(...arguments)`
+4. 最后来说通过 `new` 的方式，在之前的章节中我们学习过如何判断 `this`，对于 `new` 的情况来说，不会被任何方式改变 `this`，所以对于这种情况我们需要忽略传入的 `this`
+
+- 手撕：
+
 ```js
 Function.prototype.myBind = function (context) {
   if (typeof this !== 'function') {
@@ -203,21 +212,23 @@ Function.prototype.myBind = function (context) {
 
 ## new
 
-实现分析：
+- 实现分析：
+
   1. 创建一个空对象
   2. 获取构造函数
   3. 设置空对象的原型
   4. 绑定 `this` 并执行构造函数
   5. 确保返回值为对象
 
-手撕：
+- 手撕：
+
 ```js
-function myNew(){
+function myNew() {
   const obj = {}
   const constructor = [].shift.call(arguments)
   obj.__proto__ = constructor.prototype
   const result = constructor.apply(obj, arguments)
-  return result instanceof Object ? result : obj
+  return result instanceof Object ? result : obj
 }
 ```
 
@@ -230,6 +241,7 @@ function myNew(){
 0.1 在二进制中会表示为 `0.1 = 2^-4 * 1.10011(0011)`
 
 很多十进制小数用二进制表示都是无限循环的，JS 采用的浮点数标准却会裁剪掉循环的数字，就会出现精度丢失的问题：
+
 ```js
 0.100000000000000002 === 0.1 // true
 0.200000000000000002 === 0.2 // true
@@ -239,24 +251,82 @@ function myNew(){
 console.log(0.1) 却是正确的？
 
 因为在输入内容的时候，二进制被转换为了十进制，十进制又被转换为了字符串，在这个转换的过程中发生了取近似值的过程，所以打印出来的其实是一个近似值。
+
 ```js
 console.log(0.100000000000000002) // 0.1
 ```
 
 解决办法：
+
 ```js
 parseFloat((0.1 + 0.2).toFixed(10)) === 0.3 // true
 ```
 
 ## 浅拷贝
 
-> 创建一个新对象，这个对象有着原始对象属性值的一份精确拷贝。
-
-如果属性是`基本类型`，拷贝的就是基本类型的`值`，如果属性是`引用类型`，拷贝的就是`内存地址` ，所以如果其中一个对象改变了这个地址，就会影响到另一个对象。
-
-浅拷贝只解决了第一层的问题，拷贝第一层的基本类型值，以及第一层的引用类型地址
+> 创建一个新对象，这个对象有着原始对象属性值的一份`精确拷贝`。
+>
+> 如果属性是`基本类型`，拷贝的就是基本类型的`值`，如果属性是`引用类型`，拷贝的就是`内存地址` ，所以如果其中一个对象改变了这个地址，就会影响到另一个对象。
+>
+> 浅拷贝只解决了`第一层`的问题，拷贝第一层的基本类型值，以及第一层的引用类型地址
 
 - `Object.assign()`
   只会拷贝所有的属性值到新的对象中，如果属性值是对象的话，拷贝的是地址，所以并不是深拷贝
 
 - 拓展运算符 `...`
+
+## 深拷贝
+
+> 深拷贝会拷贝`所有的属性`，并拷贝属性指向的`动态分配的内存`。
+>
+> 当对象和它所引用的对象一起拷贝时即发生深拷贝。
+>
+> 深拷贝相比于浅拷贝速度较慢并且`花销较大`。拷贝前后两个对象`互不影响`
+
+- `JSON.parse(JSON.stringify(object))`
+
+局限性：
+
+只能拷贝`基本类型`和`引用类型`，不能拷贝`函数`，`对象`，`数组`，`正则`，`日期`，`Map`，`Set`，`WeakMap`，`WeakSet`，会忽略 `undefined`，`symbol`
+
+- `MessageChannel`
+
+```js
+function structuralClone(obj) {
+  return new Promise((resolve) => {
+    const { port1, port2 } = new MessageChannel()
+    port2.onmessage = (ev) => resolve(ev.data)
+    port1.postMessage(obj)
+  })
+}
+```
+
+- 手撕
+
+```js
+// 简单实现
+function deepClone(obj) {
+  function isObject(o) {
+    return (typeof o === 'object' || typeof o === 'function') && o !== null
+  }
+  if (!isObject(obj)) {
+    throw new Error('非对象')
+  }
+  let isArray = Array.isArray(obj)
+  let newObj = isArray ? [...obj] : { ...obj }
+  Reflect.ownKeys(newObj).forEach((key) => {
+    newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key]
+  })
+  return newObj
+}
+```
+
+## 内存泄漏
+
+- 意外的`全局变量`： 由于使用未声明的变量，而意外的创建了一个全局变量，而使这个变量一直留在内存中无法被回收。
+
+- 被遗忘的`计时器`或`回调函数`： 设置了 `setInterval` 定时器，而忘记取消它，如果循环函数有对`外部变量`的引用的话，那么这个变量会被一直留在内存中，而无法被回收。
+
+- 脱离 DOM 的引用： 获取一个 DOM 元素的引用，而后面这个元素被删除，由于一直保留了对这个元素的引用，所以它也无法被回收。
+
+- `闭包`： 不合理的使用闭包，从而导致某些变量一直被留在内存当中。
