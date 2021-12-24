@@ -391,22 +391,23 @@ typeof console.log // 'function'
 typeof null // 'object'
 ```
 
-
 ### instanceof
 
 > 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
 
 - 实现分析
+
   1. 首先获取类型的原型
   2. 然后获得对象的原型
   3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
 
 - 手撕
+
 ```js
 function instanceOf(left, right) {
   let proto = right.prototype // 获取类型的原型
   left = left.__proto__ // 获取对象的原型
-  // 判断对象的类型是否等于类型的原型  
+  // 判断对象的类型是否等于类型的原型
   while (true) {
     if (left === null || left === undefined) return false
     if (left === proto) return true
@@ -414,3 +415,52 @@ function instanceOf(left, right) {
   }
 }
 ```
+
+## 请求方法
+
+- ajax
+
+```js
+const ajax = (url,method,async,data){
+  return new Promise((resolve,reject)=>{
+    const xhr = new XMLHttpRequest()
+    
+    xhr.onreadystatechange = ()=>{
+      if(xhr.readyState === 4){
+        if(xhr.status === 200){
+          resolve(xhr.responseText)
+        }else{
+          reject(xhr.status)
+        }
+      }
+    }
+    xhr.open(method,url,async)
+    xhr.send(data || null)
+  })
+}
+```
+
+- axios
+1. 从浏览器中创建 `XMLHttpRequest`
+2. 从 `node.js` 发出 `http` 请求
+3. 支持 `Promise API`
+4. 拦截请求和响应
+5. 转换请求和响应数据
+6. 取消请求
+7. 自动转换JSON数据
+8. 客户端支持防止 `CSRF/XSRF`
+9. 提供了并发的封装 `axios.all()`，只需将一个请求数组传递给这个方法，然后使用`axios.spread()`将响应数组的属性分配给多个变量
+
+- fetch
+
+  - 优势：
+    - 语法简洁，更加语义化
+    - 基于标准 `Promise` 实现，支持 `async/await`
+    - 同构方便，使用 `isomorphic-fetch`
+    - 更加底层，提供的API丰富（`request, response`）
+    - 脱离了`XHR`，是ES规范里新的实现方式
+  - 缺陷：
+    - fetch只对网络请求报错，对400，500都当做成功的请求，服务器返回 400，500 错误码时并不会 `reject`，只有网络错误这些导致请求不能完成时，fetch 才会被 `reject`。
+    - fetch默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
+    - fetch不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
+    - fetch没有办法原生监测请求的进度，而`XHR`可以
