@@ -330,3 +330,34 @@ function deepClone(obj) {
 - 脱离 DOM 的引用： 获取一个 DOM 元素的引用，而后面这个元素被删除，由于一直保留了对这个元素的引用，所以它也无法被回收。
 
 - `闭包`： 不合理的使用闭包，从而导致某些变量一直被留在内存当中。
+
+## 私有变量
+
+- 配置属性
+
+```js
+const obj = {
+  name: '张三',
+  getName() {
+    return this.name
+  },
+}
+object.defineProperty(obj, 'name', {
+  configurable: false,
+  enumerable: false,
+})
+```
+
+- 闭包实现
+
+```js
+function Person(name) {
+  var _name = name
+  this.getName = function () {
+    return this.name
+  }
+}
+var p = new Person('张三')
+console.log(p._name) // undefined
+console.log(p.getName()) // '张三'
+```
