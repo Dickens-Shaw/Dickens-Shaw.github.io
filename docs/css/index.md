@@ -21,7 +21,7 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 ## BFC
 
-> 全称 Block Formatting Context 即块级格式上下文，简单的说，BFC 是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
+> 全称 `Block Formatting Context` 即块级格式上下文，简单的说，BFC 是页面上的一个隔离的独立容器，不受外界干扰或干扰外界
 
 触发方式：
 
@@ -148,7 +148,7 @@ id 选择器、类选择器、标签选择器、相邻选择器、子选择器�
 
 ## rAF
 
-> 全称 requestAnimationFrame，请求桢动画。
+> 全称 `requestAnimationFrame`，请求桢动画。
 
 实现动画效果的方法比较多，Javascript 中可以通过定时器 `setTimeout` 来实现，css3 可以使用 `transition` 和 `animation` 来实现，HTML5 中的 canvas 也可以实现。除此之外，HTML5 还提供一个专门用于请求动画的 API，那就是 `requestAnimationFrame` ，顾名思义就是请求动画帧
 
@@ -171,7 +171,7 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 
 ## 层叠顺序
 
-> 层叠顺序，英文称作 stacking order，表示元素发生层叠时有着特定的垂直显示顺序。
+> 层叠顺序，英文称作 `stacking orde`r，表示元素发生层叠时有着特定的垂直显示顺序。
 
 盒模型的层叠规则：
 

@@ -464,3 +464,44 @@ const ajax = (url,method,async,data){
     - fetch默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
     - fetch不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
     - fetch没有办法原生监测请求的进度，而`XHR`可以
+
+## 高阶函数
+> 高阶函数英文叫 `Higher-order function`，它的定义很简单，就是至少满足下列一个条件的函数：
+> - 接受一个或多个函数作为输入
+> - 输出一个函数
+
+也就是说高阶函数是对其他函数进行操作的函数，可以将它们作为参数传递，或者是返回它们。 
+
+简单来说，高阶函数是一个`接收函数作为参数`传递或者`将函数作为返回值`输出的函数
+
+- 函数作为参数传递
+
+  JavaScript 语言中内置了一些高阶函数，比如 
+
+  - `Array.prototype.map`：创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果，原始数组不会改变
+  - `Array.prototype.filter`：创建一个新数组, 其包含通过提供函数实现的测试的所有元素，原始数组不会改变
+  - `Array.prototype.reduce`：对数组中的每个元素执行一个提供的 `reducer` 函数(升序执行)，将其结果汇总为单个返回值
+
+  它们接受一个函数作为参数，并应用这个函数到列表的每一个元素。
+
+- 函数作为返回值输出
+
+  - Add无限累加函数
+  
+```js
+function add(a) {
+  function sum(b) { // 使用闭包
+    a = a + b; // 累加
+    return sum;
+  }
+  sum.toString = function() { // 重写toString()方法
+    return a;
+  }
+  return sum; // 返回一个函数
+}
+
+add(1); // 1
+add(1)(2);  // 3
+add(1)(2)(3)； // 6
+add(1)(2)(3)(4)； // 10 
+```
