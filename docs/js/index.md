@@ -424,7 +424,7 @@ function instanceOf(left, right) {
 const ajax = (url,method,async,data){
   return new Promise((resolve,reject)=>{
     const xhr = new XMLHttpRequest()
-    
+
     xhr.onreadystatechange = ()=>{
       if(xhr.readyState === 4){
         if(xhr.status === 200){
@@ -441,13 +441,14 @@ const ajax = (url,method,async,data){
 ```
 
 - axios
+
 1. 从浏览器中创建 `XMLHttpRequest`
 2. 从 `node.js` 发出 `http` 请求
 3. 支持 `Promise API`
 4. 拦截请求和响应
 5. 转换请求和响应数据
 6. 取消请求
-7. 自动转换JSON数据
+7. 自动转换 JSON 数据
 8. 客户端支持防止 `CSRF/XSRF`
 9. 提供了并发的封装 `axios.all()`，只需将一个请求数组传递给这个方法，然后使用`axios.spread()`将响应数组的属性分配给多个变量
 
@@ -457,26 +458,28 @@ const ajax = (url,method,async,data){
     - 语法简洁，更加语义化
     - 基于标准 `Promise` 实现，支持 `async/await`
     - 同构方便，使用 `isomorphic-fetch`
-    - 更加底层，提供的API丰富（`request, response`）
-    - 脱离了`XHR`，是ES规范里新的实现方式
+    - 更加底层，提供的 API 丰富（`request, response`）
+    - 脱离了`XHR`，是 ES 规范里新的实现方式
   - 缺陷：
-    - fetch只对网络请求报错，对400，500都当做成功的请求，服务器返回 400，500 错误码时并不会 `reject`，只有网络错误这些导致请求不能完成时，fetch 才会被 `reject`。
-    - fetch默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
-    - fetch不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
-    - fetch没有办法原生监测请求的进度，而`XHR`可以
+    - fetch 只对网络请求报错，对 400，500 都当做成功的请求，服务器返回 400，500 错误码时并不会 `reject`，只有网络错误这些导致请求不能完成时，fetch 才会被 `reject`。
+    - fetch 默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
+    - fetch 不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
+    - fetch 没有办法原生监测请求的进度，而`XHR`可以
 
 ## 高阶函数
+
 > 高阶函数英文叫 `Higher-order function`，它的定义很简单，就是至少满足下列一个条件的函数：
+>
 > - 接受一个或多个函数作为输入
 > - 输出一个函数
 
-也就是说高阶函数是对其他函数进行操作的函数，可以将它们作为参数传递，或者是返回它们。 
+也就是说高阶函数是对其他函数进行操作的函数，可以将它们作为参数传递，或者是返回它们。
 
 简单来说，高阶函数是一个`接收函数作为参数`传递或者`将函数作为返回值`输出的函数
 
 - 函数作为参数传递
 
-  JavaScript 语言中内置了一些高阶函数，比如 
+  JavaScript 语言中内置了一些高阶函数，比如
 
   - `Array.prototype.map`：创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果，原始数组不会改变
   - `Array.prototype.filter`：创建一个新数组, 其包含通过提供函数实现的测试的所有元素，原始数组不会改变
@@ -486,8 +489,8 @@ const ajax = (url,method,async,data){
 
 - 函数作为返回值输出
 
-  - Add无限累加函数
-  
+  - Add 无限累加函数
+
 ```js
 function add(a) {
   function sum(b) { // 使用闭包
@@ -499,9 +502,87 @@ function add(a) {
   }
   return sum; // 返回一个函数
 }
-
 add(1); // 1
 add(1)(2);  // 3
 add(1)(2)(3)； // 6
-add(1)(2)(3)(4)； // 10 
+add(1)(2)(3)(4)； // 10
 ```
+
+## 继承
+
+- 构造函数继承
+
+使用父类的构造函数来增强子类实例，即复制父类的实例属性给子类，构造继承可以向父类传递参数，可以实现多继承，通过 call 多个父类对象。但是构造继承只能继承父类的实例属性和方法，不能继承原型属性和方法，无法实现函数服用，每个子类都有父类实例函数的副本，影响性能。
+
+```js
+function Parent() {
+  this.name = 'parent'
+}
+
+function Child() {
+  Parent.call(this)
+  this.type = 'child'
+}
+```
+
+- 原型继承
+
+将父类的实例作为子类的原型，他的特点是实例是子类的实例也是父类的实例，父类新增的原型方法/属性，子类都能够访问，并且原型链继承简单易于实现，缺点是来自原型对象的所有属性被所有实例共享，无法实现多继承，无法向父类构造函数传参
+
+```js
+function Parent() {
+  this.name = 'parent'
+}
+
+function Child() {
+  this.type = 'child'
+}
+
+Child.prototype = new Parent()
+```
+
+- 组合继承
+
+所谓组合继承，就是在上面原型链继承方式下，在子构造函数内，手动调用父构造函数，并传入子类 this
+
+通过调用父类构造，继承父类的属性并保留传参的优点，然后通过将父类实例作为子类原型，实现函数复用
+
+```js
+function Parent(name) {
+  this.name = [name]
+}
+Parent.prototype.getName = function () {
+  return this.name
+}
+function Child() {
+  Parent.call(this, 'xxx') // 构造函数继承
+}
+//原型链继承
+Child.prototype = new Parent()
+Child.prototype.constructor = Child
+```
+
+- 寄生组合继承
+
+通过寄生方式，砍掉父类的实例属性，这样，在调用两次父类的构造的时候，就不会初始化两次实例方法/属性，避免的组合继承的缺点
+
+```js
+function Parent(name) {
+  this.name = [name]
+}
+Parent.prototype.getName = function () {
+  return this.name
+}
+function Child() {
+  // 构造函数继承
+  Parent.call(this, 'xxx')
+}
+//原型链继承
+// Child.prototype = new Parent()
+Child.prototype = Parent.prototype //将`指向父类实例`改为`指向父类原型`
+Child.prototype.constructor = Child
+```
+
+- 单继承？
+
+让 ChildType.prototype.__proto__指向 ParentType.prototype
