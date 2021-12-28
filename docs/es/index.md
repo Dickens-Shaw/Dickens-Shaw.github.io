@@ -95,3 +95,62 @@ let child = new Child(1)
 child.getValue() // 1
 child instanceof Parent // true
 ```
+
+## 装饰器 Decorator
+
+> 装饰器是一种特殊的函数，它能够被附加到类声明，方法，属性或参数上，用来扩展类的功能
+
+- 装饰类
+
+```js
+function myFunc(target) {
+  target.name = 'xxx'
+}
+@myFunc
+class Parent {}
+Person.name // 'xxx'
+```
+
+- 传参
+
+```js
+function myFunc(value) {
+  return function(target) {
+    target.name = value
+  }
+}
+@myFunc('xxx')
+class Parent {}
+Person.name // 'xxx'
+```
+
+- 装饰方法
+
+```js
+// 参数为方法名\ 参数列表\ 函数体
+function myFunc(target, key, descriptor) {
+  Object.assign(target, {
+    name: 'xxx'
+  })
+}
+class Parent {
+  @myFunc
+  say() {}
+}
+let p = new Parent()
+p.say.name // 'xxx'
+```
+
+- 装饰属性
+
+```js
+function myFunc(target, key, descriptor) {
+  descriptor.writable = false
+}
+class Parent {
+  @myFunc
+  name = 'xxx'
+}
+let p = new Parent()
+p.name = 'yyy' // 报错, 不可修改
+```
