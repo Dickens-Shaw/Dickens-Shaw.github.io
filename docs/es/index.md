@@ -23,7 +23,7 @@
 
 ## Set
 
-set是放不重复的项，也就是去重
+> set是放不重复的项，也就是去重
 
 ```js
 let set = new Set([1,2,3,4,3,2,1]);
@@ -60,3 +60,9 @@ function difference(arr1, arr2) {
 let arr = difference([1,2,3], [2,3,4,5]);
 console.log(arr); // [1]
 ```
+
+## Map
+
+> 也是集合，主要格式是 key => value，同样是不能放重复的key
+
+Map有几个常用的方法，`clear\ delete\ entries\ forEach\ get\ has\ keys\ set\ values`
