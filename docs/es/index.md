@@ -115,7 +115,7 @@ Person.name // 'xxx'
 
 ```js
 function myFunc(value) {
-  return function(target) {
+  return function (target) {
     target.name = value
   }
 }
@@ -127,10 +127,10 @@ Person.name // 'xxx'
 - 装饰方法
 
 ```js
-// 参数为方法名\ 参数列表\ 函数体
+// 参数为方法名/ 参数列表/ 函数体
 function myFunc(target, key, descriptor) {
   Object.assign(target, {
-    name: 'xxx'
+    name: 'xxx',
   })
 }
 class Parent {
@@ -144,6 +144,7 @@ p.say.name // 'xxx'
 - 装饰属性
 
 ```js
+// 参数为属性名/ 参数列表/ 属性描述符
 function myFunc(target, key, descriptor) {
   descriptor.writable = false
 }
@@ -154,3 +155,92 @@ class Parent {
 let p = new Parent()
 p.name = 'yyy' // 报错, 不可修改
 ```
+
+## Proxy
+
+> Proxy 是一个拦截对象的操作，可以拦截对象的属性的读取和设置，以及方法的调用，还可以拦截整个对象的操作
+
+```js
+let obj = {
+  name: 'xxx',
+}
+let proxy = new Proxy(obj, {
+  get(target, key) {
+    return target[key].toUpperCase()
+  },
+  set(target, key, value) {
+    target[key] = value.toUpperCase()
+  },
+})
+proxy.name // 'XXX'
+proxy.name = 'yyy' // 'YYY'
+```
+
+## 前端模块化
+
+> 前端模块化，就是将代码分割成不同的文件，每个文件可以被认为是一个模块，模块之间可以相互调用，模块之间可以相互引用
+
+好处：
+
+1. 解决命名冲突
+2. 提高复用性
+3. 提高代码的可维护性
+
+- 立即执行函数
+
+在早期，使用立即执行函数实现模块化是常见的手段，通过函数作用域解决了`命名冲突、污染全局作用域`的问题
+
+```js
+;(function (exports, require, module, __filename, __dirname) {
+  // 内部代码
+})()
+// exports
+// require
+// module
+// __filename
+// __dirname
+```
+
+- AMD和require.js
+
+使用require.js来编写模块化，特点：依赖必须`提前声明`
+
+AMD规范采用`异步`方式加载模块，模块的加载不影响它后面语句的运行。所有依赖这个模块的语句，都定义在一个回调函数中，等到加载完成之后，这个回调函数才会运行。
+
+这里介绍用require.js实现AMD规范的模块化：用`require.config()`指定引用路径等，用`define()`定义模块，用require()加载模块。
+
+- CMD和sea.js
+
+使用sea.js来编写模块化，特点：支持`动态引入`依赖文件
+
+CMD是另一种js模块化方案，它与AMD很类似，不同点在于：AMD 推崇`依赖前置、提前执行`，CMD推崇`依赖就近、延迟执行`。此规范其实是在sea.js推广过程中产生的。
+
+- CommonJS
+
+Node.js是commonJS规范的主要实践者，它有四个重要的环境变量为模块化的实现提供支持：`module、exports、require、global`。
+
+实际使用时，用`module.exports`定义当前模块对外输出的接口（不推荐直接用`exports`），用`require`加载模块。
+
+CommonJS用`同步`的方式加载模块。在服务端，模块文件都存在本地磁盘，读取非常快，所以这样做不会有问题。但是在浏览器端，限于网络原因，更合理的方案是使用异步加载。
+
+CommonJS 模块加载过程是`同步阻塞性地加载`，在模块代码被运行前就已经写入了 cache，同一个模块被多次 require 时只会执行一次，重复的 require 得到的是相同的 exports 引用
+运行机制：注入exports、require、module三个全局变量，然后执行模块的源码，然后将模块的 exports 变量的值输出
+
+- ES6 Module
+
+ES6 在`语言标准`的层面上，实现了模块功能，而且实现得相当简单，旨在成为浏览器和服务器通用的模块解决方案。其模块功能主要由两个命令构成：export和import。export命令用于`规定模块的对外接口`，import命令用于`输入其他模块提供的功能`。
+
+还提供了`export default`命令，为模块`指定默认输出`，对应的import语句不需要使用大括号。这也更趋近于ADM的引用写法。
+
+ES6的模块不是对象，import命令会被 JavaScript 引擎`静态分析`，在`编译时`就引入模块代码，而不是在代码`运行时`加载，所以`无法实现条件加载`。也正因为这个，使得`静态分析`成为可能。
+
+运行机制：js引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。原始值变了，import加载的值也会跟着变。因此，ES6 模块是`动态引用`，并且不会缓存值，模块里面的变量绑定其所在的模块。
+
+- ESM 和 CJS 的差异
+
+  1. CommonJS 模块输出的是一个值的`拷贝`，ES6 模块输出的是值的`引用`
+  2. CommonJS 模块是`运行时加载`，ES6 模块是`编译时输出`接口
+  3. CommonJS 支持`动态导入`，也就是 `require(${path}/xx.js)`，后者目前不支持，但是已有提案
+  4. CommonJS 是`同步`导入，因为用于服务端，文件都在本地，同步导入即使卡住主线程影响也不大。而后者是`异步`导入，因为用于浏览器，需要下载文件，如果也采用同步导入会对渲染有很大影响
+  5. CommonJS 在导出时都是`值拷贝`，就算导出的值变了，导入的值也不会改变，所以如果想更新值，必须重新导入一次。但是 ES Module 采用实时绑定的方式，导入导出的值都指向同一个内存地址，所以导入值会跟随导出值变化
+  6. ES Module 会编译成 `require/exports `来执行的
