@@ -383,7 +383,8 @@ CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小
 ## 水平垂直居中
 
 - 居中元素定宽高
-  - absolute + 负margin
+
+  - absolute + 负 margin
   - absolute + margin auto
   - absolute + calc
 

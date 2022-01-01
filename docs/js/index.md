@@ -582,7 +582,7 @@ Child.prototype.constructor = Child
 
 - 单继承？
 
-让 ChildType.prototype.__proto__指向 ParentType.prototype
+让 ChildType.prototype.**proto**指向 ParentType.prototype
 
 ## 数组展开
 
@@ -591,7 +591,7 @@ Child.prototype.constructor = Child
 ```js
 function flatten(arr) {
   let result = []
-  arr.forEach(item => {
+  arr.forEach((item) => {
     if (Array.isArray(item)) {
       result = result.concat(flatten(item))
     } else {
@@ -606,22 +606,20 @@ function flatten(arr) {
 
 ```js
 function flatten(arr) {
-  // 本质和 flat1 一样的，都是递归  
+  // 本质和 flat1 一样的，都是递归
   return arr.reduce((prev, cur) => {
     return prev.concat(Array.isArray(cur) ? flatten(cur) : cur)
   }, [])
 }
 ```
 
-
-
 - rest
 
 ```js
 function flatten(arr) {
-  while (arr.some(item => Array.isArray(item))) {
-    // 相当于 [].concat('1', 2, [3, 4])  
-    // concat 方法本身就会把参数中的数组展开  
+  while (arr.some((item) => Array.isArray(item))) {
+    // 相当于 [].concat('1', 2, [3, 4])
+    // concat 方法本身就会把参数中的数组展开
     arr = [].concat(...arr)
   }
 }
@@ -631,7 +629,7 @@ function flatten(arr) {
 
 ```js
 function flatten(arr) {
-   // flat() 方法会移除数组中的空项  
+  // flat() 方法会移除数组中的空项
   return arr.flat(Infinity)
 }
 ```
