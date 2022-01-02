@@ -88,3 +88,18 @@ allTags.forEach((item) => {
 })
 console.log(markDownText)
 ```
+
+- 微信收藏夹转 Markdown
+
+```js
+// 把收藏夹全部转发到微信文件传输助手[https://filehelper.weixin.qq.com/]
+let markdownText = ''
+const listArray = [...document.querySelectorAll('.msg-appmsg__content')]
+listArray.forEach((item) => {
+  const href = item.href // 链接
+  const content = item.innerText // 内容
+  markdownText += `
+  - [${content.replaceAll('\n','')}](${href})☑️
+`})
+console.log(markdownText)
+```
