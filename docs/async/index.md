@@ -11,8 +11,9 @@
 缺点：
 
 1. 回调函数有一个致命的弱点，就是容易写出`回调地狱(Callback hell)`：
-    - 嵌套函数存在耦合性，一旦有所改动，就会牵一发而动全身
-    - 嵌套函数一多，就很难处理错误
+
+   - 嵌套函数存在耦合性，一旦有所改动，就会牵一发而动全身
+   - 嵌套函数一多，就很难处理错误
 
 2. 不能使用 `try catch` 捕获错误
 3. 不能直接 `return`
@@ -34,55 +35,53 @@ then 函数会返回一个 Promise 实例，并且该返回值是一个`新的�
 - Promise.resolve
 
 ```js
-MyPromise.resolve = function(value) {
-    return new MyPromise(function(resolve) {
-        resolve(value);
-    });
+MyPromise.resolve = function (value) {
+  return new MyPromise(function (resolve) {
+    resolve(value)
+  })
 }
 ```
 
 - Promise.reject
 
 ```js
-MyPromise.reject = function(error) {
-    return new MyPromise(function(resolve, reject) {
-        reject(error);
-    });
+MyPromise.reject = function (error) {
+  return new MyPromise(function (resolve, reject) {
+    reject(error)
+  })
 }
 ```
 
-- Promise.prototype.then
-
-  -
+- Promise.then
 
 ```js
-MyPromise.prototype.then = function(onFulfilled, onRejected) {
-    return new MyPromise(function(resolve, reject) {
-        this.resolve = function(value) {
-            if (typeof onFulfilled === 'function') {
-                try {
-                    var x = onFulfilled(value);
-                    resolve(x);
-                } catch (e) {
-                    reject(e);
-                }
-            } else {
-                resolve(value);
-            }
+MyPromise.prototype.then = function (onFulfilled, onRejected) {
+  return new MyPromise(function (resolve, reject) {
+    this.resolve = function (value) {
+      if (typeof onFulfilled === 'function') {
+        try {
+          var x = onFulfilled(value)
+          resolve(x)
+        } catch (e) {
+          reject(e)
         }
-        this.reject = function(error) {
-            if (typeof onRejected === 'function') {
-                try {
-                    var x = onRejected(error);
-                    resolve(x);
-                } catch (e) {
-                    reject(e);
-                }
-            } else {
-                reject(error);
-            }
+      } else {
+        resolve(value)
+      }
+    }
+    this.reject = function (error) {
+      if (typeof onRejected === 'function') {
+        try {
+          var x = onRejected(error)
+          resolve(x)
+        } catch (e) {
+          reject(e)
         }
-    });
+      } else {
+        reject(error)
+      }
+    }
+  })
 }
 ```
 
@@ -117,21 +116,24 @@ MyPromise.all = function (iterable) {
 
 - Promise.race
 
-  - 原理：race和all大同小异，只不过它不会等所有promise都成功，而是谁快就把谁返回出去
+  - 原理：race 和 all 大同小异，只不过它不会等所有 promise 都成功，而是谁快就把谁返回出去
 
   - 手撕
 
 ```js
-MyPromise.race = function(iterable) {
-    return new MyPromise(function(resolve, reject) {
-        for (let i = 0; i < iterable.length; i++) {
-            iterable[i].then(function(data) {
-                resolve(data);
-            }, function(error) {
-                reject(error);
-            });
+MyPromise.race = function (iterable) {
+  return new MyPromise(function (resolve, reject) {
+    for (let i = 0; i < iterable.length; i++) {
+      iterable[i].then(
+        function (data) {
+          resolve(data)
+        },
+        function (error) {
+          reject(error)
         }
-    });
+      )
+    }
+  })
 }
 ```
 
@@ -142,33 +144,86 @@ MyPromise.race = function(iterable) {
   - 手撕
 
 ```js
-MyPromise.allSettled = function(iterable) {
-    return new MyPromise(function(resolve, reject) {
-        let count = 0
-        let result = []
-        for (let i = 0; i < iterable.length; i++) {
-            iterable[i].then(
-                function (value) {
-                    result[i] = {
-                        status: 'fulfilled',
-                        value: value
-                    }
-                    count++
-                    if (count === iterable.length) {
-                        resolve(result)
-                    }
-                },
-                function (error) {
-                    result[i] = {
-                        status: 'rejected',
-                        reason: error
-                    }
-                    count++
-                    if (count === iterable.length) {
-                        resolve(result)
-                    }
-                }
-            )
+MyPromise.allSettled = function (iterable) {
+  return new MyPromise(function (resolve, reject) {
+    let count = 0
+    let result = []
+    for (let i = 0; i < iterable.length; i++) {
+      iterable[i].then(
+        function (value) {
+          result[i] = {
+            status: 'fulfilled',
+            value: value,
+          }
+          count++
+          if (count === iterable.length) {
+            resolve(result)
+          }
+        },
+        function (error) {
+          result[i] = {
+            status: 'rejected',
+            reason: error,
+          }
+          count++
+          if (count === iterable.length) {
+            resolve(result)
+          }
         }
-    })
+      )
+    }
+  })
 }
+```
+
+- Promise.any
+
+## 取消 Promise
+
+`Promise.race(iterable)`，当 iterable 参数里的任意一个子 promise 被成功或失败后，父 promise 马上也会用子 promise 的成功返回值或失败详情作为参数调用父 promise 绑定的相应句柄，并返回该 promise 对象。
+
+```js
+// 通过promise.race的特性，来进行promise的取消
+function stopPromise(stopP) {
+  let proObj = {}
+  let promise = new Promise((resolve, reject) => {
+    proObj.resolve = resolve
+    proObj.reject = reject
+  })
+  proObj.promise = Promise.race([stopP, promise])
+  return proObj
+}
+```
+
+## Generator
+
+> Generator 是 ES6 中新增的语法，和 Promise 一样，都可以用来异步编程
+
+Generator 实现的核心在于`上下文的保存`，函数并没有真的被挂起，每一次 yield，其实都执行了一遍传入的`生成器函数`，只是在这个过程中间用了一个 context 对象储存上下文，使得每次执行生成器函数的时候，都可以从上一个执行结果开始执行，看起来就像函数被挂起了一样。
+
+```js
+// 使用 * 表示这是一个Generator函数
+// 内部可以通过yield表达式来暂停执行
+// 通过next方法来恢复执行
+function* gen() {
+  let a = 1 + 2
+  yield 2
+  yield 3
+}
+let b = gen()
+console.log(b.next()) // { value: 2, done: false }
+console.log(b.next()) // { value: 3, done: false }
+console.log(b.next()) // { value: undefined, done: true }
+```
+
+## async/await
+
+async 和 await 相比直接使用 Promise 来说，优势在于处理 then 的调用链，能够更清晰准确的写出代码。缺点在于滥用 await 可能会导致性能问题，因为 await 会阻塞代码，也许之后的异步代码并不依赖于前者，但仍然需要等待前者完成，导致代码失去了并发性。
+
+- 优点：代码清晰，不用像 Promise 写一大堆 then 链，处理了回调地狱的问题；
+- 缺点：await 将异步代码改造成同步代码，如果多个异步操作没有依赖性而使用 await 会导致性能上的降低。
+
+await 内部实现了 generator，其实 await 就是 `generator 加上 Promise 的语法糖`，且内部使用`co函数`实现了自动执行 generator
+
+- async 是一个修饰符，async 定义的函数会默认的返回一个 Promise 对象 resolve 的值，因此对 async 函数可以直接进行 then 操作,返回的值即为 then 方法的传入函数
+- await 也是一个修饰符，只能放在 async 函数内部。作用 就是获取 Promise 中返回的内容， 获取的是 Promise 函数中 resolve 或者 reject 的值。如果 await 后面并不是一个 Promise 的返回值，则会按照同步程序返回值处理

@@ -423,9 +423,7 @@
 
   - [GitHub发布史上最大更新，年度报告出炉！在昨天的GitHub Universe开发者大会上，GitHub发布了史上最大更新：可直接运行部分代码的GitHub Actions，以及宣布了2018年的GitHub年度报告，包括最热门的开源项目和编程语言，让我们一起来先睹为快！](http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&mid=2651009926&idx=1&sn=26f8170028a77b501f328d147858275c&chksm=bdbecbd58ac942c3bc75371bcbc4382130f6447246c3e8fd49d638d65647e05ecdc3ffa7e31f&mpshare=1&scene=24&srcid=1017aJ4FVWzmJrQhK1zsN2Yt#rd)☑️
 
-  - [mp.weixin.qq.comhttps://mp.weixin.qq.com/s?__biz=MzUxMzcxMzE5Ng==&mid=2247491566&idx=1&sn=d116a7932eceff6a66d338e7d7c9319e&chksm=f951aaadce2623bb29436e75fdc658c7374dbd80632d9cb7012c187a518a151065691653fed8&xtrack=1&scene=90&subscene=93&sessionid=1561200634&clicktime=1561200636&ascene=0&devicetype=android-28&version=2700043c&nettype=cmnet&abtest_cookie=BgABAAgACgALABIAEwAVAAcAnoYeACOXHgBWmR4AwJkeANyZHgD0mR4AC5oeAAAA&lang=zh_CN&pass_ticket=TilPSDztqmTZHeJJxUJ%2BKMqQgv%2BgNuqQMecShhSZY0YlXNw4CukWkjZDvuIMveZo&wx_header=1](https://mp.weixin.qq.com/s/XspWR3e7Jm38Q-HJm2Ntvw)☑️
-
-  - [mp.weixin.qq.comhttps://mp.weixin.qq.com/s?__biz=MzU3NjczNDk2MA==&mid=2247484421&idx=1&sn=d3d0b57bd493be0d057b49ccd300d922&chksm=fd0e179aca799e8c185082e8e6455905fa9460a27fee6e4212369877c527b272cd49d2e9f1a7&scene=90&xtrack=1&subscene=93&clicktime=1564458520&ascene=0&devicetype=android-28&version=27000537&nettype=cmnet&abtest_cookie=BQABAAgACgALABIAEwAFAJ6GHgAjlx4AVpkeAMCZHgD0mR4AAAA%3D&lang=zh_CN&pass_ticket=%2FbuuYxo80Sjo3Xvh5N%2F49L%2FQiGvI7EQroTeoS3ng3zMBIEfsPhZQ9EHivAAVjDiI&wx_header=1](https://mp.weixin.qq.com/s/VuzJdYRnoxFkgx9yUMgFag)☑️
+  - [构建大型React应用程序的最佳实践](https://mp.weixin.qq.com/s/XspWR3e7Jm38Q-HJm2Ntvw)☑️
 
   - [JavaScript状态模式及状态机模型我们平时开发时本质上就是对应用程序的各种状态进行切换并作出相应处理。最直接的解决方案是将这些所有可能发生的情况全都考虑到，然后使用if… ellse语句来做状态判断来进行不同情况的处理。但是对复杂状态的判断就显得代码逻辑特别的乱。](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651555128&idx=1&sn=122238ddd3623f568dd3d298f403a856&chksm=802552f9b752dbef2bed0b3a4ab714fd2d5efe3251b937352ce340946f1dc141040cac4b307f&mpshare=1&scene=24&srcid=1019bBoq5YLnbxjOzrzAssRY#rd)☑️
 
@@ -469,12 +467,14 @@
 
   - [提升90%加载速度——vuecli下的首屏性能优化提升90%加载速度——vuecli下的首屏性能优化。](http://mp.weixin.qq.com/s?__biz=MzAwNDcyNjI3OA==&mid=2650842665&idx=1&sn=833e9aac527b7fbce78eb8e4c75d5f1a&chksm=80d38d40b7a404564198c1ad2fc587b4f2c1529fa7425df49374ba733682d939db93685f667d&scene=0&xtrack=1#rd)☑️
 
-  - [Webpack_入门 精通 教程_w3cplushttps://www.w3cplus.com/blog/tags/692.html](https://www.w3cplus.com/blog/tags/692.html)☑️
+  - [Webpack_入门 精通 教程](https://www.w3cplus.com/blog/tags/692.html)☑️
 
   - [阿里大佬浅谈大型项目前端架构设计我在2年前，写过一篇中小型项目的前端架构浅谈。随着能力的上升，以及在阿里巴巴工作的经验，是时候写一篇大型项目的架构分析了。本篇文章不会更多侧重于具体技术实现，而是尝试从更高角度出发，分析为什么要这么做，这些设计能解决什么问题，成本和收益如何](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651556822&idx=1&sn=7c98f5fddf1a37ef04fe7176c25360f1&chksm=80255c17b752d501ce2c3ae517ec977308328dceca83e247964c28f3b130373b1c402ac551bf&scene=0&xtrack=1#rd)☑️
 
-  - [TypeScript 完全手册http://mp.weixin.qq.com/s?__biz=MzU2MzY3NTM1Nw==&mid=2247487291&idx=1&sn=8118c755725d852f74ca8974fef69a49&chksm=fc57e689cb206f9f347353c28005dfb08c6052efe05c258c6b28188875619e3257bb56b7dea3&mpshare=1&scene=2&srcid=&sharer_sharetime=1566559101667&sharer_shareid=0c8b01acdfc0b291ec762196f7c25464#rd](https://mp.weixin.qq.com/s?__biz=MzU2MzY3NTM1Nw==&mid=2247487291&idx=1&sn=8118c755725d852f74ca8974fef69a49&chksm=fc57e689cb206f9f347353c28005dfb08c6052efe05c258c6b28188875619e3257bb56b7dea3&mpshare=1&scene=2&srcid=&sharer_sharetime=1566559101667&sharer_shareid=0c8b01acdfc0b291ec762196f7c25464&from=timeline&clicktime=1566559257&ascene=2&devicetype=android-28&version=27000634&nettype=cmnet&abtest_cookie=BQABAAgACgALABIAEwAFAJ6GHgAjlx4AVpkeAMCZHgD0mR4AAAA%3D&lang=zh_CN&pass_ticket=8MjQxDn%2Bnlh1d656BwW4IRZRpPU%2FSaezhIHBH3o9z%2FyLIV2JQqpG4Gu%2BKGW%2FWtf7&wx_header=1&forceh5=1)☑️
+  - [TypeScript 完全手册](https://mp.weixin.qq.com/s?__biz=MzU2MzY3NTM1Nw==&mid=2247487291&idx=1&sn=8118c755725d852f74ca8974fef69a49&chksm=fc57e689cb206f9f347353c28005dfb08c6052efe05c258c6b28188875619e3257bb56b7dea3&mpshare=1&scene=2&srcid=&sharer_sharetime=1566559101667&sharer_shareid=0c8b01acdfc0b291ec762196f7c25464&from=timeline&clicktime=1566559257&ascene=2&devicetype=android-28&version=27000634&nettype=cmnet&abtest_cookie=BQABAAgACgALABIAEwAFAJ6GHgAjlx4AVpkeAMCZHgD0mR4AAAA%3D&lang=zh_CN&pass_ticket=8MjQxDn%2Bnlh1d656BwW4IRZRpPU%2FSaezhIHBH3o9z%2FyLIV2JQqpG4Gu%2BKGW%2FWtf7&wx_header=1&forceh5=1)☑️
 
   - [【第1711期】Webpack优化——将你的构建效率提速翻倍webpack优化](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651233582&idx=2&sn=73c142f04bfb546433c6331275628ed6&chksm=bd4944aa8a3ecdbc3aaef3c61077dc073858ce688098bb34d2eb5d01cbac63e61d60ee6e8486&scene=0&xtrack=1#rd)☑️
 
   - [重磅！滴滴跨端框架Chameleon 1.0正式发布滴滴跨端解决方案 Chameleon（简写 CML）正式发布 1.0 版本。](http://mp.weixin.qq.com/s?__biz=MzUxMzcxMzE5Ng==&mid=2247492305&idx=1&sn=2e2a75fa8d709364e4833cc62a2420e7&chksm=f9525792ce25de84eb5ff55f802bdd21e0795b98fc13de5a5ade80741704725e0425ef770f4a&scene=0&xtrack=1#rd)☑️
+
+  - [做好这 16 个方向，逐步搭建出团队的 vue3 前端架构](https://mp.weixin.qq.com/s/9_CLYyhxGCw5MCUSAEE5Sw)☑️
