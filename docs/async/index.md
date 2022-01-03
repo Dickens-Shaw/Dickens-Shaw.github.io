@@ -178,7 +178,7 @@ MyPromise.allSettled = function (iterable) {
 
 - Promise.any
 
-## 取消 Promise
+- 取消 Promise
 
 `Promise.race(iterable)`，当 iterable 参数里的任意一个子 promise 被成功或失败后，父 promise 马上也会用子 promise 的成功返回值或失败详情作为参数调用父 promise 绑定的相应句柄，并返回该 promise 对象。
 
