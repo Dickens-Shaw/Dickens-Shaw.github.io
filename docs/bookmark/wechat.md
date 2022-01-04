@@ -478,3 +478,17 @@
   - [重磅！滴滴跨端框架Chameleon 1.0正式发布滴滴跨端解决方案 Chameleon（简写 CML）正式发布 1.0 版本。](http://mp.weixin.qq.com/s?__biz=MzUxMzcxMzE5Ng==&mid=2247492305&idx=1&sn=2e2a75fa8d709364e4833cc62a2420e7&chksm=f9525792ce25de84eb5ff55f802bdd21e0795b98fc13de5a5ade80741704725e0425ef770f4a&scene=0&xtrack=1#rd)☑️
 
   - [做好这 16 个方向，逐步搭建出团队的 vue3 前端架构](https://mp.weixin.qq.com/s/9_CLYyhxGCw5MCUSAEE5Sw)☑️
+
+  - [一文吃透 WebSocket 原理一文吃透 WebSocket 原理。](http://mp.weixin.qq.com/s?__biz=MzA3NTUzNjk1OA==&mid=2651570447&idx=1&sn=e1aa2aa3c4ca9211ee76800c92c8a18d&chksm=84906e5eb3e7e748c3d8a7b2812076dc10145bf4e0be6d552247531eb744bdcb971bc4b844e8&mpshare=1&scene=24&srcid=01044YXgVgvP7Oka4nWjVvRA&sharer_sharetime=1641263774591&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
+  - [服务端渲染SSR及实现原理](http://mp.weixin.qq.com/s?__biz=Mzg5ODA5NTM1Mw==&mid=2247497625&idx=2&sn=f41cce012c31f77337b9f45e3998dc0a&chksm=c065760ff712ff1919d7ed4da4841e977dd923a135e2bac7e683d4073c5993ce7e8fb8a856a0&mpshare=1&scene=24&srcid=0104HduR8EapltWEYKCeBMIa&sharer_sharetime=1641264061117&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
+  - [图解 | 一个跨域问题给我整懵了工作中真的经常遇到~](http://mp.weixin.qq.com/s?__biz=MzkxMjI3MTA1Mg==&mid=2247514077&idx=1&sn=12ba8b56ae311676b833a477098f739d&chksm=c10d847ef67a0d6899c4c8f1c850b4144c2f020ce4838a874690e4ba812fbe5f5f8fbd7594ab&mpshare=1&scene=24&srcid=0104ZLnQYyFTHExoJ7hFcKAP&sharer_sharetime=1641264110316&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
+  - [记一次搭建业务平台组件库的过程](http://mp.weixin.qq.com/s?__biz=MzA4Nzg0MDM5Nw==&mid=2247508935&idx=2&sn=7bce9f5d66e7e3ed2c06228f38f41edf&chksm=9031a025a7462933f1db52cb74a47940cf922cdaf42f151056f8c11ef0184a47b92c1f5f13a1&mpshare=1&scene=24&srcid=0104XYrCv8hjdg8u7TJT6bzc&sharer_sharetime=1641264148683&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
+  - [这个 API 很强大，Web 身份认证的未来！WebAuthn，即 Web Authentication](http://mp.weixin.qq.com/s?__biz=MzkxMjI3MTA1Mg==&mid=2247514072&idx=1&sn=6a23071da3d2db4b43dc357239fa0ea6&chksm=c10d847bf67a0d6d01833ad6bd36ba0d26c409d3d62507961086801d6be9a21e93c92f4b2e00&mpshare=1&scene=24&srcid=0104dRedoBPTTDIkQNW4kcni&sharer_sharetime=1641264257787&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
+  - [【第2501期】从实现原理看低代码从原理看低代码](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651251979&idx=1&sn=4ce194b3db6e56a6c928d472ca9fbb8a&chksm=bd493c8f8a3eb5995cc2f2a8519b7cb4cda95aeaf947ba8d63a8216bf926a6e57688ca4dff93&mpshare=1&scene=24&srcid=0104ciRqslregBN7nLsLVX4D&sharer_sharetime=1641264265564&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
+  - [前端应该掌握的登录认证知识](http://mp.weixin.qq.com/s?__biz=Mzg5ODA5NTM1Mw==&mid=2247497618&idx=1&sn=3b0197a2c7b554671eab46bac87a0895&chksm=c0657604f712ff12b3bd9e8a856181170654c5df429940aa726b3034897b8eea5ee82d9a7aea&mpshare=1&scene=24&srcid=0104KxmH93B2G9a1FkN4klcO&sharer_sharetime=1641264482012&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
