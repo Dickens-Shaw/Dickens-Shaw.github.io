@@ -93,6 +93,13 @@ _这是倾斜的文字_`
 
 十、流程图
 
+主要的语法为 name=>type: describe，其中 type 主要有以下几种：
+1.开始和结束：start end
+2.输入输出：inputoutput
+3.操作：operation
+4.条件：condition
+5.子程序：subroutine
+
 ```flow
 st=>start: 开始
 op=>operation: My Operation
@@ -102,3 +109,25 @@ st->op->co
 co(yes)->e
 co(no)->op
 ```
+
+十一、折叠
+
+<details>
+  <summary><mark><font color=darkred>点击查看详细内容</font></mark></summary>
+  <p> - 测试 测试测试</p>
+  <pre><code>  
+for i in a:
+    print(i)
+  </code></pre>
+</details>
+
+
+十二、数学公式
+
+使用 $ 表示，其中一个 $ 表示在行内，两个 $ 表示独占一行。
+
+eg : $\sum_{i=1}^n a_i=0$
+
+支持 LaTeX 编辑显示支持，访问 MathJax 参考更多使用方法。
+
+推荐一个常用的数学公式在线编译网站：https://private.codecogs.com/latex/eqneditor.php
