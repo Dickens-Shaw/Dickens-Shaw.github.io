@@ -56,11 +56,9 @@ const allTags = [
     [...document.querySelectorAll('.tag')].map((item) => item.innerText.trim())
   ),
 ]
-
 // 获取所有文章
 const listArray = [...document.querySelector('.entry-list').children]
 let markDownText = ''
-
 allTags.forEach((item) => {
   // 根据标签分类
   markDownText += `
