@@ -507,9 +507,7 @@
 
   - [前端开发必须了解的 Nginx 单页加载优化](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651593923&idx=2&sn=e2a7ebb51fbd094ab26e1f34d20a9835&chksm=8022cb02b7554214407d4b582fe753fb0b287f826577042895df61ae7af4c79c169a280746cb&mpshare=1&scene=24&srcid=01051IDmTeKbkvYAwvm3WakO&sharer_sharetime=1641361008808&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [前端构建新世代，Esbuild 原来还能这么玩！由于近段时间一直在研究前端构建相关的领域，像 Esbuild、Vite 这些都接触得比较多了，而且这些工具现](http://mp.weixin.qq.com/s?__biz=Mzk0MDMwMzQyOA==&mid=2247491759&idx=1&sn=b00bd56db30e256f91a9191164ade15e&chksm=c2e11584f5969c929a278ce06be6633371d8a5b560a881f468e1570206243386a892381be4d8&mpshare=1&scene=24&srcid=0105L9USGfciERLRysifK5PH&sharer_sharetime=1641361036136&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-  
-  - [学完这篇 Nest.js 实战，还没入门的来锤我！(长文预警)大厂技术 高级前端 Node进阶点击上方 程序员成长指北，关注公众号回复1，加入高级Node交流群前言最](http://mp.weixin.qq.com/s?__biz=MzUxNzk1MjQ0Ng==&mid=2247500758&idx=1&sn=5fe702af0f8238d9d7c3a0950349f56f&chksm=f992c507cee54c1167bb05e409ef3595b8538e1818cf0c1ac8efebaf3f295f604de81b725433&mpshare=1&scene=24&srcid=0106Kbnn5N1gnqjbgOEsX4jU&sharer_sharetime=1641428157503&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+   - [学完这篇 Nest.js 实战，还没入门的来锤我！(长文预警)大厂技术 高级前端 Node进阶点击上方 程序员成长指北，关注公众号回复1，加入高级Node交流群前言最](http://mp.weixin.qq.com/s?__biz=MzUxNzk1MjQ0Ng==&mid=2247500758&idx=1&sn=5fe702af0f8238d9d7c3a0950349f56f&chksm=f992c507cee54c1167bb05e409ef3595b8538e1818cf0c1ac8efebaf3f295f604de81b725433&mpshare=1&scene=24&srcid=0106Kbnn5N1gnqjbgOEsX4jU&sharer_sharetime=1641428157503&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
   - [Nest.js 实战系列第二篇-实现注册、扫码登陆、jwt认证等这是 Nest.js 实战系列第二篇，我要用最真实的场景让你学会使用 Node 主流框架。](http://mp.weixin.qq.com/s?__biz=MzIyNDU2NTc5Mw==&mid=2247500443&idx=1&sn=cd69a1aed9e307b483d4b3667673c4fa&chksm=e80f8dd5df7804c3910d43067be4845572b1a7f7fce8f8272a5c2f446d7e8b522b6b27dd9c27&mpshare=1&scene=24&srcid=0106VnkQ1C38kQlcoyNzmoJ5&sharer_sharetime=1641428164481&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
