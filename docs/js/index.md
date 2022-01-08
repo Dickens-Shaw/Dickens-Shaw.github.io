@@ -59,7 +59,7 @@
 3. `Function.prototype` 和 `Object.prototype` 是两个特殊的对象，他们由引擎来创建
 4. 除了以上两个特殊对象，其他对象都是通过构造器 `new` 出来的
 
-![blockchain](../_media/js/prototype.png)
+![blockchain](../_media/imgs/prototype.png)
 
 ## 变量提升
 
