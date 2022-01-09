@@ -158,7 +158,7 @@ man.name // xxx
 ## 适配器模式
 
 - 概念：适配器模式，将一个接口转换成客户希望的另一个接口，使接口不兼容的那些类可以一起工作
-- 应用：Vue的computed ，例如出境旅游插头插座不匹配，这时我们就需要使用转换插头，也就是适配器来帮我们解决问题
+- 应用：Vue 的 computed ，例如出境旅游插头插座不匹配，这时我们就需要使用转换插头，也就是适配器来帮我们解决问题
 
 ```js
 class Adaptor {
@@ -182,26 +182,26 @@ target.test() // 适配old
 ## 代理模式
 
 - 概念： 代理模式，为一个对象找一个替代对象，以便对原对象进行访问。即在访问者与目标对象之间加一层代理，通过代理做授权和控制，不让外部直接访问到对象
-- 应用：事件代理、JQuery的$.proxy、ES6的proxy都是这一模式的实现
+- 应用：事件代理、JQuery 的$.proxy、ES6 的 proxy 都是这一模式的实现
 
 ```js
 const idol = {
   name: 'CXK',
   phone: '10086',
-  price: '1000000'
+  price: '1000000',
 }
-const agent = new Proxy(idol,{
+const agent = new Proxy(idol, {
   get: (target) => {
     return '经纪人电话：10010'
   },
-  set: (target,key,value) => {
-    if(key === 'price') {
-      if(value < target.price) {
+  set: (target, key, value) => {
+    if (key === 'price') {
+      if (value < target.price) {
         throw new Error('报价过低')
       }
       target[key] = value
     }
-  }
+  },
 })
 agent.phone // 经纪人电话：10010
 agent.price = 100 // 报价过低
@@ -216,21 +216,42 @@ agent.price = 100 // 报价过低
 用大白话来说就是只传递给函数一部分参数来调用它，让它返回一个新函数去处理剩下的参数。使用一个简单的例子来介绍下，最常用的就是 add 函数了。
 
 - 应用：
+
   1. 延迟计算：部分求和、bind 函数
   2. 动态创建函数：添加监听 addEvent、惰性函数
   3. 参数服用
   4. Function.prototype.call.bind(Object.prototype.toString)
 
 - 实现：
-用闭包把传入参数保存起来，当传入参数的数量足够执行函数时，就开始执行函数
+  用闭包把传入参数保存起来，当传入参数的数量足够执行函数时，就开始执行函数
 
 ```js
-function currying(fn,length) {
-  length = length || fn.length // 第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度 
-  return function(...args) { // currying 包裹之后返回一个新函数，接收参数为 ...args  
-      return args.length >= length // 新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度 
-        ? fn.apply(this, args) // 满足要求，执行 fn 函数，传入新函数的参数 
-        : currying(fn.bind(this, ...args), length - args.length) // 不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度  
+function currying(fn, length) {
+  length = length || fn.length // 第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度
+  return function (...args) {
+    // currying 包裹之后返回一个新函数，接收参数为 ...args
+    return args.length >= length // 新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度
+      ? fn.apply(this, args) // 满足要求，执行 fn 函数，传入新函数的参数
+      : currying(fn.bind(this, ...args), length - args.length) // 不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
   }
 }
 ```
+
+- ES6 写法：
+
+```js
+function curryingES6 = fn =>
+  judge = (...args) =>
+    args.length >= fn.length
+      ? fn(...args)
+      : (...arg) =>
+          judge(...args, ...arg)
+```
+
+## 属性描述符
+
+属性描述符（Property Descriptor）是对 JavaScript 属性的描述，包括：value、writable、enumerable、configurable，除 value 其他默认为 true：
+
+1. writable[对象是否可以再赋值]
+2. enumerable[对象是否可以迭代]
+3. configurable[是否可以通过 Object.defineProperty 对对象再次配置]
