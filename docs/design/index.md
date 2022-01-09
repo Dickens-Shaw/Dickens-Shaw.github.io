@@ -178,3 +178,32 @@ class Target {
 let target = new Target()
 target.test() // 适配old
 ```
+
+## 代理模式
+
+- 概念： 代理模式，为一个对象找一个替代对象，以便对原对象进行访问。即在访问者与目标对象之间加一层代理，通过代理做授权和控制，不让外部直接访问到对象
+- 应用：事件代理、JQuery的$.proxy、ES6的proxy都是这一模式的实现
+
+```js
+const idol = {
+  name: 'CXK',
+  phone: '10086',
+  price: '1000000'
+}
+const agent = new Proxy(idol,{
+  get: (target) => {
+    return '经纪人电话：10010'
+  },
+  set: (target,key,value) => {
+    if(key === 'price') {
+      if(value < target.price) {
+        throw new Error('报价过低')
+      }
+      target[key] = value
+    }
+  }
+})
+agent.phone // 经纪人电话：10010
+agent.price = 100 // 报价过低
+```
+
