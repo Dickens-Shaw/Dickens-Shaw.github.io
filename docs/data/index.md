@@ -240,3 +240,82 @@ function getDepth(root) {
   return Math.max(getDepth(root.left), getDepth(root.right)) + 1
 }
 ```
+
+## 动态规划
+
+本质：
+1. 自底向上分解子问题：将一个问题拆分为子问题，一般来说这些子问题都是非常相似的，那么我们可以通过只解决一次每个子问题来达到减少计算量的目的。
+2. 通过变量存储已经计算过的解：一旦得出每个子问题的解，就存储该结果以便下次使用
+
+### 非波拉契数列
+
+- 递归
+
+```js
+function fib(n) {
+  if (n <= 1) return n
+  return fib(n - 1) + fib(n - 2)
+}
+```
+
+- 动态规划
+  - 思路：
+    1. 斐波那契数列从 0 和 1 开始，那么这就是这个子问题的最底层
+    2. 通过数组来存储每一位所对应的斐波那契数列的值
+
+```js
+function fib(n) {
+  if (n <= 1) return n
+  let arr = [0, 1]
+  for (let i = 2; i <= n; i++) {
+    arr[i] = arr[i - 1] + arr[i - 2]
+  }
+  return arr[n]
+}
+```
+
+### 最长公共子串
+### 背包问题
+
+## 贪心算法
+
+贪心算法总是会选择当下最优解，通过一系列最优选择带来整体的最优选择。
+
+### 找零问题
+
+> 假设货币面额有1,2,5,10,20,50,100，每种数量都无限多，现在给出金额n(1<=n<=100000)，求出最少的货币数量。
+```js
+// 找零问题
+function coinChange(n) {
+  //首先尝试最大面额找零，之后尝试次大面额找零，直到完全找零
+  let coins = []
+  if(n%100 < n) {
+    coins.push(parseInt(n/100))
+    n %= 100
+  }
+  if(n%50 < n) {
+    coins.push(parseInt(n/50))
+    n %= 50
+  }
+  if(n%20 < n) {
+    coins.push(parseInt(n/20))
+    n %= 20
+  }
+  if(n%10 < n) {
+    coins.push(parseInt(n/10))
+    n %= 10
+  }
+  if(n%5 < n) {
+    coins.push(parseInt(n/5))
+    n %= 5
+  }
+  if(n%2 < n) {
+    coins.push(parseInt(n/2))
+    n %= 2
+  }
+  if(n%1 < n) {
+    coins.push(n/1)
+  }
+  return coins
+}
+```
