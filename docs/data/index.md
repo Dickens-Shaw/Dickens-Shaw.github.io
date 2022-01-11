@@ -319,3 +319,7 @@ function coinChange(n) {
   return coins
 }
 ```
+
+## 排序算法
+
+> V8的 `Array.sort()` ：当 n<=10 时, 采用插入排序, 当 n>10 时，采用三路快排的排序策略
