@@ -331,7 +331,22 @@ function coinChange(n) {
 - 优化：增加一个flag，判断排序是否在中途就已经完成
 
 ```js
-function bubble(array){}
+function bubble(array){
+  let flag = true
+  for(let i = 0; i < array.length; i++) {
+    if(!flag) break
+    flag = false
+    for(let j = 0; j < array.length - i - 1; j++) {
+      if(array[j] > array[j + 1]) {
+        let temp = array[j]
+        array[j] = array[j + 1]
+        array[j + 1] = temp
+        flag = true
+      }
+    }
+  }
+  return array
+}
 ```
 
 该算法的操作次数是一个等差数列 n + (n - 1) + (n - 2) + 1 ，去掉常数项以后得出时间复杂度是 O(n * n)
