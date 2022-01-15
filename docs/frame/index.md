@@ -21,3 +21,18 @@ View 和 Model：
 - 这个隐式的 Binder 层就是 Vue 通过解析模板中的插值和指令从而实现 View 与 ViewModel 的绑定。
 
 对于 MVVM 来说，其实最重要的并不是通过双向绑定或者其他的方式将 View 与 ViewModel 绑定起来，而是 `通过 ViewModel 将视图中的状态和用户的行为分离出一个抽象`，这才是 MVVM 的精髓
+
+## 虚拟DOM
+
+就是一个普通的 JavaScript 对象，包含了 tag(selector)、props(data)、children 三个属性
+
+- 实现：
+  1. 用 JavaScript 对象模拟真实 DOM 树，对真实 DOM 进行抽象；
+  2. diff 算法 — 比较两棵虚拟 DOM 树的差异；
+  3. pach 算法 — 将两个虚拟 DOM 对象的差异应用到真正的 DOM 树
+
+- 优势：
+  1. 保证性能下限: 虚拟DOM可以经过diff找出最小差异,然后批量进行patch,这种操作虽然比不上手动优化,但是比起粗暴的DOM操作性能要好很多,因此虚拟DOM可以保证性能下限
+  2. 无需手动操作DOM: 虚拟DOM的diff和patch都是在一次更新中自动进行的,我们无需手动操作DOM,极大提高开发效率
+  3. 跨平台: 虚拟DOM本质上是JavaScript对象,而DOM与平台强相关,相比之下虚拟DOM可以进行更方便地跨平台操作,例如服务器渲染、移动端开发等等
+  4. 实现组件的高度抽象化
