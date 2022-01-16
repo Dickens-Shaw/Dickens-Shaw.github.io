@@ -59,3 +59,9 @@ View 和 Model：
   1. Hash 模式只可以更改 # 后面的内容，History 模式可以通过 API 设置任意的同源 URL
   2. History 模式可以通过 API 添加任意类型的数据到历史记录中，Hash 模式只能更改哈希值，也就是字符串
   3. Hash 模式无需后端配置，并且兼容性好。History 模式在用户手动输入地址或者刷新页面的时候会发起 URL 请求，后端需要配置 index.html 页面用于匹配不到静态资源的时候
+
+## Vue
+
+### 基本原理
+
+当一个Vue实例创建时，vue会遍历data选项的属性，用 Object.defineProperty（vue3.0使用proxy ）将它们转为 getter/setter 并且在内部追踪相关依赖，在属性被访问和修改时通知变化。 每个组件实例都有相应的 watcher程序实例，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的setter被调用时，会通知watcher重新计算，从而致使它关联的组件得以更新。
