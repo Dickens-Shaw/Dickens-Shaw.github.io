@@ -65,3 +65,10 @@ View 和 Model：
 ### 基本原理
 
 当一个Vue实例创建时，vue会遍历data选项的属性，用 Object.defineProperty（vue3.0使用proxy ）将它们转为 getter/setter 并且在内部追踪相关依赖，在属性被访问和修改时通知变化。 每个组件实例都有相应的 watcher程序实例，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的setter被调用时，会通知watcher重新计算，从而致使它关联的组件得以更新。
+
+### 响应式原理
+
+1. 任何一个 Vue Component 都有一个与之对应的 Watcher 实例。
+2. Vue 的 data 上的属性会被添加 getter 和 setter 属性。
+3. 当 Vue Component render 函数被执行的时候, data 上会被 触碰(touch), 即被读, getter 方法会被调用, 此时 Vue 会去记录此 Vue component 所依赖的所有 data。(这一过程被称为依赖收集)
+4. data 被改动时（主要是用户操作）, 即被写, setter 方法会被调用, 此时 Vue 会去通知所有依赖于此 data 的组件去调用他们的 render 函数进行更新。
