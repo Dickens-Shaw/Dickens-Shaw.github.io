@@ -215,6 +215,7 @@ this.$emit('update:value', 1)
   3. 执行 render 函数，会生成 vnode 并且渲染出页面
 
 - 更新渲染：
+
   1. 修改 data，触发 setter
   2. 重新执行 render 函数，生成新的 vnode
   3. diff 算法对比新旧 vnode ，更新页面
@@ -223,12 +224,25 @@ this.$emit('update:value', 1)
 
 Vue 是组件级更新，如果不采用异步更新，那么每次更新数据都会对当前组件进行重新渲染，所以为了性能， Vue 会在本轮数据更新后，在异步更新视图。核心思想 nextTick 。
 
-dep.notify（） 通知 watcher进行更新， subs[i].update 依次调用 watcher 的 update ， queueWatcher 将watcher 去重放入队列， nextTick（ flushSchedulerQueue ）在下一tick中刷新watcher队列（异步）。
+dep.notify（） 通知 watcher 进行更新， subs[i].update 依次调用 watcher 的 update ， queueWatcher 将 watcher 去重放入队列， nextTick（ flushSchedulerQueue ）在下一 tick 中刷新 watcher 队列（异步）。
 
 - 编译过程
   1. 将模板解析为 AST：
-  通过各种各样的正则表达式去匹配模板中的内容，然后将内容提取出来做各种逻辑操作生成一个最基本的 AST 对象
+     通过各种各样的正则表达式去匹配模板中的内容，然后将内容提取出来做各种逻辑操作生成一个最基本的 AST 对象
   2. 优化 AST：
-  对节点进行了静态内容提取，也就是将永远不会变动的节点提取了出来，实现复用 Virtual DOM，跳过对比算法的功能
+     对节点进行了静态内容提取，也就是将永远不会变动的节点提取了出来，实现复用 Virtual DOM，跳过对比算法的功能
   3. 将 AST 转换为 render 函数：
-  遍历整个 AST，根据不同的条件生成不同的代码
+     遍历整个 AST，根据不同的条件生成不同的代码
+
+### 性能优化
+
+- v-if 和 v-show 区分使用场景
+- computed 和 watch 区分使用场景
+- v-for 遍历必须为 item 添加 key，且避免同时使用 v-if
+- 长列表性能优化
+- 事件的销毁
+- 图片资源懒加载
+- 路由懒加载
+- 第三方插件的按需引入
+- 优化无限列表性能
+- 服务端渲染 SSR or 预渲染
