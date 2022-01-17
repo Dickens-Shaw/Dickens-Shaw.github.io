@@ -64,7 +64,7 @@ View 和 Model：
 
 ### 基本原理
 
-当一个Vue实例创建时，vue会遍历data选项的属性，用 Object.defineProperty（vue3.0使用proxy ）将它们转为 getter/setter 并且在内部追踪相关依赖，在属性被访问和修改时通知变化。 每个组件实例都有相应的 watcher程序实例，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的setter被调用时，会通知watcher重新计算，从而致使它关联的组件得以更新。
+当一个 Vue 实例创建时，vue 会遍历 data 选项的属性，用 Object.defineProperty（vue3.0 使用 proxy ）将它们转为 getter/setter 并且在内部追踪相关依赖，在属性被访问和修改时通知变化。 每个组件实例都有相应的 watcher 程序实例，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的 setter 被调用时，会通知 watcher 重新计算，从而致使它关联的组件得以更新。
 
 ### 响应式原理
 
@@ -76,36 +76,37 @@ View 和 Model：
 通过数据劫持结合发布-订阅模式实现：
 
 - 在初始化 data props 时，递归对象，给每一个属性双向绑定，对于数组而言，会拿到原型重写函数，实现手动派发更新。因为函数不能监听到数据的变动，和 proxy 比较一下。
-- 除了以上数组函数，通过索引改变数组数据或者给对象添加新属性也不能触发，需要使用自带的set 函数，这个函数内部也是手动派发更新
+- 除了以上数组函数，通过索引改变数组数据或者给对象添加新属性也不能触发，需要使用自带的 set 函数，这个函数内部也是手动派发更新
 - 在组件挂载时，会实例化渲染观察者，传入组件更新的回调。在实例化过程中，会对模板中的值对象进行求值，触发依赖收集。在触发依赖之前，会保存当前的渲染观察者，用于组件含有子组件的时候，恢复父组件的观察者。触发依赖收集后，会清理掉不需要的依赖，性能优化，防止不需要的地方去重复渲染。
 - 改变值会触发依赖更新，会将收集到的所有依赖全部拿出来，放入 nextTick 中统一执行。执行过程中，会先对观察者进行排序，渲染的最后执行。先执行 beforeupdate 钩子函数，然后执行观察者的回调。在执行回调的过程中，可能 watch 会再次 push 进来，因为存在在回调中再次赋值，判断无限循环。
 
 1. 实现一个监听器 Observer：对数据对象进行遍历，包括子属性对象的属性，利用 Object.defineProperty() 对属性都加上 setter 和 getter。这样的话，给这个对象的某个值赋值，就会触发 setter，那么就能监听到了数据变化。
+
 ```js
-function definereactive (obj, key, val) {
-    var dep = new Dep();
-        Object.defineProperty(obj, key, {
-             get: function() {
-                    //添加订阅者watcher到主题对象Dep
-                    if(Dep.target) {
-                        // js的浏览器单线程特性，保证这个全局变量在同一时间内，只会有同一个监听器使用
-                        dep.addSub(Dep.target);
-                    }
-                    return val;
-             },
-             set: function (newVal) {
-                    if(newVal === val) return;
-                    val = newVal;
-                    console.log(val);
-                    // 作为发布者发出通知
-                    dep.notify();//通知后dep会循环调用各自的update方法更新视图
-             }
-       })
+function definereactive(obj, key, val) {
+  var dep = new Dep()
+  Object.defineProperty(obj, key, {
+    get: function () {
+      //添加订阅者watcher到主题对象Dep
+      if (Dep.target) {
+        // js的浏览器单线程特性，保证这个全局变量在同一时间内，只会有同一个监听器使用
+        dep.addSub(Dep.target)
+      }
+      return val
+    },
+    set: function (newVal) {
+      if (newVal === val) return
+      val = newVal
+      console.log(val)
+      // 作为发布者发出通知
+      dep.notify() //通知后dep会循环调用各自的update方法更新视图
+    },
+  })
 }
 function observe(obj, vm) {
-    Object.keys(obj).forEach(function(key) {
-        definereactive(vm, key, obj[key]);
-    })
+  Object.keys(obj).forEach(function (key) {
+    definereactive(vm, key, obj[key])
+  })
 }
 ```
 
@@ -115,24 +116,24 @@ function observe(obj, vm) {
 
 ```js
 function Watcher(vm, node, name, type) {
-    Dep.target = this;
-    this.name = name;
-    this.node = node;
-    this.vm = vm;
-    this.type = type;
-    this.update();
-    Dep.target = null;
+  Dep.target = this
+  this.name = name
+  this.node = node
+  this.vm = vm
+  this.type = type
+  this.update()
+  Dep.target = null
 }
 Watcher.prototype = {
-    update: function() {
-        this.get();
-        this.node[this.type] = this.value; // 订阅者执行相应操作
-    },
-    // 获取data的属性值
-    get: function() {
-        console.log(1)
-        this.value = this.vm[this.name]; //触发相应属性的get
-    }
+  update: function () {
+    this.get()
+    this.node[this.type] = this.value // 订阅者执行相应操作
+  },
+  // 获取data的属性值
+  get: function () {
+    console.log(1)
+    this.value = this.vm[this.name] //触发相应属性的get
+  },
 }
 ```
 
@@ -140,17 +141,17 @@ Watcher.prototype = {
 
 ```js
 function Dep() {
-    this.subs = [];
+  this.subs = []
 }
 Dep.prototype = {
-    addSub: function(sub) {
-        this.subs.push(sub);
-    },
-    notify: function() {
-        this.subs.forEach(function(sub) {
-        sub.update();
-        })
-    }
+  addSub: function (sub) {
+    this.subs.push(sub)
+  },
+  notify: function () {
+    this.subs.forEach(function (sub) {
+      sub.update()
+    })
+  },
 }
 ```
 
@@ -158,10 +159,11 @@ Dep.prototype = {
 
 ### 单项数据流
 
-所有prop都使得其父子prop之间形成了一个单向下行绑定：父级prop的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外修改父组件的状态。
-额外的，每次父组件发生变更时，子组件中所有prop都将会刷新为最新的值。这意味着你不应该在一个子组件内部改变prop。如果你这样做了，Vue会在浏览器控制台中发出警告。子组件想修改时，只能通过 $emit 派发一个自定义事件，父组件接收到后，由父组件修改。
+所有 prop 都使得其父子 prop 之间形成了一个单向下行绑定：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外修改父组件的状态。
+额外的，每次父组件发生变更时，子组件中所有 prop 都将会刷新为最新的值。这意味着你不应该在一个子组件内部改变 prop。如果你这样做了，Vue 会在浏览器控制台中发出警告。子组件想修改时，只能通过 $emit 派发一个自定义事件，父组件接收到后，由父组件修改。
 
 ### 生命周期
+
 1. 在 beforeCreate 钩子函数调用的时候，是获取不到 props 或者 data 中的数据的，因为这些数据的初始化都在 initState 中。
 
 2. 然后会执行 created 钩子函数，在这一步的时候已经可以访问到之前不能访问到的数据，但是这时候组件还没被挂载，所以是看不到的。
@@ -182,23 +184,37 @@ Dep.prototype = {
   3. .sync 属性是个语法糖
 
 ```vue
-  <!--父组件中-->
-  <input :value.sync="value" />
-  <!--以上写法等同于-->
-  <input :value="value" @update:value="v=>value=v" />
-  <!--子组件中-->
-  <script>
-    this.$emit('update:value',1)
-  </script>
+<!--父组件中-->
+<input :value.sync="value" />
+<!--以上写法等同于-->
+<input :value="value" @update:value="(v) => (value = v)" />
+<!--子组件中-->
+<script>
+this.$emit('update:value', 1)
+</script>
 ```
 
 - 兄弟组件
-查找父组件中的子组件实现，也就是 this.$parent.$children，在 $children 中可以通过组件 name 查询到需要的组件实例，然后进行通信
+  查找父组件中的子组件实现，也就是 this.$parent.$children，在 $children 中可以通过组件 name 查询到需要的组件实例，然后进行通信
 
 - 跨层级组件
+
   1. provide / inject：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
   2. $attrs：包含了父作用域中不被 prop 所识别 (且获取) 的特性绑定 ( class 和 style 除外 )。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 ( class 和 style 除外 )，并且可以通过 v-bind="$attrs" 传入内部组件。通常配合 inheritAttrs 选项一起使用。
   3. $listeners：包含了父作用域中的 (不含 .native 修饰器的) v-on 事件监听器。它可以通过 v-on="$listeners" 传入内部组件
 
 - 任意组件
-Vuex或者Event Bus
+  Vuex 或者 Event Bus
+
+### 渲染过程
+
+- 初次渲染：
+
+  1. 解析模板为 render 函数
+  2. 触发响应式，监听 data 属性的 getter setter
+  3. 执行 render 函数，会生成 vnode 并且渲染出页面
+
+- 更新渲染：
+  1. 修改 data，触发 setter
+  2. 重新执行 render 函数，生成新的 vnode
+  3. diff 算法对比新旧 vnode ，更新页面
