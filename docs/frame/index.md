@@ -218,3 +218,17 @@ this.$emit('update:value', 1)
   1. 修改 data，触发 setter
   2. 重新执行 render 函数，生成新的 vnode
   3. diff 算法对比新旧 vnode ，更新页面
+
+- 异步渲染
+
+Vue 是组件级更新，如果不采用异步更新，那么每次更新数据都会对当前组件进行重新渲染，所以为了性能， Vue 会在本轮数据更新后，在异步更新视图。核心思想 nextTick 。
+
+dep.notify（） 通知 watcher进行更新， subs[i].update 依次调用 watcher 的 update ， queueWatcher 将watcher 去重放入队列， nextTick（ flushSchedulerQueue ）在下一tick中刷新watcher队列（异步）。
+
+- 编译过程
+  1. 将模板解析为 AST：
+  通过各种各样的正则表达式去匹配模板中的内容，然后将内容提取出来做各种逻辑操作生成一个最基本的 AST 对象
+  2. 优化 AST：
+  对节点进行了静态内容提取，也就是将永远不会变动的节点提取了出来，实现复用 Virtual DOM，跳过对比算法的功能
+  3. 将 AST 转换为 render 函数：
+  遍历整个 AST，根据不同的条件生成不同的代码
