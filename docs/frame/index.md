@@ -72,3 +72,86 @@ View 和 Model：
 2. Vue 的 data 上的属性会被添加 getter 和 setter 属性。
 3. 当 Vue Component render 函数被执行的时候, data 上会被 触碰(touch), 即被读, getter 方法会被调用, 此时 Vue 会去记录此 Vue component 所依赖的所有 data。(这一过程被称为依赖收集)
 4. data 被改动时（主要是用户操作）, 即被写, setter 方法会被调用, 此时 Vue 会去通知所有依赖于此 data 的组件去调用他们的 render 函数进行更新。
+
+通过数据劫持结合发布-订阅模式实现：
+
+- 在初始化 data props 时，递归对象，给每一个属性双向绑定，对于数组而言，会拿到原型重写函数，实现手动派发更新。因为函数不能监听到数据的变动，和 proxy 比较一下。
+- 除了以上数组函数，通过索引改变数组数据或者给对象添加新属性也不能触发，需要使用自带的set 函数，这个函数内部也是手动派发更新
+- 在组件挂载时，会实例化渲染观察者，传入组件更新的回调。在实例化过程中，会对模板中的值对象进行求值，触发依赖收集。在触发依赖之前，会保存当前的渲染观察者，用于组件含有子组件的时候，恢复父组件的观察者。触发依赖收集后，会清理掉不需要的依赖，性能优化，防止不需要的地方去重复渲染。
+- 改变值会触发依赖更新，会将收集到的所有依赖全部拿出来，放入 nextTick 中统一执行。执行过程中，会先对观察者进行排序，渲染的最后执行。先执行 beforeupdate 钩子函数，然后执行观察者的回调。在执行回调的过程中，可能 watch 会再次 push 进来，因为存在在回调中再次赋值，判断无限循环。
+
+1. 实现一个监听器 Observer：对数据对象进行遍历，包括子属性对象的属性，利用 Object.defineProperty() 对属性都加上 setter 和 getter。这样的话，给这个对象的某个值赋值，就会触发 setter，那么就能监听到了数据变化。
+```js
+function definereactive (obj, key, val) {
+    var dep = new Dep();
+        Object.defineProperty(obj, key, {
+             get: function() {
+                    //添加订阅者watcher到主题对象Dep
+                    if(Dep.target) {
+                        // js的浏览器单线程特性，保证这个全局变量在同一时间内，只会有同一个监听器使用
+                        dep.addSub(Dep.target);
+                    }
+                    return val;
+             },
+             set: function (newVal) {
+                    if(newVal === val) return;
+                    val = newVal;
+                    console.log(val);
+                    // 作为发布者发出通知
+                    dep.notify();//通知后dep会循环调用各自的update方法更新视图
+             }
+       })
+}
+function observe(obj, vm) {
+    Object.keys(obj).forEach(function(key) {
+        definereactive(vm, key, obj[key]);
+    })
+}
+```
+
+2. 实现一个解析器 Compile：解析 Vue 模板指令，将模板中的变量都替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，调用更新函数进行数据更新。
+
+3. 实现一个订阅者 Watcher：Watcher 订阅者是 Observer 和 Compile 之间通信的桥梁 ，主要的任务是订阅 Observer 中的属性值变化的消息，当收到属性值变化的消息时，触发解析器 Compile 中对应的更新函数。
+
+```js
+function Watcher(vm, node, name, type) {
+    Dep.target = this;
+    this.name = name;
+    this.node = node;
+    this.vm = vm;
+    this.type = type;
+    this.update();
+    Dep.target = null;
+}
+Watcher.prototype = {
+    update: function() {
+        this.get();
+        this.node[this.type] = this.value; // 订阅者执行相应操作
+    },
+    // 获取data的属性值
+    get: function() {
+        console.log(1)
+        this.value = this.vm[this.name]; //触发相应属性的get
+    }
+}
+```
+
+4.实现一个订阅器 Dep：订阅器采用 发布-订阅 设计模式，用来收集订阅者 Watcher，对监听器 Observer 和 订阅者 Watcher 进行统一管理。
+
+```js
+function Dep() {
+    this.subs = [];
+}
+Dep.prototype = {
+    addSub: function(sub) {
+        this.subs.push(sub);
+    },
+    notify: function() {
+        this.subs.forEach(function(sub) {
+        sub.update();
+        })
+    }
+}
+```
+
+5. ![blockchain](../_media/imgs/vue.png)
