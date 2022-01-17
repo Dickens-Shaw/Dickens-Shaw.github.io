@@ -226,7 +226,7 @@ Vue 是组件级更新，如果不采用异步更新，那么每次更新数据�
 
 dep.notify（） 通知 watcher 进行更新， subs[i].update 依次调用 watcher 的 update ， queueWatcher 将 watcher 去重放入队列， nextTick（ flushSchedulerQueue ）在下一 tick 中刷新 watcher 队列（异步）。
 
-- 编译过程
+### 编译过程
   1. 将模板解析为 AST：
      通过各种各样的正则表达式去匹配模板中的内容，然后将内容提取出来做各种逻辑操作生成一个最基本的 AST 对象
   2. 优化 AST：
