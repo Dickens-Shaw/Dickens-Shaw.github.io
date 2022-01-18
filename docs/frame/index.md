@@ -246,3 +246,30 @@ dep.notify（） 通知 watcher 进行更新， subs[i].update 依次调用 watc
 - 第三方插件的按需引入
 - 优化无限列表性能
 - 服务端渲染 SSR or 预渲染
+
+### Diff
+diff学习snabbdom.js
+双端标记学习cito.js
+vue的数据检测原理是可以知道哪里用到了某个数据，数据变化的时候可以直接通知到对应的 watcher 进行修改。那为什么还需要用 diff 算法呢？因为粒度太细，会有很多 watcher 同时观察某个状态，会有一些内存开销以及一些依赖追踪的开销，所以 Vue.js 2.0 采用了一个中等粒度的解决方案，状态侦测不再细化到某个具体节点，而是组件，组件内部通过虚拟DOM来渲染视图，这可以大大缩减依赖数量和 watcher 数量
+
+在 Vue.js 2.0 版本中组件更新渲染的时候，会使用新创建的虚拟节点和将上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实DOM节点，从而避免不必要的 DOM 操作，节省一定的性能。
+在采取diff算法比较新旧节点的时候，比较只会在同层级进行, 不会跨层级比较。
+
+diff 算法源码执行函数依次是：
+- patch (oldVnode, vnode) ：
+  - 调用sameVnode方法更具tag、key判断是否为相同元素：
+  - 相同则走patchVnode()
+  - 不同则创建新的删除旧的
+- patchVnode (oldVnode, vnode)
+  - 如果新旧节点都有children则调用updateChildren 
+  - 否则通过对比新旧节点有无text和children来做相应的增删或更新
+- updateChildren (parentElm, oldCh, newCh)
+
+  通过`双端标记法`
+  对比新老children的start和end是否相等，头头、尾尾、头尾、尾头
+
+  如果四种都未命中则拿新children的开始的key去老children里找：
+    - 没有的话直接添加
+    - 有的话对比tag(sel)是否相等：
+      - 不等则直接添加
+       -相等的话，调用patchVnode后。将找到的old节点值为undefine，然后添加新的节点
