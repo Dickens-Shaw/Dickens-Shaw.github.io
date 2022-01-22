@@ -341,3 +341,12 @@ v-model 因为语法糖的原因，还可以用于父子通信
 1. 如果目标是数组，直接使用数组的 splice 方法触发相应式；
 
 2. 如果目标是对象，会先判读属性是否存在、对象是否是响应式，最终如果要对属性进行响应式处理，则是通过调用 defineReactive 方法进行响应式处理（ defineReactive 方法就是 Vue 在初始化对象时，给对象属性采用 Object.defineProperty 动态添加 getter 和 setter 的功能所调用的方法）
+
+### nextTick
+
+可以让我们在下次 DOM 更新循环结束之后执行延迟回调，用于获得更新后的 DOM
+
+在 Vue 2.4 之前都是使用的 microtasks，但是 microtasks 的优先级过高，在某些情况下可能会出现比事件冒泡更快的情况，但如果都使用 macrotasks 又可能会出现渲染的性能问题。所以在新版本中，会默认使用 microtasks，但在特殊情况下会使用 macrotasks，比如 v-on。
+
+对于实现 macrotasks ，会先判断是否能使用 setImmediate ，不能的话降级为 MessageChannel ，以上都不行的话就使用 setTimeout
+nextTick 同时也支持 Promise 的使用，会判断是否实现了 Promise，可以的话给 _resolve 赋值，这样回调函数就能以 promise 的方式调用
