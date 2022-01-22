@@ -350,3 +350,15 @@ v-model 因为语法糖的原因，还可以用于父子通信
 
 对于实现 macrotasks ，会先判断是否能使用 setImmediate ，不能的话降级为 MessageChannel ，以上都不行的话就使用 setTimeout
 nextTick 同时也支持 Promise 的使用，会判断是否实现了 Promise，可以的话给 _resolve 赋值，这样回调函数就能以 promise 的方式调用
+
+### keep-alive
+
+keep-alive 是Vue内置组件，主要用于保留组件状态或避免重新渲染。
+
+如果你需要在组件切换的时候，保存一些组件的状态防止多次渲染，就可以使用 keep-alive 组件包裹需要保存的组件。
+
+对于 keep-alive 组件来说，它拥有两个独有的生命周期钩子函数，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数
+
+Props:
+include：字符串或正则表达式。只有名称匹配的组件会被缓存。
+exclude：字符串或正则表达式。任何名称匹配的组件都不会被缓存。
