@@ -349,11 +349,11 @@ v-model 因为语法糖的原因，还可以用于父子通信
 在 Vue 2.4 之前都是使用的 microtasks，但是 microtasks 的优先级过高，在某些情况下可能会出现比事件冒泡更快的情况，但如果都使用 macrotasks 又可能会出现渲染的性能问题。所以在新版本中，会默认使用 microtasks，但在特殊情况下会使用 macrotasks，比如 v-on。
 
 对于实现 macrotasks ，会先判断是否能使用 setImmediate ，不能的话降级为 MessageChannel ，以上都不行的话就使用 setTimeout
-nextTick 同时也支持 Promise 的使用，会判断是否实现了 Promise，可以的话给 _resolve 赋值，这样回调函数就能以 promise 的方式调用
+nextTick 同时也支持 Promise 的使用，会判断是否实现了 Promise，可以的话给 \_resolve 赋值，这样回调函数就能以 promise 的方式调用
 
 ### keep-alive
 
-keep-alive 是Vue内置组件，主要用于保留组件状态或避免重新渲染。
+keep-alive 是 Vue 内置组件，主要用于保留组件状态或避免重新渲染。
 
 如果你需要在组件切换的时候，保存一些组件的状态防止多次渲染，就可以使用 keep-alive 组件包裹需要保存的组件。
 
@@ -363,24 +363,53 @@ Props:
 include：字符串或正则表达式。只有名称匹配的组件会被缓存。
 exclude：字符串或正则表达式。任何名称匹配的组件都不会被缓存。
 
-### Proxy对比
+### Proxy 对比
+
 Proxy 的优势如下:
-  - Proxy 可以直接监听对象而非属性；
-  - Proxy 可以直接监听数组的变化；
-  - Proxy 有多达 13 种拦截方法,不限于 apply、ownKeys、deleteProperty、has 等等是 Object.defineProperty 不具备的；
-  - Proxy 返回的是一个新对象,我们可以只操作新的对象达到目的,而 Object.defineProperty 只能遍历对象属性直接修改；
-  - Proxy 作为新标准将受到浏览器厂商重点持续的性能优化，也就是传说中的新标准的性能红利；
+
+- Proxy 可以直接监听对象而非属性；
+- Proxy 可以直接监听数组的变化；
+- Proxy 有多达 13 种拦截方法,不限于 apply、ownKeys、deleteProperty、has 等等是 Object.defineProperty 不具备的；
+- Proxy 返回的是一个新对象,我们可以只操作新的对象达到目的,而 Object.defineProperty 只能遍历对象属性直接修改；
+- Proxy 作为新标准将受到浏览器厂商重点持续的性能优化，也就是传说中的新标准的性能红利；
 
 Object.defineProperty 的优势如下:
-  - 兼容性好，支持 IE9，而 Proxy 的存在浏览器兼容性问题,而且无法用 polyfill 磨平
+
+- 兼容性好，支持 IE9，而 Proxy 的存在浏览器兼容性问题,而且无法用 polyfill 磨平
 
 ### Vue-Composition-Api:
+
 - 原理：
-在 Vue 中，之所以 setup 函数只执行一次，后续对于数据的更新也可以驱动视图更新，归根结底在于它的「响应式机制」
+  在 Vue 中，之所以 setup 函数只执行一次，后续对于数据的更新也可以驱动视图更新，归根结底在于它的「响应式机制」
 
 - 对比：
   1. 与 React Hooks 相同级别的逻辑组合功能，但有一些重要的区别。 与 React Hook 不同，setup 函数仅被调用一次，这在性能上比较占优。
   2. 对调用顺序没什么要求，每次渲染中不会反复调用 Hook 函数，产生的的 GC 压力较小。
-  3. 不必考虑几乎总是需要 useCallback 的问题，以防止传递函数prop给子组件的引用变化，导致无必要的重新渲染。
+  3. 不必考虑几乎总是需要 useCallback 的问题，以防止传递函数 prop 给子组件的引用变化，导致无必要的重新渲染。
   4. React Hook 有臭名昭著的闭包陷阱问题，如果用户忘记传递正确的依赖项数组，useEffect 和 useMemo 可能会捕获过时的变量，这不受此问题的影响。 Vue 的自动依赖关系跟踪确保观察者和计算值始终正确无误。
   5. 不得不提一句，React Hook 里的「依赖」是需要你去手动声明的，而且官方提供了一个 eslint 插件，这个插件虽然大部分时候挺有用的，但是有时候也特别烦人，需要你手动加一行丑陋的注释去关闭它。
+
+### Vuex
+
+Vuex 把组件的共享状态抽出来，以一个全局单例模式管理。
+
+主要包括：
+
+- State：定义了应用状态的数据结构，可以在这里设置默认的初始状态。
+- Getter：允许组件从 Store 中获取数据，mapGetters 辅助函数仅仅是将 store 中的 getter 映射到局部计算属性。
+- Mutation：是唯一更改 store 中状态的方法，且必须是同步函数。
+- Action：用于提交 mutation，而不是直接变更状态，可以包含任意异步操作。
+- Module：允许将单一的 Store 拆分为多个 store 且同时保存在单一的状态树中。
+
+Vuex 应用的核心就是 store (仓库)。 store 基本上就是一个容器，它包含着你的应用中的大部分 状态 (state). Vuex 和单纯的全局对象有以下两点不同：
+
+1. Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应的得到高效更新。
+2. 你不能直接修改 store 中的状态。改变 store 中的状态的唯一途径就是显示地提交 (commit) mutation。这样使得我们可以方便地跟踪每一个状态地变化。
+
+Vuex 实现原理是将 state 的数据通过 new Vue() 后，将数据转为响应式的。同时，将 getter 里面定义的数据通过 new Vue 的 computed 实现了计算属性的特点，只有当它的依赖值发生了改变才会被重新计算。
+
+### Action 和 mutation 的区别
+
+action 中处理异步操作，mutation 最好不要。（ mutation 处理异步操作页面数据会修改，但是 devtools 里面的值还是原来的并没有修改。出现了数据不一致，无法追踪数据变化。）
+mutation 做原子操作
+action 可以整合多个 mutation
