@@ -417,27 +417,93 @@ action 可以整合多个 mutation
 ## React
 
 ### Fiber
+
 React Fiber 是一种基于浏览器的单线程调度算法.
-React 16之前 ，reconcilation 算法实际上是递归，想要中断递归是很困难的，React 16 开始使用了循环来代替之前的递归.
+React 16 之前 ，reconcilation 算法实际上是递归，想要中断递归是很困难的，React 16 开始使用了循环来代替之前的递归.
 Fiber：一种将 recocilation （递归 diff），拆分成无数个小任务的算法；它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（16ms）内，还有没有足够的时间允许计算。
 
-react在进行组件渲染时，从setState开始到渲染完成整个过程是同步的（“一气呵成”）。如果需要渲染的组件比较庞大，js执行会占据主线程时间较长，会导致页面响应度变差，使得react在动画、手势等应用中效果比较差。
-为了解决这个问题，react团队经过两年的工作，重写了react中核心算法——reconciliation。并在v16版本中发布了这个新的特性。为了区别之前和之后的reconciler，通常将之前的reconciler称为stack reconciler，重写后的称为fiber reconciler，简称为Fiber。
+react 在进行组件渲染时，从 setState 开始到渲染完成整个过程是同步的（“一气呵成”）。如果需要渲染的组件比较庞大，js 执行会占据主线程时间较长，会导致页面响应度变差，使得 react 在动画、手势等应用中效果比较差。
+为了解决这个问题，react 团队经过两年的工作，重写了 react 中核心算法——reconciliation。并在 v16 版本中发布了这个新的特性。为了区别之前和之后的 reconciler，通常将之前的 reconciler 称为 stack reconciler，重写后的称为 fiber reconciler，简称为 Fiber。
 
-Fiber 可以提升复杂React 应用的可响应性和性能。Fiber 即是React新的调度算法（reconciliation algorithm）
+Fiber 可以提升复杂 React 应用的可响应性和性能。Fiber 即是 React 新的调度算法（reconciliation algorithm）
 每次有 state 的变化 React 重新计算，如果计算量过大，浏览器主线程来不及做其他的事情，比如 rerender 或者 layout，那例如动画就会出现卡顿现象。
 React 制定了一种名为 Fiber 的数据结构，加上新的算法，使得大量的计算可以被拆解，异步化，浏览器主线程得以释放，保证了渲染的帧率。从而提高响应性。
 React 将更新分为了两个时期：
-  - render/reconciliation：可打断，React 在 workingProgressTree 上复用 current 上的 Fiber 数据结构来一步地（通过requestIdleCallback）来构建新的 tree，标记处需要更新的节点，放入队列中。
-  - Commit：不可打断。在第二阶段，React 将其所有的变更一次性更新到DOM上。
 
-核心思想是将渲染分割成多个事务，更新的时候根据事务优先级来调度执行顺序。之前的更新是直接从父节点递归子节点压栈，执行，弹栈，没有优先级，也不能控制顺序；Fiber为了实现调度功能，重构了栈，即虚拟栈(virtual stack)，这样栈的执行顺序就能定制了，调度、暂停、终止、复用事务都成为可能。
+- render/reconciliation：可打断，React 在 workingProgressTree 上复用 current 上的 Fiber 数据结构来一步地（通过 requestIdleCallback）来构建新的 tree，标记处需要更新的节点，放入队列中。
+- Commit：不可打断。在第二阶段，React 将其所有的变更一次性更新到 DOM 上。
+
+核心思想是将渲染分割成多个事务，更新的时候根据事务优先级来调度执行顺序。之前的更新是直接从父节点递归子节点压栈，执行，弹栈，没有优先级，也不能控制顺序；Fiber 为了实现调度功能，重构了栈，即虚拟栈(virtual stack)，这样栈的执行顺序就能定制了，调度、暂停、终止、复用事务都成为可能。
 
 ### 时间分片
+
 Time Slice:
-基于可随时打断、重启的Fiber架构,可打断当前任务,优先处理紧急且重要的任务,保证页面的流畅运行
-  1. React 在渲染（render）的时候，不会阻塞现在的线程
-  2. 如果你的设备足够快，你会感觉渲染是同步的
-  3. 如果你设备非常慢，你会感觉还算是灵敏的
-  4. 虽然是异步渲染，但是你将会看到完整的渲染，而不是一个组件一行行的渲染出来
-  5. 同样书写组件的方式
+基于可随时打断、重启的 Fiber 架构,可打断当前任务,优先处理紧急且重要的任务,保证页面的流畅运行
+
+1. React 在渲染（render）的时候，不会阻塞现在的线程
+2. 如果你的设备足够快，你会感觉渲染是同步的
+3. 如果你设备非常慢，你会感觉还算是灵敏的
+4. 虽然是异步渲染，但是你将会看到完整的渲染，而不是一个组件一行行的渲染出来
+5. 同样书写组件的方式
+
+### 生命周期
+
+在 V16 版本中引入了 Fiber 机制。这个机制一定程度上的影响了部分生命周期的调用，并且也引入了新的 2 个 API 来解决问题。
+
+在之前的版本中，如果你拥有一个很复杂的复合组件，然后改动了最上层组件的 state，那么调用栈可能会很长
+
+调用栈过长，再加上中间进行了复杂的操作，就可能导致长时间阻塞主线程，带来不好的用户体验。Fiber 就是为了解决该问题而生。
+Fiber 本质上是一个虚拟的堆栈帧，新的调度器会按照优先级自由调度这些帧，从而将之前的同步渲染改成了异步渲染，在不影响体验的情况下去分段计算更新。
+对于如何区别优先级，React 有自己的一套逻辑。对于动画这种实时性很高的东西，也就是 16 ms 必须渲染一次保证不卡顿的情况下，React 会每 16 ms（以内） 暂停一下更新，返回来继续渲染动画。
+
+对于异步渲染，现在渲染有两个阶段：reconciliation 和 commit 。前者过程是可以打断的，后者不能暂停，会一直更新界面直到完成。
+
+- Reconciliation 阶段
+
+  - componentWillMount（UNSAFE）
+  - componentWillReceiveProps（UNSAFE）
+  - shouldComponentUpdate
+  - componentWillUpdate（UNSAFE）
+
+- Commit 阶段
+
+  - componentDidMount
+  - componentDidUpdate
+  - componentWillUnmount
+
+因为 reconciliation 阶段是可以被打断的，所以 reconciliation 阶段会执行的生命周期函数就可能会出现调用多次的情况，从而引起 Bug。所以对于 reconciliation 阶段调用的几个函数，除了 shouldComponentUpdate 以外，其他都应该避免去使用，并且 V16 中也引入了新的 API 来解决这个问题。
+
+- getDerivedStateFromProps 用于替换 componentWillReceiveProps ，该函数会在初始化和 update 时被调用
+- getSnapshotBeforeUpdate 用于替换 componentWillUpdate ，该函数会在 update 后 DOM 更新前被调用，用于读取最新的 DOM 数据。
+
+V16 生命周期函数用法建议
+```js
+classExampleComponentextendsReact.Component{
+  //用于初始化state
+  constructor(){}
+  //用于替换`componentWillReceiveProps`，该函数会在初始化和`update`时被调用
+  //因为该函数是静态函数，所以取不到`this`
+  //如果需要对比`prevProps`需要单独在`state`中维护
+  staticgetDerivedStateFromProps(nextProps,prevState){}
+  //判断是否需要更新组件，多用于组件性能优化
+  shouldComponentUpdate(nextProps,nextState){}
+  //组件挂载后调用
+  //可以在该函数中进行请求或者订阅
+  componentDidMount(){}
+  //用于获得最新的DOM数据
+  getSnapshotBeforeUpdate(){}
+  //组件即将销毁
+  //可以在此处移除订阅，定时器等等
+  componentWillUnmount(){}
+  //组件销毁后调用
+  componentDidUnMount(){}
+  //组件更新后调用
+  componentDidUpdate(){}
+  //渲染组件函数
+  render(){}
+  //以下函数不建议使用
+  UNSAFE_componentWillMount(){}
+  UNSAFE_componentWillUpdate(nextProps,nextState){}
+  UNSAFE_componentWillReceiveProps(nextProps){}
+}
+```
