@@ -477,6 +477,7 @@ Fiber 本质上是一个虚拟的堆栈帧，新的调度器会按照优先级�
 - getSnapshotBeforeUpdate 用于替换 componentWillUpdate ，该函数会在 update 后 DOM 更新前被调用，用于读取最新的 DOM 数据。
 
 V16 生命周期函数用法建议
+
 ```js
 classExampleComponentextendsReact.Component{
   //用于初始化state
@@ -509,27 +510,63 @@ classExampleComponentextendsReact.Component{
 ```
 
 #### 发送请求
-我们应当将AJAX 请求放到 componentDidMount 函数中执行，主要原因有下：
+
+我们应当将 AJAX 请求放到 componentDidMount 函数中执行，主要原因有下：
 React 下一代调和算法 Fiber 会通过开始或停止渲染的方式优化应用性能，其会影响到 componentWillMount 的触发次数。对于 componentWillMount 这个生命周期函数的调用次数会变得不确定，React 可能会多次频繁调用 componentWillMount。如果我们将 AJAX 请求放到 componentWillMount 函数中，那么显而易见其会被触发多次，自然也就不是好的选择。
-如果我们将 AJAX 请求放置在生命周期的其他函数中，我们并不能保证请求仅在组件挂载完毕后才会要求响应。如果我们的数据请求在组件挂载之前就完成，并且调用了setState函数将数据添加到组件状态中，对于未挂载的组件则会报错。而在 componentDidMount 函数中进行 AJAX 请求则能有效避免这个问题。
+如果我们将 AJAX 请求放置在生命周期的其他函数中，我们并不能保证请求仅在组件挂载完毕后才会要求响应。如果我们的数据请求在组件挂载之前就完成，并且调用了 setState 函数将数据添加到组件状态中，对于未挂载的组件则会报错。而在 componentDidMount 函数中进行 AJAX 请求则能有效避免这个问题。
 
 ### 事件机制
+
 JSX 上写的事件并没有绑定在对应的真实 DOM 上，而是通过事件代理的方式，将所有的事件都统一绑定在了 document 上。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件
 好处：
-  1. 合成事件首先抹平了浏览器之间的兼容问题，另外这是一个跨浏览器原生事件包装器，赋予了跨浏览器开发的能力
-  2. 对于原生浏览器事件来说，浏览器会给监听器创建一个事件对象。如果你有很多的事件监听，那么就需要分配很多的事件对象，造成高额的内存分配问题。但是对于合成事件来说，有一个事件池专门来管理它们的创建和销毁，当事件需要被使用时，就会从池子中复用对象，事件回调结束后，就会销毁事件对象上的属性，从而便于下次复用事件对象
+
+1. 合成事件首先抹平了浏览器之间的兼容问题，另外这是一个跨浏览器原生事件包装器，赋予了跨浏览器开发的能力
+2. 对于原生浏览器事件来说，浏览器会给监听器创建一个事件对象。如果你有很多的事件监听，那么就需要分配很多的事件对象，造成高额的内存分配问题。但是对于合成事件来说，有一个事件池专门来管理它们的创建和销毁，当事件需要被使用时，就会从池子中复用对象，事件回调结束后，就会销毁事件对象上的属性，从而便于下次复用事件对象
 
 ### 组件通信
+
 - 父子组件
+
   1. 父组件通过 props 传递数据给子组件，子组件通过调用父组件传来的函数传递数据给父组件
-  2. ref获取子组件实例、props传onRef（this）实例给子组件
+  2. ref 获取子组件实例、props 传 onRef（this）实例给子组件
   3. Slot
 
 - 兄弟组件
+
   - 通过共同的父组件来管理状态和事件函数
 
 - 跨层级组件
-  - 使用 Context API：React.createContext(),使用Provider和Customer模式,在顶层的Provider中传入value，在子孙级的Consumer中获取该值
+
+  - 使用 Context API：React.createContext(),使用 Provider 和 Customer 模式,在顶层的 Provider 中传入 value，在子孙级的 Consumer 中获取该值
 
 - 任意组件
-  - Redux、 Mobx、flux或者 Event Bus 
+  - Redux、 Mobx、flux 或者 Event Bus
+
+### Diff
+
+diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然后将变化的部分更新到视图上。其实之前的 diff 算法，是通过循环递归每个节点，然后进行对比，复杂程度为 O(n^3)，n 是树中节点的总数，这样性能是非常差的。
+
+触发更新的时机主要在 state 变化与 hooks 调用之后。此时触发虚拟 DOM 树变更遍历，采用了深度优先遍历算法。但传统的遍历方式，效率较低。为了优化效率，使用了分治的方式。将单一节点比对转化为了 3 种类型节点的比对，分别是树、组件及元素，以此提升效率。
+
+- 策略：
+  1. Web UI 中 DOM 节点跨层级的移动操作特别少，可以忽略不计。
+  2. 拥有相同类的两个组件将会生成相似的树形结构，拥有不同类的两个组件将会生成不同的树形结构。
+  3. 对于同一层级的一组子节点，它们可以通过唯一 id 进行区分。
+
+基于以上三个策略，React 分别对 tree diff、component diff 以及 element diff 进行了算法优化
+
+- tree diff：基于第一个策略，react 只会对同一层次的节点进行比较
+
+- component diff：
+
+  1. 如果是同一类型的组件，按照原策略继续比较虚拟 dom 树
+  2. 如果不是，则将该组件判断为 dirty component，从而替换整个组件下的所有子节点
+  3. 对于同一类型的组件，有可能其 Virtual DOM 没有任何变化，如果能够确切的知道这点那可以节省大量的 diff 运算的时间，因此 React 允许用户通过 shouldComponentUpdate()判断该组件是否需要进行 diff
+
+- element diff：
+  当节点处于同一层级时，React diff 提供了三种节点操作：插入、移动和删除
+  1. 插入：新的 component 类型不在老集合里 -> 全新的节点，需要对新节点执行插入操作
+  2. 移动：在老集合里有新 component 类型，且 element 是可更新的类型，generateComponentChildren 已调用 receiveComponent，这种情况下 prevChild=nextChild，就需要做移动操作，可以复用以前的 dom 节点
+  3. 删除：老的 component 类型，在新集合中也有，但对应的 element 不同则不能直接复用和更新，需要执行删除操作，或者老 component 不在新集合里，也需要执行删除操作
+
+自 React 16 起，引入了 Fiber 架构。为了使整个更新过程可随时暂停恢复，节点与树分别采用了 FiberNode 与 FiberTree 进行重构。fiberNode 使用了双链表的结构，可以直接找到兄弟节点与子节点。整个更新过程由 current 与 workInProgress 两株树双缓冲完成。workInProgress 更新完成后，再通过修改 current 相关指针指向新节点
