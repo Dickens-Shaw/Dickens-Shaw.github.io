@@ -573,11 +573,11 @@ diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然�
 
 ### 性能优化
 
-两个方向
+#### 两个方向
 
 1. 减少重新 render 的次数。因为在 React 里最重(花时间最长)的一块就是 reconction(简单的可以理解为 diff)，如果不 render，就不会 reconction。（React.memo 和 useCallback ）
 2. 减少计算的量。主要是减少重复计算，对于函数式组件来说，每次 render 都会重新从头开始执行函数调用。（useMemo ）
-   在使用类组件的时候，使用的 React 优化 API 主要是：shouldComponentUpdate 和 PureComponent，这两个 API 所提供的解决思路都是为了减少重新 render 的次数，主要是减少父组件更新而子组件也更新的情况，虽然也可以在 state 更新的时候阻止当前组件渲染，如果要这么做的话，证明你这个属性不适合作为 state，而应该作为静态属性或者放在 class 外面作为一个简单的变量 。
+  在使用类组件的时候，使用的 React 优化 API 主要是：shouldComponentUpdate 和 PureComponent，这两个 API 所提供的解决思路都是为了减少重新 render 的次数，主要是减少父组件更新而子组件也更新的情况，虽然也可以在 state 更新的时候阻止当前组件渲染，如果要这么做的话，证明你这个属性不适合作为 state，而应该作为静态属性或者放在 class 外面作为一个简单的变量 。
 
 #### shouldComponentUpdate
 
@@ -588,3 +588,26 @@ diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然�
 另外如果只是单纯的浅比较一下，可以直接使用 Pure Component，底层就是实现了浅比较 state。
 
 16.6.0 之后的版本的话，可以使用 React.memo 来实现相同的功能
+
+#### 21项优化React App
+
+1. 使用不可变数据结构
+2. 函数/无状态组件和 React.PureComponent
+3. 生成多个块文件
+4. 在 Webpack 中使用 Production 标识生产环境
+5. 依赖优化
+6. React.Fragments 用于避免额外的 HTML 元素包裹
+7. 避免在渲染函数中使用内联函数定义
+8. JavaScript 中事件的防抖和节流
+9. 避免在 map 方法中使用 Index 作为组件的 Key
+10. 避免使用 props 来初始化 state （直接赋值）
+11. 在 DOM 元素上传递 Props
+12. 在使用 Redux Connect 时，同时使用 Reselect 来避免组件的频繁重新渲染
+14. 记忆化的 React 组件
+15. 使用 CSS 动画代替 JS 动画
+16. 使用CDN
+17. 在CPU扩展任务中使用 Web Workers
+18. 虚拟化长列表
+19. 分析和优化您的 Webpack 打包
+20. 考虑服务端渲染
+21. 在Web服务器上启用Gzip压缩
