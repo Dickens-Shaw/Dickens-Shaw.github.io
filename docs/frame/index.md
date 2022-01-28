@@ -640,34 +640,95 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 ### Mixin
 
 缺陷：
-  1. 组件与 Mixin 之间存在隐式依赖（Mixin 经常依赖组件的特定方法，但在定义组件时并不知道这种依赖关系）
-  2. 多个 Mixin 之间可能产生冲突（比如定义了相同的state字段）
-  3. Mixin 倾向于增加更多状态，这降低了应用的可预测性（The more state in your application, the harder it is to reason about it.），导致复杂度剧增
-  4. 隐式依赖导致依赖关系不透明，维护成本和理解成本迅速攀升
+
+1. 组件与 Mixin 之间存在隐式依赖（Mixin 经常依赖组件的特定方法，但在定义组件时并不知道这种依赖关系）
+2. 多个 Mixin 之间可能产生冲突（比如定义了相同的 state 字段）
+3. Mixin 倾向于增加更多状态，这降低了应用的可预测性（The more state in your application, the harder it is to reason about it.），导致复杂度剧增
+4. 隐式依赖导致依赖关系不透明，维护成本和理解成本迅速攀升
 
 ### HOC
+
 - 定义：就是类似高阶函数的定义,将组件作为参数或者返回一个组件的组件;
 
 高阶组件是重用组件逻辑的高级方法，是一种源于 React 的组件模式。 HOC 是自定义组件，在它之内包含另一个组件。它们可以接受子组件提供的任何动态，但不会修改或复制其输入组件中的任何行为。你可以认为 HOC 是“纯（Pure）”组件.
 
 - 作用:
+
   1. 抽取重复代码，实现组件复用，常见场景,页面复用;
   2. 条件渲染，控制组件的渲染逻辑（渲染劫持），常见场景,权限控制;
   3. 捕获/劫持被处理组件的生命周期，常见场景,组件渲染性能追踪、日志打点
 
 - 实现：
+
   1. 属性代理
   2. 反向继承：利用 super 改变改组件的 this 方向,继而就可以在该组件处理容器组件的一些值
 
 - 优势：
-  1. HOC通过外层组件通过 Props 影响内层组件的状态，而不是直接改变其 State不存在冲突和互相干扰,这就降低了耦合度
+
+  1. HOC 通过外层组件通过 Props 影响内层组件的状态，而不是直接改变其 State 不存在冲突和互相干扰,这就降低了耦合度
   2. 不同于 Mixin 的打平+合并，HOC 具有天然的层级结构（组件树结构），这又降低了复杂度
 
 - 缺陷：
-  1. 扩展性限制: HOC 无法从外部访问子组件的 State因此无法通过shouldComponentUpdate滤掉不必要的更新,React 在支持 ES6 Class 之后提供了React.PureComponent来解决这个问题
-  2. Ref 传递问题: Ref 被隔断,后来的React.forwardRef 来解决这个问题
-  3. Wrapper Hell: HOC可能出现多层包裹组件的情况,多层抽象同样增加了复杂度和理解成本
+  1. 扩展性限制: HOC 无法从外部访问子组件的 State 因此无法通过 shouldComponentUpdate 滤掉不必要的更新,React 在支持 ES6 Class 之后提供了 React.PureComponent 来解决这个问题
+  2. Ref 传递问题: Ref 被隔断,后来的 React.forwardRef 来解决这个问题
+  3. Wrapper Hell: HOC 可能出现多层包裹组件的情况,多层抽象同样增加了复杂度和理解成本
   4. 命名冲突: 如果高阶组件多次嵌套,没有使用命名空间的话会产生冲突,然后覆盖老属性
-  5. 不可见性: HOC相当于在原有组件外层再包装一个组件,你压根不知道外层的包装是啥,对于你是黑盒
+  5. 不可见性: HOC 相当于在原有组件外层再包装一个组件,你压根不知道外层的包装是啥,对于你是黑盒
 
-### 
+### Hooks
+
+> Hooks 让我们在函数组件中可以使用 state 和其他功能
+
+- 原理：
+  由于每次渲染都会不断的执行并产生闭包，那么从性能上和 GC 压力上都会稍逊于 Vue3。它的关键字是「每次渲染都重新执行」
+
+- 限制：
+
+  1. 不要在循环，条件或嵌套函数中调用 Hook
+  2. 确保总是在你的 React 函数的最顶层调用他们。
+  3. 遵守这条规则，你就能确保 Hook 在每一次渲染中都按照同样的顺序被调用。这让 React 能够在多次的 useState 和 useEffect 调用之间保持 hook 状态的正确。
+
+- 优点：
+
+  - 简洁: React Hooks 解决了 HOC 和 Render Props 的嵌套问题,更加简洁
+  - 解耦: React Hooks 可以更方便地把 UI 和状态分离,做到更彻底的解耦
+  - 组合: Hooks 中可以引用另外的 Hooks 形成新的 Hooks,组合变化万千
+  - 函数友好: React Hooks 为函数组件而生,从而解决了类组件的几大问题:
+    1. this 指向容易错误
+    2. 分割在不同声明周期中的逻辑使得代码难以理解和维护
+    3. 代码复用成本高（高阶组件容易使代码量剧增）
+
+- 缺陷：
+  1. 额外的学习成本（Functional Component 与 Class Component 之间的困惑）
+  2. 写法上有限制（不能出现在条件、循环中），并且写法限制增加了重构成本
+  3. 破坏了 PureComponent、React.memo 浅比较的性能优化效果（为了取最新的 props 和 state，每次 render()都要重新创建事件处函数）
+  4. 在闭包场景可能会引用到旧的 state、props 值
+  5. 内部实现上不直观（依赖一份可变的全局状态，不再那么“纯”）
+  6. React.memo 并不能完全替代 shouldComponentUpdate（因为拿不到 state change，只针对 props change）
+
+- 对原有React的API封装的钩子函数
+
+钩子名 | 作用
+----------- | -------
+useState | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了
+useEffect | componentDidMount，componentDidUpdate和componentWillUnmount和结合体,所以可以监听useState定义值的变化
+useContext | 定义一个全局的对象,类似 context
+useReducer | 可以增强函数提供类似 Redux 的功能
+useCallback | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果
+useMemo | 作用和传入参数与 useCallback 一致,useCallback返回函数,useMemo 返回值
+useRef | 获取 ref 属性对应的 dom
+useImperativeMethods | 自定义使用ref时公开给父组件的实例值
+useMutationEffect | 作用与useEffect相同，但在更新兄弟组件之前，它在React执行其DOM改变的同一阶段同步触发
+useLayoutEffect | 作用与useEffect相同，但在所有DOM改变后同步触发
+
+### Hooks 和 Mixin & HOC
+
+#### Mixin & HOC 模式的缺点：
+  1. 渲染上下文中公开的属性的来源不清楚。 例如，当使用多个 mixin 读取组件的模板时，可能很难确定从哪个 mixin 注入了特定的属性。
+  2. 命名空间冲突。 Mixins 可能会在属性和方法名称上发生冲突，而 HOC 可能会在预期的 prop 名称上发生冲突。
+  3. 性能问题，HOC 和无渲染组件需要额外的有状态组件实例，这会降低性能。
+
+#### Hooks模式优点：
+  1. 暴露给模板的属性具有明确的来源，因为它们是从 Hook 函数返回的值。
+  2. Hook 函数返回的值可以任意命名，因此不会发生名称空间冲突。
+  3. 没有创建仅用于逻辑重用的不必要的组件实例
