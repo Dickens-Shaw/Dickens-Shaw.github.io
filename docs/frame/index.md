@@ -636,3 +636,12 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
    Immutable 本身就是函数式编程中的概念，纯函数式编程比面向对象更适用于前端开发。因为只要输入一致，输出必然一致，这样开发的组件更易于调试和组装
    与 Object.freeze、const 区别：
    Object.freeze 和 ES6 中新加入的 const 都可以达到防止对象被篡改的功能，但它们是 shallowCopy 的。对象层级一深就要特殊处理了
+
+### Mixin
+
+缺陷：
+  1. 组件与 Mixin 之间存在隐式依赖（Mixin 经常依赖组件的特定方法，但在定义组件时并不知道这种依赖关系）
+  2. 多个 Mixin 之间可能产生冲突（比如定义了相同的state字段）
+  3. Mixin 倾向于增加更多状态，这降低了应用的可预测性（The more state in your application, the harder it is to reason about it.），导致复杂度剧增
+  4. 隐式依赖导致依赖关系不透明，维护成本和理解成本迅速攀升
+
