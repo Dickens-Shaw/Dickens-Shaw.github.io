@@ -777,3 +777,33 @@ React 组件的核心，是数据的来源，必须尽可能简单。基本上�
 
 ### replaceState
 setState 是修改其中的部分状态，相当于 Object.assign，只是覆盖，不会减少原来的状态。而replaceState 是完全替换原来的状态，相当于赋值，将原来的 state 替换为另一个对象，如果新状态属性减少，那么 state 中就没有这个状态了
+
+### Element
+
+#### createElement
+语法：React.createElement( type, [props], [...children] )
+原理：实质上 JSX 的 dom 最后转化为 js 都是React.createElement
+
+#### cloneElement
+- 语法：
+```js
+React.cloneElement(
+  element,
+  [props],
+  [...children]
+)
+```
+- 作用：这个方法的作用是复制组件,给组件传值或者添加属性
+- 核心代码：
+
+```js
+React.Children.map(children, child => {
+  return React.cloneElement(child, {
+    count: _this.state.count
+  });
+});
+```
+
+#### Fragment
+- 作用：React.Fragment可以让你聚合一个子元素列表，并且不在DOM中增加额外节点
+- 简写：<>
