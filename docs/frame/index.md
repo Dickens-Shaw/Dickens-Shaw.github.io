@@ -699,6 +699,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
     3. 代码复用成本高（高阶组件容易使代码量剧增）
 
 - 缺陷：
+
   1. 额外的学习成本（Functional Component 与 Class Component 之间的困惑）
   2. 写法上有限制（不能出现在条件、循环中），并且写法限制增加了重构成本
   3. 破坏了 PureComponent、React.memo 浅比较的性能优化效果（为了取最新的 props 和 state，每次 render()都要重新创建事件处函数）
@@ -706,109 +707,116 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
   5. 内部实现上不直观（依赖一份可变的全局状态，不再那么“纯”）
   6. React.memo 并不能完全替代 shouldComponentUpdate（因为拿不到 state change，只针对 props change）
 
-- 对原有React的API封装的钩子函数
+- 对原有 React 的 API 封装的钩子函数
 
-钩子名 | 作用
-:-------: | -------
-useState | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了
-useEffect | componentDidMount，componentDidUpdate和componentWillUnmount和结合体,所以可以监听useState定义值的变化
-useContext | 定义一个全局的对象,类似 context
-useReducer | 可以增强函数提供类似 Redux 的功能
-useCallback | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果
-useMemo | 作用和传入参数与 useCallback 一致,useCallback返回函数,useMemo 返回值
-useRef | 获取 ref 属性对应的 dom
-useImperativeMethods | 自定义使用ref时公开给父组件的实例值
-useMutationEffect | 作用与useEffect相同，但在更新兄弟组件之前，它在React执行其DOM改变的同一阶段同步触发
-useLayoutEffect | 作用与useEffect相同，但在所有DOM改变后同步触发
+|        钩子名        | 作用                                                                                                                                                                                                                        |
+| :------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       useState       | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了                                                                 |
+|      useEffect       | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化                                                                                                                   |
+|      useContext      | 定义一个全局的对象,类似 context                                                                                                                                                                                             |
+|      useReducer      | 可以增强函数提供类似 Redux 的功能                                                                                                                                                                                           |
+|     useCallback      | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
+|       useMemo        | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值                                                                                                                                                       |
+|        useRef        | 获取 ref 属性对应的 dom                                                                                                                                                                                                     |
+| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值                                                                                                                                                                                       |
+|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发                                                                                                                                   |
+|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发                                                                                                                                                                          |
 
 ### Hooks & Mixin & HOC
 
 - Mixin & HOC 模式的缺点：
+
   1. 渲染上下文中公开的属性的来源不清楚。 例如，当使用多个 mixin 读取组件的模板时，可能很难确定从哪个 mixin 注入了特定的属性。
   2. 命名空间冲突。 Mixins 可能会在属性和方法名称上发生冲突，而 HOC 可能会在预期的 prop 名称上发生冲突。
   3. 性能问题，HOC 和无渲染组件需要额外的有状态组件实例，这会降低性能。
 
-- Hooks模式优点：
+- Hooks 模式优点：
   1. 暴露给模板的属性具有明确的来源，因为它们是从 Hook 函数返回的值。
   2. Hook 函数返回的值可以任意命名，因此不会发生名称空间冲突。
   3. 没有创建仅用于逻辑重用的不必要的组件实例
 
 ### props 和 state
 
-条件 | State | Props
-------- | :-------: | :-------:
-从父组件中接收初始值 | Yes | Yes
-父组件可以改变值 | No | Yes
-在组件中设置默认值 | Yes | Yes
-在组件的内部变化 | Yes | No
-设置子组件的初始值 | Yes | Yes
-在子组件的内部更改 | No | Yes
+| 条件                 | State | Props |
+| -------------------- | :---: | :---: |
+| 从父组件中接收初始值 |  Yes  |  Yes  |
+| 父组件可以改变值     |  No   |  Yes  |
+| 在组件中设置默认值   |  Yes  |  Yes  |
+| 在组件的内部变化     |  Yes  |  No   |
+| 设置子组件的初始值   |  Yes  |  Yes  |
+| 在子组件的内部更改   |  No   |  Yes  |
 
 - props:
-React 中属性的简写。它们是只读组件，必须保持纯，即不可变。它们总是在整个应用中从父组件传递到子组件。子组件永远不能将 prop 送回父组件。这有助于维护单向数据流，通常用于呈现动态生成的数据
+  React 中属性的简写。它们是只读组件，必须保持纯，即不可变。它们总是在整个应用中从父组件传递到子组件。子组件永远不能将 prop 送回父组件。这有助于维护单向数据流，通常用于呈现动态生成的数据
 
 - state:
-React 组件的核心，是数据的来源，必须尽可能简单。基本上状态是确定组件呈现和行为的对象。与props 不同，它们是可变的，并创建动态和交互式组件。可以通过 this.state() 访问它们
+  React 组件的核心，是数据的来源，必须尽可能简单。基本上状态是确定组件呈现和行为的对象。与 props 不同，它们是可变的，并创建动态和交互式组件。可以通过 this.state() 访问它们
 
 ### setState
+
 - 原理
-  1. 首先调用了setState 入口函数，入口函数在这里就是充当一个分发器的角色，根据入参的不同，将其分发到不同的功能函数中去；
+
+  1. 首先调用了 setState 入口函数，入口函数在这里就是充当一个分发器的角色，根据入参的不同，将其分发到不同的功能函数中去；
   2. enqueueSetState 方法将新的 state 放进组件的状态队列里，并调用 enqueueUpdate 来处理将要更新的实例对象；
-  3. 在 enqueueUpdate 方法中引出了一个关键的对象——batchingStrategy，该对象所具备的isBatchingUpdates 属性直接决定了当下是要走更新流程，还是应该排队等待；如果轮到执行，就调用 batchedUpdates 方法来直接发起更新流程。由此可以推测，batchingStrategy 或许正是 React 内部专门用于管控批量更新的对象。
+  3. 在 enqueueUpdate 方法中引出了一个关键的对象——batchingStrategy，该对象所具备的 isBatchingUpdates 属性直接决定了当下是要走更新流程，还是应该排队等待；如果轮到执行，就调用 batchedUpdates 方法来直接发起更新流程。由此可以推测，batchingStrategy 或许正是 React 内部专门用于管控批量更新的对象。
 
 - 调用后发生了什么
   1. React 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程（Reconciliation）。
-  2. 经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个UI界面。
+  2. 经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个 UI 界面。
   3. 在 React 得到元素树之后，React 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。
   4. 在差异计算算法中，React 能够相对精确地知道哪些位置发生了改变以及应该如何改变，这就保证了按需更新，而不是全部重新渲染。
 
-如果在短时间内频繁setState。React会将state的改变压入栈中，在合适的时机，批量更新state和视图，达到提高性能的效果。
+如果在短时间内频繁 setState。React 会将 state 的改变压入栈中，在合适的时机，批量更新 state 和视图，达到提高性能的效果。
 
 - 同步还是异步
-  1. setState只在合成事件和钩子函数中是“异步”的，在原生事件和setTimeout 中都是同步的。
-  2. setState 的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。
-  setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次setState，setState的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时setState多个不同的值，在更新时会对其进行合并批量更新。
+
+  1. setState 只在合成事件和钩子函数中是“异步”的，在原生事件和 setTimeout 中都是同步的。
+  2. setState 的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的 callback 拿到更新后的结果。
+     setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和 setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState，setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
 
 - 批量更新
-调用 setState 时，组件的 state 并不会立即改变， setState 只是把要修改的 state 放入一个队列， React 会优化真正的执行时机，并出于性能原因，会将 React 事件处理程序中的多次React 事件处理程序中的多次 setState 的状态修改合并成一次状态修改。 最终更新只产生一次组件及其子组件的重新渲染，这对于大型应用程序中的性能提升至关重要。
+  调用 setState 时，组件的 state 并不会立即改变， setState 只是把要修改的 state 放入一个队列， React 会优化真正的执行时机，并出于性能原因，会将 React 事件处理程序中的多次 React 事件处理程序中的多次 setState 的状态修改合并成一次状态修改。 最终更新只产生一次组件及其子组件的重新渲染，这对于大型应用程序中的性能提升至关重要。
 
 - 第二个参数
-该函数会在setState函数调用完成并且组件开始重渲染的时候被调用，我们可以用该函数来监听渲染是否完成
+  该函数会在 setState 函数调用完成并且组件开始重渲染的时候被调用，我们可以用该函数来监听渲染是否完成
 
 ### replaceState
-setState 是修改其中的部分状态，相当于 Object.assign，只是覆盖，不会减少原来的状态。而replaceState 是完全替换原来的状态，相当于赋值，将原来的 state 替换为另一个对象，如果新状态属性减少，那么 state 中就没有这个状态了
+
+setState 是修改其中的部分状态，相当于 Object.assign，只是覆盖，不会减少原来的状态。而 replaceState 是完全替换原来的状态，相当于赋值，将原来的 state 替换为另一个对象，如果新状态属性减少，那么 state 中就没有这个状态了
 
 ### Element
 
 #### createElement
+
 语法：React.createElement( type, [props], [...children] )
-原理：实质上 JSX 的 dom 最后转化为 js 都是React.createElement
+原理：实质上 JSX 的 dom 最后转化为 js 都是 React.createElement
 
 #### cloneElement
+
 - 语法：
+
 ```js
-React.cloneElement(
-  element,
-  [props],
-  [...children]
-)
+React.cloneElement(element, [props], [...children])
 ```
+
 - 作用：这个方法的作用是复制组件,给组件传值或者添加属性
 - 核心代码：
 
 ```js
-React.Children.map(children, child => {
+React.Children.map(children, (child) => {
   return React.cloneElement(child, {
-    count: _this.state.count
-  });
-});
+    count: _this.state.count,
+  })
+})
 ```
 
 #### Fragment
-- 作用：React.Fragment可以让你聚合一个子元素列表，并且不在DOM中增加额外节点
+
+- 作用：React.Fragment 可以让你聚合一个子元素列表，并且不在 DOM 中增加额外节点
 - 简写：<>
 
 ### Refs
+
 > React 中引用的简写。它是一个有助于存储对特定的 React 元素或组件的引用的属性，它将由组件渲染配置函数返回。用于对 render() 返回的特定元素或组件的引用。
 
 - 使用场景：
@@ -817,54 +825,64 @@ React.Children.map(children, child => {
   - 与第三方 DOM 库集成
 
 ### 纯组件
+
 纯（Pure） 组件是可以编写的最简单、最快的组件。它们可以替换任何只有 render() 的组件。这些组件增强了代码的简单性和应用的性能。
 
 ### Key
+
 1. 用于追踪哪些列表中元素被修改、被添加或者被移除的辅助标识
 2. 用于识别唯一的 Virtual DOM 元素及其驱动 UI 的相应数据。它们通过回收 DOM 中当前所有的元素来帮助 React 优化渲染。这些 key 必须是唯一的数字或字符串，React 只是重新排序元素而不是重新渲染它们。这可以提高应用程序的性能
 
 ### Reducer
+
 是纯函数，它规定应用程序的状态怎样因响应 ACTION 而改变。Reducers 通过接受先前的状态和 action 来工作，然后它返回一个新的状态。它根据操作的类型确定需要执行哪种更新，然后返回新的值。如果不需要完成任务，它会返回原来的状态.
 
 ### children.map
-props.children并不一定是数组类型
 
-如果我们使用props.children.map函数来遍历时会受到异常提示，因为在这种情况下props.children是对象（object）而不是数组（array）。React 当且仅当超过一个子元素的情况下会将props.children设置为数组
+props.children 并不一定是数组类型
 
-优先选择使用React.Children.map函数的原因，其已经将props.children不同类型的情况考虑在内了
+如果我们使用 props.children.map 函数来遍历时会受到异常提示，因为在这种情况下 props.children 是对象（object）而不是数组（array）。React 当且仅当超过一个子元素的情况下会将 props.children 设置为数组
+
+优先选择使用 React.Children.map 函数的原因，其已经将 props.children 不同类型的情况考虑在内了
 
 ### Dirty component
 
-React的更新流程（批处理更新）是围绕待更新组件（React称为dirtyComponent）来实现，dirtyComponent即ReactCompositeComponent实例。
+React 的更新流程（批处理更新）是围绕待更新组件（React 称为 dirtyComponent）来实现，dirtyComponent 即 ReactCompositeComponent 实例。
 
 批处理更新过程如下：
-  1. 开始一次批处理更新
-  2. 收集dirtyComponents
-  3. 更新dirtyComponent（更改UI的操作在这里）
-  4. 执行回调（生命周期函数、setState传入的回调方法）
-  5. 若在3、4间产生了新的dirtyComponent，重复3、4步，直至dirtyComponents清空，完成了一次完整的批处理更新
+
+1. 开始一次批处理更新
+2. 收集 dirtyComponents
+3. 更新 dirtyComponent（更改 UI 的操作在这里）
+4. 执行回调（生命周期函数、setState 传入的回调方法）
+5. 若在 3、4 间产生了新的 dirtyComponent，重复 3、4 步，直至 dirtyComponents 清空，完成了一次完整的批处理更新
 
 ### React.lazy
-对于最初 React.lazy() 所返回的 LazyComponent 对象，其 _status 默认是 -1，所以首次渲染时，会进入 readLazyComponentType 函数中的 default 的逻辑，这里才会真正异步执行 import(url)操作，由于并未等待，随后会检查模块是否 Resolved，如果已经Resolved了（已经加载完毕）则直接返回moduleObject.default（动态加载的模块的默认导出），否则将通过 throw 将 thenable 抛出到上层
+
+对于最初 React.lazy() 所返回的 LazyComponent 对象，其 \_status 默认是 -1，所以首次渲染时，会进入 readLazyComponentType 函数中的 default 的逻辑，这里才会真正异步执行 import(url)操作，由于并未等待，随后会检查模块是否 Resolved，如果已经 Resolved 了（已经加载完毕）则直接返回 moduleObject.default（动态加载的模块的默认导出），否则将通过 throw 将 thenable 抛出到上层
 
 React 捕获到异常之后，会判断异常是不是一个 thenable，如果是则会找到 SuspenseComponent ，如果 thenable 处于 pending 状态，则会将其 children 都渲染成 fallback 的值，一旦 thenable 被 resolve 则 SuspenseComponent 的子组件会重新渲染一次
 
 ### forceUpdate()
+
 如果你的 render() 方法依赖于一些其他数据，你可以告诉 React 组件需要通过调用 forceUpdate() 重新渲染。
 
 调用 forceUpdate() 会导致组件跳过 shouldComponentUpdate() ，直接调用 render()。 这将触发子组件的正常生命周期方法，包括每个子组件的 shouldComponentUpdate() 方法。
 
-forceUpdate就是重新render，使用场景：
-  1. 有些变量不在state上，但是你又想达到这个变量更新的时候，刷新render；
-  2. state里的某个变量层次太深，更新的时候没有自动触发render
+forceUpdate 就是重新 render，使用场景：
+
+1. 有些变量不在 state 上，但是你又想达到这个变量更新的时候，刷新 render；
+2. state 里的某个变量层次太深，更新的时候没有自动触发 render
 
 ### 异常捕获边界
-在部分UI中出现的JavaScript异常是不应该导致整个应用的崩溃的。为了解决这个问题，React16引进了一个新的概念“异常捕获边界(Error Boundaries)“。
 
-异常捕获边界是一种React组件，它能够捕获在它子组件树中出现的任何JavaScript异常，将它们打印出来并展示一个备用UI，这样就不会导致组件树的崩溃。异常捕获边界能够捕获它的子组件数中在渲染，生命周期方法和构造函数中出现的任何异常。
+在部分 UI 中出现的 JavaScript 异常是不应该导致整个应用的崩溃的。为了解决这个问题，React16 引进了一个新的概念“异常捕获边界(Error Boundaries)“。
 
-只要在组件中定义其中一个及以上的生命周期方法（static getDerivedStateFromError()或 componentDidCatch()），那么这个组件就变成了异常捕获边界。当异常被抛出时使用static getDerivedStateFromError()来渲染一个备用UI，使用componentDidCatch()来打印异常信息。
+异常捕获边界是一种 React 组件，它能够捕获在它子组件树中出现的任何 JavaScript 异常，将它们打印出来并展示一个备用 UI，这样就不会导致组件树的崩溃。异常捕获边界能够捕获它的子组件数中在渲染，生命周期方法和构造函数中出现的任何异常。
+
+只要在组件中定义其中一个及以上的生命周期方法（static getDerivedStateFromError()或 componentDidCatch()），那么这个组件就变成了异常捕获边界。当异常被抛出时使用 static getDerivedStateFromError()来渲染一个备用 UI，使用 componentDidCatch()来打印异常信息。
 
 ### Context
-context提供了一种数据传输方式，它使得数据可以直接通过组件树传递而不需要在每一个层级上手动地传递props。
-在典型的React应用中，数据是通过props自上而下（父组件传递给子组件）传递的，但是对于同时被许多组件所需要的某些props（如个人偏好，UI主题）来说，使用这种方式传递数据简直就是受刑。Context提供了不需要显式地在组件树上每个层级传递prop而是直接在组件之间传递的方法。
+
+context 提供了一种数据传输方式，它使得数据可以直接通过组件树传递而不需要在每一个层级上手动地传递 props。
+在典型的 React 应用中，数据是通过 props 自上而下（父组件传递给子组件）传递的，但是对于同时被许多组件所需要的某些 props（如个人偏好，UI 主题）来说，使用这种方式传递数据简直就是受刑。Context 提供了不需要显式地在组件树上每个层级传递 prop 而是直接在组件之间传递的方法。
