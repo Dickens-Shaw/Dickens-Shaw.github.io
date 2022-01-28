@@ -75,9 +75,10 @@ allTags.forEach((item) => {
     ) // 标签
     if (tags.length > 1)
       tags = tags.filter((tag) => tag !== '前端' && tag !== 'JavaScript') // 多标签情况过滤前端和JavaScript
+    if (tags.length === 0) tags = ['前端'] // 没有标签情况默认为前端
     if (tags.includes(item)) {
       markDownText += `
-  - [[${tags}]${title}](${href})☑️
+  - [${title}](${href})☑️
 `
     }
   })
