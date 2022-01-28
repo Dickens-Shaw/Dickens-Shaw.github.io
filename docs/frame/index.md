@@ -858,4 +858,9 @@ forceUpdate就是重新render，使用场景：
   1. 有些变量不在state上，但是你又想达到这个变量更新的时候，刷新render；
   2. state里的某个变量层次太深，更新的时候没有自动触发render
 
-### 
+### 异常捕获边界
+在部分UI中出现的JavaScript异常是不应该导致整个应用的崩溃的。为了解决这个问题，React16引进了一个新的概念“异常捕获边界(Error Boundaries)“。
+
+异常捕获边界是一种React组件，它能够捕获在它子组件树中出现的任何JavaScript异常，将它们打印出来并展示一个备用UI，这样就不会导致组件树的崩溃。异常捕获边界能够捕获它的子组件数中在渲染，生命周期方法和构造函数中出现的任何异常。
+
+只要在组件中定义其中一个及以上的生命周期方法（static getDerivedStateFromError()或 componentDidCatch()），那么这个组件就变成了异常捕获边界。当异常被抛出时使用static getDerivedStateFromError()来渲染一个备用UI，使用componentDidCatch()来打印异常信息。
