@@ -815,3 +815,36 @@ React.Children.map(children, child => {
   - 需要管理焦点、选择文本或媒体播放时
   - 触发式动画
   - 与第三方 DOM 库集成
+
+### 纯组件
+纯（Pure） 组件是可以编写的最简单、最快的组件。它们可以替换任何只有 render() 的组件。这些组件增强了代码的简单性和应用的性能。
+
+### Key
+1. 用于追踪哪些列表中元素被修改、被添加或者被移除的辅助标识
+2. 用于识别唯一的 Virtual DOM 元素及其驱动 UI 的相应数据。它们通过回收 DOM 中当前所有的元素来帮助 React 优化渲染。这些 key 必须是唯一的数字或字符串，React 只是重新排序元素而不是重新渲染它们。这可以提高应用程序的性能
+
+### Reducer
+是纯函数，它规定应用程序的状态怎样因响应 ACTION 而改变。Reducers 通过接受先前的状态和 action 来工作，然后它返回一个新的状态。它根据操作的类型确定需要执行哪种更新，然后返回新的值。如果不需要完成任务，它会返回原来的状态.
+
+### children.map
+props.children并不一定是数组类型
+
+如果我们使用props.children.map函数来遍历时会受到异常提示，因为在这种情况下props.children是对象（object）而不是数组（array）。React 当且仅当超过一个子元素的情况下会将props.children设置为数组
+
+优先选择使用React.Children.map函数的原因，其已经将props.children不同类型的情况考虑在内了
+
+### Dirty component
+
+React的更新流程（批处理更新）是围绕待更新组件（React称为dirtyComponent）来实现，dirtyComponent即ReactCompositeComponent实例。
+
+批处理更新过程如下：
+  1. 开始一次批处理更新
+  2. 收集dirtyComponents
+  3. 更新dirtyComponent（更改UI的操作在这里）
+  4. 执行回调（生命周期函数、setState传入的回调方法）
+  5. 若在3、4间产生了新的dirtyComponent，重复3、4步，直至dirtyComponents清空，完成了一次完整的批处理更新
+
+### React.lazy
+对于最初 React.lazy() 所返回的 LazyComponent 对象，其 _status 默认是 -1，所以首次渲染时，会进入 readLazyComponentType 函数中的 default 的逻辑，这里才会真正异步执行 import(url)操作，由于并未等待，随后会检查模块是否 Resolved，如果已经Resolved了（已经加载完毕）则直接返回moduleObject.default（动态加载的模块的默认导出），否则将通过 throw 将 thenable 抛出到上层
+
+React 捕获到异常之后，会判断异常是不是一个 thenable，如果是则会找到 SuspenseComponent ，如果 thenable 处于 pending 状态，则会将其 children 都渲染成 fallback 的值，一旦 thenable 被 resolve 则 SuspenseComponent 的子组件会重新渲染一次
