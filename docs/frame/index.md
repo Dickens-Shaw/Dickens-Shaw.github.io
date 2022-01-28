@@ -709,7 +709,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 - 对原有React的API封装的钩子函数
 
 钩子名 | 作用
------------ | -------
+:-------: | -------
 useState | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了
 useEffect | componentDidMount，componentDidUpdate和componentWillUnmount和结合体,所以可以监听useState定义值的变化
 useContext | 定义一个全局的对象,类似 context
@@ -732,3 +732,20 @@ useLayoutEffect | 作用与useEffect相同，但在所有DOM改变后同步触�
   1. 暴露给模板的属性具有明确的来源，因为它们是从 Hook 函数返回的值。
   2. Hook 函数返回的值可以任意命名，因此不会发生名称空间冲突。
   3. 没有创建仅用于逻辑重用的不必要的组件实例
+
+### props 和 state
+
+条件 | State | Props
+------- | :-------: | :-------:
+从父组件中接收初始值 | Yes | Yes
+父组件可以改变值 | No | Yes
+在组件中设置默认值 | Yes | Yes
+在组件的内部变化 | Yes | No
+设置子组件的初始值 | Yes | Yes
+在子组件的内部更改 | No | Yes
+
+- props:
+React 中属性的简写。它们是只读组件，必须保持纯，即不可变。它们总是在整个应用中从父组件传递到子组件。子组件永远不能将 prop 送回父组件。这有助于维护单向数据流，通常用于呈现动态生成的数据
+
+- state:
+React 组件的核心，是数据的来源，必须尽可能简单。基本上状态是确定组件呈现和行为的对象。与props 不同，它们是可变的，并创建动态和交互式组件。可以通过 this.state() 访问它们
