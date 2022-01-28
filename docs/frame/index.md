@@ -577,19 +577,19 @@ diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然�
 
 1. 减少重新 render 的次数。因为在 React 里最重(花时间最长)的一块就是 reconction(简单的可以理解为 diff)，如果不 render，就不会 reconction。（React.memo 和 useCallback ）
 2. 减少计算的量。主要是减少重复计算，对于函数式组件来说，每次 render 都会重新从头开始执行函数调用。（useMemo ）
-  在使用类组件的时候，使用的 React 优化 API 主要是：shouldComponentUpdate 和 PureComponent，这两个 API 所提供的解决思路都是为了减少重新 render 的次数，主要是减少父组件更新而子组件也更新的情况，虽然也可以在 state 更新的时候阻止当前组件渲染，如果要这么做的话，证明你这个属性不适合作为 state，而应该作为静态属性或者放在 class 外面作为一个简单的变量 。
+   在使用类组件的时候，使用的 React 优化 API 主要是：shouldComponentUpdate 和 PureComponent，这两个 API 所提供的解决思路都是为了减少重新 render 的次数，主要是减少父组件更新而子组件也更新的情况，虽然也可以在 state 更新的时候阻止当前组件渲染，如果要这么做的话，证明你这个属性不适合作为 state，而应该作为静态属性或者放在 class 外面作为一个简单的变量 。
 
 #### shouldComponentUpdate
 
 在 shouldComponentUpdate 函数中我们可以通过返回布尔值来决定当前组件是否需要更新。这层代码逻辑可以是简单地浅比较一下当前 state 和之前的 state 是否相同，也可以是判断某个值更新了才触发组件更新。一般来说不推荐完整地对比当前 state 和之前的 state 是否相同，因为组件更新触发可能会很频繁，这样的完整对比性能开销会有点大，可能会造成得不偿失的情况。
 
-当然如果真的想完整对比当前 state 和之前的 state 是否相同，并且不影响性能也是行得通的，可以通过 immutable库来生成不可变对象。这类库对于操作大规模的数据来说会提升不错的性能，并且一旦改变数据就会生成一个新的对象，对比前后 state 是否一致也就方便多了。
+当然如果真的想完整对比当前 state 和之前的 state 是否相同，并且不影响性能也是行得通的，可以通过 immutable 库来生成不可变对象。这类库对于操作大规模的数据来说会提升不错的性能，并且一旦改变数据就会生成一个新的对象，对比前后 state 是否一致也就方便多了。
 
 另外如果只是单纯的浅比较一下，可以直接使用 Pure Component，底层就是实现了浅比较 state。
 
 16.6.0 之后的版本的话，可以使用 React.memo 来实现相同的功能
 
-#### 21项优化React App
+#### 21 项优化 React App
 
 1. 使用不可变数据结构
 2. 函数/无状态组件和 React.PureComponent
@@ -603,11 +603,36 @@ diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然�
 10. 避免使用 props 来初始化 state （直接赋值）
 11. 在 DOM 元素上传递 Props
 12. 在使用 Redux Connect 时，同时使用 Reselect 来避免组件的频繁重新渲染
-14. 记忆化的 React 组件
-15. 使用 CSS 动画代替 JS 动画
-16. 使用CDN
-17. 在CPU扩展任务中使用 Web Workers
-18. 虚拟化长列表
-19. 分析和优化您的 Webpack 打包
-20. 考虑服务端渲染
-21. 在Web服务器上启用Gzip压缩
+13. 记忆化的 React 组件
+14. 使用 CSS 动画代替 JS 动画
+15. 使用 CDN
+16. 在 CPU 扩展任务中使用 Web Workers
+17. 虚拟化长列表
+18. 分析和优化您的 Webpack 打包
+19. 考虑服务端渲染
+20. 在 Web 服务器上启用 Gzip 压缩
+
+### Immutable
+
+JavaScript 中的对象一般是可变的（Mutable），因为使用了引用赋值，新的对象简单的引用了原始对象，改变新的对象将影响到原始对象。如 `foo={a: 1}; bar=foo; bar.a=2` 你会发现此时 foo.a 也被改成了 2。虽然这样做可以节约内存，但当应用复杂后，这就造成了非常大的隐患，Mutable 带来的优点变得得不偿失。为了解决这个问题，一般的做法是使用 shallow-copy（浅拷贝）或 deep-copy（深拷贝）来避免被修改，但这样做造成了 CPU 和内存的浪费。
+
+Immutable 可以很好地解决这些问题。
+
+#### 什么是 IMMUTABLE DATA
+
+Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutable 对象的任何修改或添加删除操作都会返回一个新的 Immutable 对象。Immutable 实现的原理是 Persistent Data Structure（持久化数据结构），也就是使用旧数据创建新数据时，要保证旧数据同时可用且不变。同时为了避免 deepCopy 把所有节点都复制一遍带来的性能损耗，Immutable 使用了 Structural Sharing（结构共享），即如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点，其它节点则进行共享。
+
+优点：
+
+1. Immutable 降低了 Mutable 带来的复杂度：
+   可变（Mutable）数据耦合了 Time 和 Value 的概念，造成了数据很难被回溯
+2. 节省内存：
+   Immutable.js 使用了 Structure Sharing 会尽量复用内存，甚至以前使用的对象也可以再次被复用。没有被引用的对象会被垃圾回收
+3. Undo/Redo，Copy/Paste，甚至时间旅行这些功能做起来小菜一碟：
+   因为每次数据都是不一样的，只要把这些数据放到一个数组里储存起来，想回退到哪里就拿出对应数据即可，很容易开发出撤销重做这种功能。
+4. 并发安全：
+   传统的并发非常难做，因为要处理各种数据不一致问题，因此『聪明人』发明了各种锁来解决。但使用了 Immutable 之后，数据天生是不可变的，并发锁就不需要了
+5. 拥抱函数式编程：
+   Immutable 本身就是函数式编程中的概念，纯函数式编程比面向对象更适用于前端开发。因为只要输入一致，输出必然一致，这样开发的组件更易于调试和组装
+   与 Object.freeze、const 区别：
+   Object.freeze 和 ES6 中新加入的 const 都可以达到防止对象被篡改的功能，但它们是 shallowCopy 的。对象层级一深就要特殊处理了
