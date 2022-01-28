@@ -864,3 +864,7 @@ forceUpdate就是重新render，使用场景：
 异常捕获边界是一种React组件，它能够捕获在它子组件树中出现的任何JavaScript异常，将它们打印出来并展示一个备用UI，这样就不会导致组件树的崩溃。异常捕获边界能够捕获它的子组件数中在渲染，生命周期方法和构造函数中出现的任何异常。
 
 只要在组件中定义其中一个及以上的生命周期方法（static getDerivedStateFromError()或 componentDidCatch()），那么这个组件就变成了异常捕获边界。当异常被抛出时使用static getDerivedStateFromError()来渲染一个备用UI，使用componentDidCatch()来打印异常信息。
+
+### Context
+context提供了一种数据传输方式，它使得数据可以直接通过组件树传递而不需要在每一个层级上手动地传递props。
+在典型的React应用中，数据是通过props自上而下（父组件传递给子组件）传递的，但是对于同时被许多组件所需要的某些props（如个人偏好，UI主题）来说，使用这种方式传递数据简直就是受刑。Context提供了不需要显式地在组件树上每个层级传递prop而是直接在组件之间传递的方法。
