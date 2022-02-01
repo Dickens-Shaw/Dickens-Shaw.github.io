@@ -903,3 +903,15 @@ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
 
 ### 类/有状态组件
 类或有状态组件具有状态和生命周期方可能通过setState()方法更改组件的状态。类组件是通过扩展React创建的。它在构造函数中初始化，也可能有子组件
+
+### 异步组件
+- 场景:路由切换,如果同步加载多个页面路由会导致缓慢
+
+- 核心 API:
+  loader:需要加载的组件
+  loading:未加载出来的页面展示组件
+  delay:延迟加载时间
+  timeout:超时时间
+  
+- 使用方法:
+安装 react-loadable ,babel插件安装 syntax-dynamic-import. react-loadable是通过webpack的异步import实现的
