@@ -912,6 +912,10 @@ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
   loading:未加载出来的页面展示组件
   delay:延迟加载时间
   timeout:超时时间
-  
+
 - 使用方法:
 安装 react-loadable ,babel插件安装 syntax-dynamic-import. react-loadable是通过webpack的异步import实现的
+
+### 动态组件
+场景：做一个 tab 切换时就会涉及到组件动态加载
+实现：条件判断渲染不同组件
