@@ -887,24 +887,29 @@ forceUpdate 就是重新 render，使用场景：
 context 提供了一种数据传输方式，它使得数据可以直接通过组件树传递而不需要在每一个层级上手动地传递 props。
 在典型的 React 应用中，数据是通过 props 自上而下（父组件传递给子组件）传递的，但是对于同时被许多组件所需要的某些 props（如个人偏好，UI 主题）来说，使用这种方式传递数据简直就是受刑。Context 提供了不需要显式地在组件树上每个层级传递 prop 而是直接在组件之间传递的方法。
 
-### react-router实现思想
+### react-router 实现思想
+
 1. 基于 history 库来实现上述不同的客户端路由实现思想，并且能够保存历史记录等，磨平浏览器差异，上层无感知
 2. 通过维护的列表，在每次 URL 发生变化的回收，通过配置的 路由路径，匹配到对应的 Component，并且 render
 
 ### 组件设计相关
 
 #### 组件划分
-根据组件的职责通常把组件分为UI组件和容器组件。
+
+根据组件的职责通常把组件分为 UI 组件和容器组件。
 UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
-两者通过React-Redux 提供connect方法联系起来。
+两者通过 React-Redux 提供 connect 方法联系起来。
 
 ### 函数/无状态/展示组件
-函数或无状态组件是一个纯函数，它可接受接受参数，并返回react元素。这些都是没有任何副作用的纯函数。这些组件没有状态或生命周期方法
+
+函数或无状态组件是一个纯函数，它可接受接受参数，并返回 react 元素。这些都是没有任何副作用的纯函数。这些组件没有状态或生命周期方法
 
 ### 类/有状态组件
-类或有状态组件具有状态和生命周期方可能通过setState()方法更改组件的状态。类组件是通过扩展React创建的。它在构造函数中初始化，也可能有子组件
+
+类或有状态组件具有状态和生命周期方可能通过 setState()方法更改组件的状态。类组件是通过扩展 React 创建的。它在构造函数中初始化，也可能有子组件
 
 ### 异步组件
+
 - 场景:路由切换,如果同步加载多个页面路由会导致缓慢
 
 - 核心 API:
@@ -914,95 +919,114 @@ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
   timeout:超时时间
 
 - 使用方法:
-安装 react-loadable ,babel插件安装 syntax-dynamic-import. react-loadable是通过webpack的异步import实现的
+  安装 react-loadable ,babel 插件安装 syntax-dynamic-import. react-loadable 是通过 webpack 的异步 import 实现的
 
 ### 动态组件
+
 场景：做一个 tab 切换时就会涉及到组件动态加载
 实现：条件判断渲染不同组件
 
 ### 递归组件
-场景：tree组件
-利用React.Fragment或者 div 包裹循环
+
+场景：tree 组件
+利用 React.Fragment 或者 div 包裹循环
 
 ### 受控组件和不受控组件
+
 处理表单数据：
-- 受控组件：组件的状态通过React 的状态值 state 或者 props 控制
-- 不受控组件：组件不被 React的状态值控制,通过 dom 的特性或者React 的ref 来控制
+
+- 受控组件：组件的状态通过 React 的状态值 state 或者 props 控制
+- 不受控组件：组件不被 React 的状态值控制,通过 dom 的特性或者 React 的 ref 来控制
 
 ### 状态管理
+
 把组件之间需要共享的状态抽取出来，遵循特定的约定，统一来管理，让状态的变化可以预测
 
-###  Flux
+### Flux
+
 是一种强制单向数据流的架构模式。它控制派生数据，并使用具有所有数据权限的中心 store 实现多个组件之间的通信。整个应用中的数据更新必须只能在此处进行。 Flux 为应用提供稳定性并减少运行时的错误。
+
 1. 核心模块:Store,Reduce,Store,Container;
 2. 有多个 store;
 
 ### Redux
-Redux 是 React的一个状态管理库，是遵循Flux模式的一种实现。 Redux简化了React中的单向数据流。 Redux将状态管理完全从React中抽象出来。
+
+Redux 是 React 的一个状态管理库，是遵循 Flux 模式的一种实现。 Redux 简化了 React 中的单向数据流。 Redux 将状态管理完全从 React 中抽象出来。
 
 - 核心概念：
-  - Store：保存数据的地方，你可以把它看成一个容器，整个应用只能有一个Store。
-  - State：Store对象包含所有数据，如果想得到某个时点的数据，就要对Store生成快照，这种时点的数据集合，就叫做State。
-  - Action：State的变化，会导致View的变化。但是，用户接触不到State，只能接触到View。所以，State的变化必须是View导致的。Action就是View发出的通知，表示State应该要发生变化了。
-  - Action Creator：View要发送多少种消息，就会有多少种Action。如果都手写，会很麻烦，所以我们定义一个函数来生成Action，这个函数就叫Action Creator。
-  - Reducer：Store收到Action以后，必须给出一个新的State，这样View才会发生变化。这种State的计算过程就叫做Reducer。Reducer是一个函数，它接受Action和当前State作为参数，返回一个新的State。
-  - dispatch：是View发出Action的唯一方法。
+
+  - Store：保存数据的地方，你可以把它看成一个容器，整个应用只能有一个 Store。
+  - State：Store 对象包含所有数据，如果想得到某个时点的数据，就要对 Store 生成快照，这种时点的数据集合，就叫做 State。
+  - Action：State 的变化，会导致 View 的变化。但是，用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。
+  - Action Creator：View 要发送多少种消息，就会有多少种 Action。如果都手写，会很麻烦，所以我们定义一个函数来生成 Action，这个函数就叫 Action Creator。
+  - Reducer：Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 State 的计算过程就叫做 Reducer。Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。
+  - dispatch：是 View 发出 Action 的唯一方法。
 
 - 工作流程：
-  1. 首先，用户（通过View）发出（一个包含 id和负载payload的）Action，发出方式就用到了dispatch方法。
-  2. 然后，Store自动调用Reducer，并且传入两个参数：当前State和收到的Action，Reducer会返回新的State
-  3. State一旦有变化，Store就会调用监听函数，来更新View。
+  1. 首先，用户（通过 View）发出（一个包含 id 和负载 payload 的）Action，发出方式就用到了 dispatch 方法。
+  2. 然后，Store 自动调用 Reducer，并且传入两个参数：当前 State 和收到的 Action，Reducer 会返回新的 State
+  3. State 一旦有变化，Store 就会调用监听函数，来更新 View。
 
-#### redux异步中间件
-redux中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个middleware 接受2个参数， Store 的getState 函数和dispatch 函数，分别获得store和action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
+#### redux 异步中间件
+
+redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个 middleware 接受 2 个参数， Store 的 getState 函数和 dispatch 函数，分别获得 store 和 action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
 
 #### redux-thunk
+
 - 优点：
-  - 体积小: redux-thunk的实现方式很简单,只有不到20行代码
-  - 使用简单: redux-thunk没有引入像redux-saga或者redux-observable额外的范式,上手简单
+
+  - 体积小: redux-thunk 的实现方式很简单,只有不到 20 行代码
+  - 使用简单: redux-thunk 没有引入像 redux-saga 或者 redux-observable 额外的范式,上手简单
 
 - 缺陷：
-  - 样板代码过多: 与redux本身一样,通常一个请求需要大量的代码,而且很多都是重复性质的
-  - 耦合严重: 异步操作与redux的action偶合在一起,不方便管理
+
+  - 样板代码过多: 与 redux 本身一样,通常一个请求需要大量的代码,而且很多都是重复性质的
+  - 耦合严重: 异步操作与 redux 的 action 偶合在一起,不方便管理
   - 功能孱弱: 有一些实际开发中常用的功能需要自己进行封装
 
 - 处理副作用：
-既可以 dispatch action 对象，也可以 dispatch 一个函数。函数的第一个参数为 dispatch 函数，在函数内部我们可以处理一些副作用，完成后再调用 dispatch 函数就又回到了纯函数的流
+  既可以 dispatch action 对象，也可以 dispatch 一个函数。函数的第一个参数为 dispatch 函数，在函数内部我们可以处理一些副作用，完成后再调用 dispatch 函数就又回到了纯函数的流
 
 #### redux-saga
+
 - 优点：
+
   - 异步解耦: 异步操作被被转移到单独 saga.js 中，不再是掺杂在 action.js 或 component.js 中
-action摆脱thunk function: dispatch 的参数依然是一个纯粹的 action (FSA)，而不是充满 “黑魔法” thunk function
+    action 摆脱 thunk function: dispatch 的参数依然是一个纯粹的 action (FSA)，而不是充满 “黑魔法” thunk function
   - 异常处理: 受益于 generator function 的 saga 实现，代码异常/请求失败 都可以直接通过 try/catch 语法直接捕获处理
-  - 功能强大: redux-saga提供了大量的Saga 辅助函数和Effect 创建器供开发者使用,开发者无须封装或者简单封装即可使用
-  - 灵活: redux-saga可以将多个Saga可以串行/并行组合起来,形成一个非常实用的异步flow
-  - 易测试，提供了各种case的测试方案，包括mock task，分支覆盖等等
+  - 功能强大: redux-saga 提供了大量的 Saga 辅助函数和 Effect 创建器供开发者使用,开发者无须封装或者简单封装即可使用
+  - 灵活: redux-saga 可以将多个 Saga 可以串行/并行组合起来,形成一个非常实用的异步 flow
+  - 易测试，提供了各种 case 的测试方案，包括 mock task，分支覆盖等等
 
 - 缺陷：
-  - 额外的学习成本: redux-saga不仅在使用难以理解的 generator function,而且有数十个API,学习成本远超redux-thunk,最重要的是你的额外学习成本是只服务于这个库的,与redux-observable不同,redux-observable虽然也有额外学习成本但是背后是rxjs和一整套思想
-  - 体积庞大: 体积略大,代码近2000行，min版25KB左右
-  - 功能过剩: 实际上并发控制等功能很难用到,但是我们依然需要引入这些代码
-  - ts支持不友好: yield无法返回TS类型
 
-- 处理副作用：
-  - redux-saga 会用它的生成器函数执器来替我们完成在生成器函数内部定义的"一系列操作"
+  - 额外的学习成本: redux-saga 不仅在使用难以理解的 generator function,而且有数十个 API,学习成本远超 redux-thunk,最重要的是你的额外学习成本是只服务于这个库的,与 redux-observable 不同,redux-observable 虽然也有额外学习成本但是背后是 rxjs 和一整套思想
+  - 体积庞大: 体积略大,代码近 2000 行，min 版 25KB 左右
+  - 功能过剩: 实际上并发控制等功能很难用到,但是我们依然需要引入这些代码
+  - ts 支持不友好: yield 无法返回 TS 类型
+
+- 处理副作用：redux-saga 会用它的生成器函数执器来替我们完成在生成器函数内部定义的"一系列操作"
 
 - 处理并发：
   - takeEvery：可以让多个 saga 任务并行被 fork 执行
   - takeLatest：takeLatest 不允许多个 saga 任务并行地执行。一旦接收到新的发起的 action，它就会取消前面所有 fork 过的任务（如果这些任务还在执行的话）。在处理 AJAX 请求的时候，如果只希望获取最后那个请求的响应， takeLatest 就会非常有用。
 
 ### Mobx
+
 透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
+
 1. 核心模块:Action,Reducer,Derivation;
 2. 有多个 store;
 3. 设计更多偏向于面向对象编程和响应式编程，通常将状态包装成可观察对象，一旦状态对象变更，就能自动获得更新
 
 ### Dva
+
 dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了简化开发体验，dva 还额外内置了 react-router 和 fetch，所以也可以理解为一个轻量级的应用框架
 
 核心概念：
-  - State：一个对象，保存整个应用状态
-  - View：React 组件构成的视图层
-  - Action：一个对象，描述事件
-  - connect 方法：一个函数，绑定 State 到 View
-  - dispatch 方法：一个函数，发送 Action 到 State
+
+- State：一个对象，保存整个应用状态
+- View：React 组件构成的视图层
+- Action：一个对象，描述事件
+- connect 方法：一个函数，绑定 State 到 View
+- dispatch 方法：一个函数，发送 Action 到 State
