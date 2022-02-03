@@ -958,3 +958,13 @@ Redux 是 React的一个状态管理库，是遵循Flux模式的一种实现。 
 1. 核心模块:Action,Reducer,Derivation;
 2. 有多个 store;
 3. 设计更多偏向于面向对象编程和响应式编程，通常将状态包装成可观察对象，一旦状态对象变更，就能自动获得更新
+
+### Dva
+dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了简化开发体验，dva 还额外内置了 react-router 和 fetch，所以也可以理解为一个轻量级的应用框架
+
+核心概念：
+  - State：一个对象，保存整个应用状态
+  - View：React 组件构成的视图层
+  - Action：一个对象，描述事件
+  - connect 方法：一个函数，绑定 State 到 View
+  - dispatch 方法：一个函数，发送 Action 到 State
