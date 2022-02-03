@@ -969,6 +969,28 @@ redux中间件本质就是一个函数柯里化。redux applyMiddleware Api 源�
 - 处理副作用：
 既可以 dispatch action 对象，也可以 dispatch 一个函数。函数的第一个参数为 dispatch 函数，在函数内部我们可以处理一些副作用，完成后再调用 dispatch 函数就又回到了纯函数的流
 
+#### redux-saga
+- 优点：
+  - 异步解耦: 异步操作被被转移到单独 saga.js 中，不再是掺杂在 action.js 或 component.js 中
+action摆脱thunk function: dispatch 的参数依然是一个纯粹的 action (FSA)，而不是充满 “黑魔法” thunk function
+  - 异常处理: 受益于 generator function 的 saga 实现，代码异常/请求失败 都可以直接通过 try/catch 语法直接捕获处理
+  - 功能强大: redux-saga提供了大量的Saga 辅助函数和Effect 创建器供开发者使用,开发者无须封装或者简单封装即可使用
+  - 灵活: redux-saga可以将多个Saga可以串行/并行组合起来,形成一个非常实用的异步flow
+  - 易测试，提供了各种case的测试方案，包括mock task，分支覆盖等等
+
+- 缺陷：
+  - 额外的学习成本: redux-saga不仅在使用难以理解的 generator function,而且有数十个API,学习成本远超redux-thunk,最重要的是你的额外学习成本是只服务于这个库的,与redux-observable不同,redux-observable虽然也有额外学习成本但是背后是rxjs和一整套思想
+  - 体积庞大: 体积略大,代码近2000行，min版25KB左右
+  - 功能过剩: 实际上并发控制等功能很难用到,但是我们依然需要引入这些代码
+  - ts支持不友好: yield无法返回TS类型
+
+- 处理副作用：
+  - redux-saga 会用它的生成器函数执器来替我们完成在生成器函数内部定义的"一系列操作"
+
+- 处理并发：
+  - takeEvery：可以让多个 saga 任务并行被 fork 执行
+  - takeLatest：takeLatest 不允许多个 saga 任务并行地执行。一旦接收到新的发起的 action，它就会取消前面所有 fork 过的任务（如果这些任务还在执行的话）。在处理 AJAX 请求的时候，如果只希望获取最后那个请求的响应， takeLatest 就会非常有用。
+
 ### Mobx
 透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
 1. 核心模块:Action,Reducer,Derivation;
