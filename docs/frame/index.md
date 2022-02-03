@@ -936,3 +936,19 @@ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
 是一种强制单向数据流的架构模式。它控制派生数据，并使用具有所有数据权限的中心 store 实现多个组件之间的通信。整个应用中的数据更新必须只能在此处进行。 Flux 为应用提供稳定性并减少运行时的错误。
 1. 核心模块:Store,Reduce,Store,Container;
 2. 有多个 store;
+
+### Redux
+Redux 是 React的一个状态管理库，是遵循Flux模式的一种实现。 Redux简化了React中的单向数据流。 Redux将状态管理完全从React中抽象出来。
+
+- 核心概念：
+  - Store：保存数据的地方，你可以把它看成一个容器，整个应用只能有一个Store。
+  - State：Store对象包含所有数据，如果想得到某个时点的数据，就要对Store生成快照，这种时点的数据集合，就叫做State。
+  - Action：State的变化，会导致View的变化。但是，用户接触不到State，只能接触到View。所以，State的变化必须是View导致的。Action就是View发出的通知，表示State应该要发生变化了。
+  - Action Creator：View要发送多少种消息，就会有多少种Action。如果都手写，会很麻烦，所以我们定义一个函数来生成Action，这个函数就叫Action Creator。
+  - Reducer：Store收到Action以后，必须给出一个新的State，这样View才会发生变化。这种State的计算过程就叫做Reducer。Reducer是一个函数，它接受Action和当前State作为参数，返回一个新的State。
+  - dispatch：是View发出Action的唯一方法。
+
+- 工作流程：
+  1. 首先，用户（通过View）发出（一个包含 id和负载payload的）Action，发出方式就用到了dispatch方法。
+  2. 然后，Store自动调用Reducer，并且传入两个参数：当前State和收到的Action，Reducer会返回新的State
+  3. State一旦有变化，Store就会调用监听函数，来更新View。
