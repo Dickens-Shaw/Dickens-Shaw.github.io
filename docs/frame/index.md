@@ -952,3 +952,9 @@ Redux 是 React的一个状态管理库，是遵循Flux模式的一种实现。 
   1. 首先，用户（通过View）发出（一个包含 id和负载payload的）Action，发出方式就用到了dispatch方法。
   2. 然后，Store自动调用Reducer，并且传入两个参数：当前State和收到的Action，Reducer会返回新的State
   3. State一旦有变化，Store就会调用监听函数，来更新View。
+
+### Mobx
+透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
+1. 核心模块:Action,Reducer,Derivation;
+2. 有多个 store;
+3. 设计更多偏向于面向对象编程和响应式编程，通常将状态包装成可观察对象，一旦状态对象变更，就能自动获得更新
