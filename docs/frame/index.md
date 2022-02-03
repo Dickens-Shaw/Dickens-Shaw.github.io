@@ -956,6 +956,19 @@ Redux 是 React的一个状态管理库，是遵循Flux模式的一种实现。 
 #### redux异步中间件
 redux中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个middleware 接受2个参数， Store 的getState 函数和dispatch 函数，分别获得store和action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
 
+#### redux-thunk
+- 优点：
+  - 体积小: redux-thunk的实现方式很简单,只有不到20行代码
+  - 使用简单: redux-thunk没有引入像redux-saga或者redux-observable额外的范式,上手简单
+
+- 缺陷：
+  - 样板代码过多: 与redux本身一样,通常一个请求需要大量的代码,而且很多都是重复性质的
+  - 耦合严重: 异步操作与redux的action偶合在一起,不方便管理
+  - 功能孱弱: 有一些实际开发中常用的功能需要自己进行封装
+
+- 处理副作用：
+既可以 dispatch action 对象，也可以 dispatch 一个函数。函数的第一个参数为 dispatch 函数，在函数内部我们可以处理一些副作用，完成后再调用 dispatch 函数就又回到了纯函数的流
+
 ### Mobx
 透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
 1. 核心模块:Action,Reducer,Derivation;
