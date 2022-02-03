@@ -953,6 +953,9 @@ Redux 是 React的一个状态管理库，是遵循Flux模式的一种实现。 
   2. 然后，Store自动调用Reducer，并且传入两个参数：当前State和收到的Action，Reducer会返回新的State
   3. State一旦有变化，Store就会调用监听函数，来更新View。
 
+#### redux异步中间件
+redux中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个middleware 接受2个参数， Store 的getState 函数和dispatch 函数，分别获得store和action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
+
 ### Mobx
 透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
 1. 核心模块:Action,Reducer,Derivation;
