@@ -106,3 +106,11 @@ import()和 require.ensure
 - 初始化： 从启动构建，读取与合并配置参数，加载 Plugin， 实例化 Compiler
 - 编译： 从 Entry 出发，针对每个 Module 串行调用对应的 Loader 去翻译文件的内容，再找到该 Module 依赖的 Module ，递归地进行编译处理
 - 输出： 将编译后的 Module 组合成 Chunk，将 Chunk 转换成文件，输出到文件系统中。
+
+### 优化打包速度
+
+- 减少文件搜索范围：比如通过别名、设置loader 的 test，include & exclude
+- Webpack4 默认压缩并行
+- Happypack 将 Loader 的同步执行转换为并行的
+- DLLPlugin将特定的类库提前打包然后引入
+- babel 也可以缓存编译
