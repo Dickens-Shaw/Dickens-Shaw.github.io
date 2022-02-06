@@ -57,3 +57,8 @@
 - webpack-bundle-analyzer 可视化 webpack 输出文件的体积
 - terser-webpack-plugin
 - add-asset-html-webpack-plugin
+
+### 实现插件
+调用插件 apply 函数传入 compiler 对象
+
+通过 compiler 对象监听事件
