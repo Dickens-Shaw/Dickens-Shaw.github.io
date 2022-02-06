@@ -62,3 +62,8 @@
 调用插件 apply 函数传入 compiler 对象
 
 通过 compiler 对象监听事件
+
+### 动态加载
+import()和 require.ensure
+
+原理：动态的创建 script 标签，以及通过 jsonp 去请求 chunk
