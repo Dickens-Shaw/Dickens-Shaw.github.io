@@ -33,7 +33,7 @@
 
 > Loader 本质就是一个函数，在该函数中对接收到的内容进行转换，返回转换后的结果。因为 Webpack 只认识 JavaScript，所以 Loader 就成了翻译官，对其他类型的资源进行转译预处理工作
 
-常用 loader:- 
+常用 loader:-
 
 - file-loader 使得我们可以在 JS 文件中引入 png\jpg 等图片资源
 - url-loader 跟 file-loader 类似；唯一不同的是在于用户可以设置一个文件大小的阈值，当大于阈值时跟 file-loader 一样返回 publicPath，而小于该阈值时则返回文件 base64 形式编码。
@@ -43,15 +43,16 @@
 - babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
 
 ### Plugin
-> Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展Webpack的功能，在Webpack运行的生命周期中会广播出许多事件，Plugin可以监听这些事件，在合适的时机通过Webpack提供的API改变输出结果。
 
-常用的plugin：
+> Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展 Webpack 的功能，在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。
 
-- html-webpack-plugin 自动生成HTML5文件，并引入webpack打包好的 js 等文件。
-- clean-webpack-plugin 用于打包前先把dist文件夹清空
-- hot-module-replacement-plugin 模块热替换插件，即HMR，webpack4 自带插件，无需安装，在开发模式下配合 devServer 使用
-- mini-css-extract-plugin 将CSS提取到单独的文件中
-- PurgecssPlugin 可以去除未使用的 css, 一般与glob、glob-all 配合使用。
+常用的 plugin：
+
+- html-webpack-plugin 自动生成 HTML5 文件，并引入 webpack 打包好的 js 等文件。
+- clean-webpack-plugin 用于打包前先把 dist 文件夹清空
+- hot-module-replacement-plugin 模块热替换插件，即 HMR，webpack4 自带插件，无需安装，在开发模式下配合 devServer 使用
+- mini-css-extract-plugin 将 CSS 提取到单独的文件中
+- PurgecssPlugin 可以去除未使用的 css, 一般与 glob、glob-all 配合使用。
 - optimize-css-assets-webpack-plugin 用于 CSS 压缩
 - split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。相比于 commons-chunk-plugin 的优点：
 - webpack-bundle-analyzer 可视化 webpack 输出文件的体积
@@ -59,11 +60,21 @@
 - add-asset-html-webpack-plugin
 
 ### 实现插件
+
 调用插件 apply 函数传入 compiler 对象
 
 通过 compiler 对象监听事件
 
 ### 动态加载
+
 import()和 require.ensure
 
 原理：动态的创建 script 标签，以及通过 jsonp 去请求 chunk
+
+### Babel 原理
+
+本质就是编译器，分为三步：
+
+1. 词法分析生成 Token，语法分析生成 AST，
+2. 遍历 AST，根据插件变换相应的节点，
+3. 最后把 AST 转换为代码
