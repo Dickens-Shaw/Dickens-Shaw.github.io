@@ -33,7 +33,7 @@
 
 > Loader 本质就是一个函数，在该函数中对接收到的内容进行转换，返回转换后的结果。因为 Webpack 只认识 JavaScript，所以 Loader 就成了翻译官，对其他类型的资源进行转译预处理工作
 
-常用 loader
+常用 loader:- 
 
 - file-loader 使得我们可以在 JS 文件中引入 png\jpg 等图片资源
 - url-loader 跟 file-loader 类似；唯一不同的是在于用户可以设置一个文件大小的阈值，当大于阈值时跟 file-loader 一样返回 publicPath，而小于该阈值时则返回文件 base64 形式编码。
@@ -41,3 +41,19 @@
 - sass-loader 把 scss 转成 css
 - less-loader 把 less 转成 css
 - babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
+
+### Plugin
+> Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展Webpack的功能，在Webpack运行的生命周期中会广播出许多事件，Plugin可以监听这些事件，在合适的时机通过Webpack提供的API改变输出结果。
+
+常用的plugin：
+
+- html-webpack-plugin 自动生成HTML5文件，并引入webpack打包好的 js 等文件。
+- clean-webpack-plugin 用于打包前先把dist文件夹清空
+- hot-module-replacement-plugin 模块热替换插件，即HMR，webpack4 自带插件，无需安装，在开发模式下配合 devServer 使用
+- mini-css-extract-plugin 将CSS提取到单独的文件中
+- PurgecssPlugin 可以去除未使用的 css, 一般与glob、glob-all 配合使用。
+- optimize-css-assets-webpack-plugin 用于 CSS 压缩
+- split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。相比于 commons-chunk-plugin 的优点：
+- webpack-bundle-analyzer 可视化 webpack 输出文件的体积
+- terser-webpack-plugin
+- add-asset-html-webpack-plugin
