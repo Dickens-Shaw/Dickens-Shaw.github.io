@@ -78,3 +78,10 @@ import()和 require.ensure
 1. 词法分析生成 Token，语法分析生成 AST，
 2. 遍历 AST，根据插件变换相应的节点，
 3. 最后把 AST 转换为代码
+
+### 热跟新原理
+1. 当修改了一个或多个文件； 
+2. 文件系统接收更改并通知webpack； 
+3. webpack重新编译构建一个或多个模块，并通知HMR服务器进行更新； 
+4. HMR Server 使用webSocket通知HMR runtime 需要更新，HMR运行时通过HTTP请求更新jsonp； 
+5. HMR运行时替换更新中的模块，如果确定这些模块无法更新，则触发整个页面刷新。
