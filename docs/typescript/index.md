@@ -6,3 +6,6 @@
   TypeScript 会包括 ES6 和未来提案中的特性，比如异步操作和装饰器。也会从其他语言借鉴某些特点，比如接口和抽象类。
 - 工具属性
   TypeScript 可以编译成标准的 Javascript。可以在任何浏览器和操作系统上运行。无需任何运行时额外开销。从这个角度讲 TypeScript 更像时一个工具。
+
+## 原始数据类型
+原始数据类型包括：布尔值、数值、字符串、null、undefined 以及 ES6 中的新类型 Symbol 和 BigInt。
