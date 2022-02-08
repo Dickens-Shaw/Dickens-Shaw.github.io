@@ -975,20 +975,6 @@
 
   - [分享这半年的 Electron 应用开发和优化经验 - 掘金](https://juejin.cn/post/6844904029231775758#heading-8)☑️
 
-## 公司
-
-## JGJ
-
-  - [GitLab](http://gitlab.ex.yzgong.com/)☑️
-
-  - [Files - ownCloud](http://in.yzgong.com/apps/files/)☑️
-
-  - [设计稿 - 工作台 - 腾讯CoDesign](https://codesign.qq.com/workspace/project/KnYqZLW11l0PGem)☑️
-
-  - [我的项目-TAPD平台](https://www.tapd.cn/company/participant_projects?from=left_tree2)☑️
-
-  - [| 吉工家文档中心](http://doc.ex.yzgong.com/)☑️
-
 ## 小程序转换
 
   - [（uni-app）微信小程序转钉钉小程序 - 灰信网（软件开发博客聚合）](https://www.freesion.com/article/8215531547/)☑️
@@ -1006,8 +992,6 @@
   - [吉工家管理系统](http://admin.test.jgjapp.com/index/login)☑️
 
   - [阿里邮箱企业版](https://qiye.aliyun.com/alimail/#h=WyJmbV8yIixbIjIiLCIiLHsiZklkIjoiMiIsInNlbElkIjoiMl8wOkR6enp6eVNMc2FXJC0tLS5MelRsTngyIiwib2Zmc2V0Ijo0OSwicmciOltbIm1haWxfc2Vzc2lvbl92aWV3Iix7ImlkIjoibSEyXzA6RHp6enp5U0xzYVckLS0tLkx6VGxOeDIiLCJzZiI6MH1dXX0seyJsYWJlbCI6IumCruS7tiJ9XV0=)☑️
-
-## VSPN
 
 ## 脚手架
 
@@ -1077,11 +1061,7 @@
 
   - [web前端工程化](https://www.zhihu.com/question/24558375)☑️
 
-## code review
-
 ## 代码规范
-
-## markdown
 
   - [百度](https://github.com/ecomfe/spec)☑️
 
@@ -1118,8 +1098,6 @@
   - [前端代码规范手册_dkh_321的博客-CSDN博客_前端代码规范文档](https://blog.csdn.net/dkh_321/article/details/81705340)☑️
 
   - [eslint-config-ali - npm](https://www.npmjs.com/package/eslint-config-ali)☑️
-
-  - [前端开发规范：命名规范、html规范、css规范、js规范](https://juejin.cn/post/6844903479698259975#heading-24)☑️
 
   - [前端开发规范：命名规范、html规范、css规范、js规范](https://juejin.cn/post/6844903479698259975)☑️
 
@@ -1161,40 +1139,6 @@
 
   - [《代码大全》里核心的部分checklist整理 - Liigo's blog - CSDN博客](https://blog.csdn.net/liigo/article/details/9997951)☑️
 
-  - [Web端原型图](https://org.modao.cc/app/43b49b0a236b477039113f0a729af9568a5392c9?simulator_type=device&sticky#screen=skmblcrpc8mk287)☑️
-
-  - [Projects · Dashboard · GitLab](http://gitlab.vspncd.com/dashboard/projects)☑️
-
-  - [YApi-高效、易用、功能强大的可视化接口管理平台](http://192.168.0.11:3001/group/265)☑️
-
-  - [用户登录 - 禅道](http://192.168.0.11:3030/zentao/user-login-L3plbnRhby8=.html)☑️
-
-  - [声网 - 文档中心](https://docs.agora.io/cn/Interactive%20Broadcast/landing-page?platform=Web)☑️
-
-  - [友盟唤起APP](https://developer.umeng.com/docs/191212/detail/193297)☑️
-
-  - [即时通信 IM SDK API（Web & 小程序） - 客户端 API - 文档中心 - 腾讯云](https://cloud.tencent.com/document/product/269/37411)☑️
-
-  - [5-7月作战计划 - 迭代开发 - Confluence](http://139.155.244.153:8090/pages/viewpage.action?pageId=5145518)☑️
-
-  - [转盘原型](https://shimo.im/docs/5rk9drmadeiPjpqx/read)☑️
-
-  - [赛博中心 - 蓝湖](https://lanhuapp.com/web/#/item?tid=a474f7ed-dc18-4c4a-83ec-36604794b877&teamId=a474f7ed-dc18-4c4a-83ec-36604794b877)☑️
-
-  - [腾讯企业邮箱 - 收件箱](https://exmail.qq.com/cgi-bin/frame_html?sid=NyWCUB9MInTEHDBQ,7&sign_type=&r=fbbe81d927fc9d2d7658ea147ca65631)☑️
-
-  - [GOGO语音后台管理系统](http://192.168.0.23:30002/SmashEggsAdmin/EggConfiguration)☑️
-
-  - [测试环境](http://gogotestweb.chatgogo.cn/)☑️
-
-  - [预发布](https://wwwstaging.chatgogo.cn/)☑️
-
-  - [正式环境](https://www.chatgogo.cn/Website/Home)☑️
-
-  - [Teambition · 阿里巴巴工作学习套件](https://www.teambition.com/organization/60bd8ad682e74f1bda72e98f)☑️
-
-## DGG
-
 ## 架构
 
   - [重拳出击：打造 Vue3.0 + Typescript + TSX 开(乞)发(丐)模式](https://juejin.cn/post/6844904054103998477)☑️
@@ -1232,84 +1176,6 @@
   - [jenkins + docker + nginx - SegmentFault 思否](https://segmentfault.com/a/1190000024419100)☑️
 
   - [jenkins+docker+nginx服务并访问vue项目 - 程序员大本营](https://www.pianshen.com/article/3835347340/)☑️
-
-  - [顶呱呱网址导航](http://map.dgg.net/)☑️
-
-  - [OA](http://jtoa.dgg188.cn/wui/main.jsp)☑️
-
-  - [IBOSS](https://portal.dgg188.cn/#/homePage)☑️
-
-  - [YAPI](http://yapi.dgg.cn/group/379)☑️
-
-  - [前端开发规范](https://note.youdao.com/ynoteshare1/index.html?id=fbfaf176202ebce7cad68eed58a9fe7a&type=notebook)☑️
-
-  - [商户、用户、产品中心](https://lanhuapp.com/web/#/item/project/board?pid=116a814e-75c7-4cb7-aec7-c7cfcb4a4266)☑️
-
-  - [原型](https://lanhuapp.com/web/#/item/project/product?pid=0009ad3b-9d66-42b8-9eed-2479723059b7&docId=5fe6a4a6-969f-4c2f-9b42-ea299dc09806&docType=axure&pageId=fa57444a749a4c209d2cd96b25588d38&image_id=5fe6a4a6-969f-4c2f-9b42-ea299dc09806&parentId=2c1b9fe2336b43baa7e9a55773f36883&type=share_board&pwd=rJNG&activeSectionId=&teamId=f9cbb872-eb5b-4e62-b603-24de28bd89ee&userId=20e3bbd4-78aa-463e-a4fd-f82ebe37a42c)☑️
-
-  - [薯片项目公共文档](http://172.16.0.253:8181/docs/shupian/665)☑️
-
-  - [薯片UI](http://192.168.254.233:86/ui/components/)☑️
-
-  - [薯片UI组件](http://192.168.254.225:12125/guide/)☑️
-
-  - [JIRA](http://cfce.dgg188.cn/pages/viewpage.action?pageId=918920#app-switcher)☑️
-
-  - [数据字典 - 薯片管理后台](https://dchipscommon.dgg188.cn/system/dic)☑️
-
-  - [Phabricator](http://phabricator.dgg188.cn/)☑️
-
-  - [薯片APP-Bug - 禅道](http://192.168.254.34/zentao/bug-browse-177-51-all.html)☑️
-
-  - [Jenkins](http://192.168.254.113:8080/view/xg/job/xg_crisps-product-center-web_3000/)☑️
-
-  - [合并请求 · fe / sp-scripts · GitLab](http://172.16.0.25/fe/sp-scripts/merge_requests)☑️
-
-  - [dev环境](https://dadmin-product.shupian.cn/)☑️
-
-  - [prod环境](https://admin-product.shupian.cn/)☑️
-
-  - [测试门户](https://xgxg.shupian.cn/login?redirect=%2F)☑️
-
-  - [薯片主应用](https://admin.shupian.cn/)☑️
-
-## SNQU
-
-## 声网
-
-  - [Project](https://console.agora.io/projects)☑️
-
-  - [实现音视频通话](https://docs.agora.io/cn/Voice/start_call_web?platform=Web)☑️
-
-  - [Basic-Video-Call/index.html at 5eeadc97f646a5e2bf4c11e42edea47af8b963fe · AgoraIO/Basic-Video-Call](https://github.com/AgoraIO/Basic-Video-Call/blob/5eeadc97f646a5e2bf4c11e42edea47af8b963fe/One-to-One-Video/Agora-Web-Tutorial-1to1/index.html#L191)☑️
-
-  - [Agora Web SDK API 参考 v3.0.0](https://docs.agora.io/cn/Voice/API%20Reference/web/index.html)☑️
-
-  - [AgoraIO/Basic-Video-Call at 5eeadc97f646a5e2bf4c11e42edea47af8b963fe](https://github.com/AgoraIO/Basic-Video-Call/tree/5eeadc97f646a5e2bf4c11e42edea47af8b963fe)☑️
-
-  - [Client | Agora Web SDK API 参考 v3.0.0](https://docs.agora.io/cn/Audio%20Broadcast/API%20Reference/web/interfaces/agorartc.client.html#gettransportstats)☑️
-
-  - [Stream | Agora Web SDK API 参考 v3.0.0](https://docs.agora.io/cn/Audio%20Broadcast/API%20Reference/web/interfaces/agorartc.stream.html#setaudiovolume)☑️
-
-  - [Client | Agora Web SDK API 参考 v3.0.0](https://docs.agora.io/cn/Audio%20Broadcast/API%20Reference/web/interfaces/agorartc.client.html#enableaudiovolumeindicator)☑️
-
-  - [为什么在 Chrome 81 浏览器上无法获取设备 ID？ - FAQ](https://docs.agora.io/cn/faq/empty_deviceId)☑️
-
-  - [Stream | Agora Web SDK API 参考 v3.1.1](https://docs.agora.io/cn/Audio%20Broadcast/API%20Reference/web/interfaces/agorartc.stream.html#setaudiooutput)☑️
-
-  - [Stream | Agora Web SDK API 参考 v3.1.1](https://docs.agora.io/cn/Audio%20Broadcast/API%20Reference/web/interfaces/agorartc.stream.html#switchdevice)☑️
-
-## 网易IM
-
-  - [Web源码导读-即时通讯Demo-Demo源码导读-通用-网易云信开发文档](https://dev.yunxin.163.com/docs/product/%E9%80%9A%E7%94%A8/Demo%E6%BA%90%E7%A0%81%E5%AF%BC%E8%AF%BB/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AFDemo/Web%E6%BA%90%E7%A0%81%E5%AF%BC%E8%AF%BB)☑️
-
-  - [GitHub - netease-im/NIM_Web_Demo: 网易云信Web Demo发布仓库](https://github.com/netease-im/NIM_Web_Demo)☑️
-
-  - [Documentation Class: NIM](https://dev.yunxin.163.com/docs/interface/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AFWeb%E7%AB%AF/NIMSDK-Web/NIM.html)☑️
-
-  - [文档搜索-网易云信](https://dev.yunxin.163.com/search?kw=%E8%8E%B7%E5%8F%96%E5%9C%A8%E7%BA%BF%E7%8A%B6%E6%80%81&pd=im&serv=all&sercn=web&offset=10&limit=10)☑️
-
-  - [统计场景](https://docs.qq.com/sheet/DQnlnanJqd0JsSFVJ?tab=zr5fyp&c=B20A0A0)☑️
 
 ## dicord
 
@@ -1359,40 +1225,3 @@
 
   - [Vue CLI 首屏优化技巧](https://mp.weixin.qq.com/s/Mi42xwB3wsARILhi5hi4fQ)☑️
 
-## PUBG代理
-
-  - [抽奖测试](https://prod-live-fronts-t.vosat.cn/draw_cjl/index.html?channel_id=jwxf&ip=192.168.2.117&mac=1C-1B-0D-AC-CC-D9)☑️
-
-  - [正式服抽奖](https://promotional.playbatllesgrounds.com/draw_cjl/index.html?channel_id=jwxf&ip=192.168.2.117&mac=1C-1B-0D-AC-CC-D9)☑️
-
-  - [PLAYERUNKNOWN'S BATTLEGROUNDS](https://prod-live-front.playbattlegrounds.com/)☑️
-
-  - [PUBG正式](https://prod-live-front.playbattlesgrounds.com/)☑️
-
-  - [PUBG测试](https://prod-live-front-t.playbattlesgrounds.com/)☑️
-
-  - [V6电竞开发进度 - 敏捷看板 - SNQU-JIRA](http://192.168.3.73:8080/secure/RapidBoard.jspa?rapidView=1&view=detail&selectedIssue=V6DJ-37&quickFilter=1)☑️
-
-  - [V6电竞 - 蓝湖](https://lanhuapp.com/web/#/item?cid=&fid=all&tid=6c922516-40fd-4487-8ae4-8b8c74422021)☑️
-
-  - [System Dashboard - SNQU(CD) NetWork---天下武功，唯快不破；](http://dev.snqu.com:9999/secure/Dashboard.jspa)☑️
-
-  - [禅道内网](http://192.168.1.63/zentao/my/)☑️
-
-  - [禅道外网](http://218.6.242.42:3389/zentao/my/)☑️
-
-  - [技术文档 - V6电竞 - SNQU --- 知识的海洋](http://dev.snqu.com:9998/pages/viewpage.action?pageId=31097160)☑️
-
-  - [提交上线单 - walle](http://192.168.2.30:88/task/submit)☑️
-
-  - [CDN服务器](http://tresource.v6.cn/elfinder/manager#elf_l1_d2Vi)☑️
-
-  - [Projects · Dashboard · GitLab](https://git.vm.snqu.com/)☑️
-
-  - [YApi-高效、易用、功能强大的可视化接口管理平台](http://apidoc.v6.cn/group/84)☑️
-
-  - [Iconfont-阿里巴巴矢量图标库](https://www.iconfont.cn/manage/index?manage_type=myprojects&projectId=1462943&keyword=)☑️
-
-  - [WeFun - 测试](https://test-ma.wefunapp.cn/app/index)☑️
-
-  - [WeFun语音-开黑语音平台,手游语音开黑聊天软件](https://www.wefunapp.cn/)☑️
