@@ -10,3 +10,10 @@
   - iframe 会阻塞主页面的 onload 事件
   - 无法被一些搜索引擎索识别
   - 会产生很多页面，不容易管理
+
+## single-spa
+在single-spa中，通过reroute和路由控制不断地在调度子应用，加载子应用的代码，切换子应用，改变子应用的app.status。
+
+所以single-spa解决了一个子应用之间的调度问题。
+
+但是single-spa的加载函数registerApplication是需要用户自己去实现的，它的作用就是告诉single-spa需要如何去加载子应用的代码，同时让主应用获取到子应用的生命周期函数，这个地方的书写难度是比较高的
