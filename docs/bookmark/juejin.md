@@ -1,6 +1,8 @@
 
 ## 前端
 
+  - [初探 MicroApp，一个极致简洁的微前端框架](https://juejin.cn/post/7058112712076689439)☑️
+
   - [最全的手写JS面试题](https://juejin.cn/post/6968713283884974088)☑️
 
   - [ES6、ES7、ES8、ES9、ES10新特性一览](https://juejin.cn/post/6844903811622912014)☑️
@@ -216,6 +218,8 @@
   - [专有钉钉前端面试指南](https://juejin.cn/post/6986436944913924103)☑️
 
 ## Webpack
+
+  - [打包的3种hash值你知道吗？当年我校招时被这题难倒了！](https://juejin.cn/post/7060688758370205733)☑️
 
   - [「吐血整理」再来一打Webpack面试题](https://juejin.cn/post/6844904094281236487)☑️
 
