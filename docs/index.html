@@ -33,6 +33,8 @@
 
     #live2dcanvas {
       border: 0 !important;
+      /* pointer-events: unset!important;
+      cursor: pointer; */
     }
   </style>
 </head>
@@ -78,9 +80,9 @@
       },
       auto2top: true,
       copyCode: {
-        buttonText: '你敢点',
+        buttonText: '点击复制',
         errorText: 'Error',
-        successText: '我就敢复制'
+        successText: 'copied'
       },
       count: {
         countable: true,
@@ -127,13 +129,6 @@
     model: {
       jsonPath: pathConf['黑猫'],
     },
-    dialog: {
-      enable: true,
-      script: {
-        'tap body': '哎呀！别碰我！',
-        'tap face': '人家是在认真写博客哦--前端妹子',
-      }
-    },
     display: {
       superSample: 1,
       width: 100,
@@ -144,5 +139,4 @@
     },
   });
 </script>
-
 </html>
