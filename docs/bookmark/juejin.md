@@ -1,7 +1,7 @@
 
 ## React.js
 
-  - [React useState和setState到底是同步还是异步呢？](https://juejin.cn/post/6959885030063603743)☑️
+  - [React useState和setState到底是同步还是异步呢？](https://juejin.cn/post/6959885030063603743)✅
 
   - [30分钟精通React Hooks](https://juejin.cn/post/6844903709927800846)☑️
 

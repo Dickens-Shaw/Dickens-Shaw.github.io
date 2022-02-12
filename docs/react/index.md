@@ -91,12 +91,6 @@ classExampleComponentextendsReact.Component{
 }
 ```
 
-### 发送请求
-
-我们应当将 AJAX 请求放到 componentDidMount 函数中执行，主要原因有下：
-React 下一代调和算法 Fiber 会通过开始或停止渲染的方式优化应用性能，其会影响到 componentWillMount 的触发次数。对于 componentWillMount 这个生命周期函数的调用次数会变得不确定，React 可能会多次频繁调用 componentWillMount。如果我们将 AJAX 请求放到 componentWillMount 函数中，那么显而易见其会被触发多次，自然也就不是好的选择。
-如果我们将 AJAX 请求放置在生命周期的其他函数中，我们并不能保证请求仅在组件挂载完毕后才会要求响应。如果我们的数据请求在组件挂载之前就完成，并且调用了 setState 函数将数据添加到组件状态中，对于未挂载的组件则会报错。而在 componentDidMount 函数中进行 AJAX 请求则能有效避免这个问题。
-
 ## 事件机制
 
 JSX 上写的事件并没有绑定在对应的真实 DOM 上，而是通过事件代理的方式，将所有的事件都统一绑定在了 document 上。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件
@@ -200,7 +194,7 @@ JavaScript 中的对象一般是可变的（Mutable），因为使用了引用�
 
 Immutable 可以很好地解决这些问题。
 
-### 什么是 IMMUTABLE DATA
+- IMMUTABLE DATA
 
 Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutable 对象的任何修改或添加删除操作都会返回一个新的 Immutable 对象。Immutable 实现的原理是 Persistent Data Structure（持久化数据结构），也就是使用旧数据创建新数据时，要保证旧数据同时可用且不变。同时为了避免 deepCopy 把所有节点都复制一遍带来的性能损耗，Immutable 使用了 Structural Sharing（结构共享），即如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点，其它节点则进行共享。
 
@@ -340,7 +334,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
   1. 首先调用了 setState 入口函数，入口函数在这里就是充当一个分发器的角色，根据入参的不同，将其分发到不同的功能函数中去；
   2. enqueueSetState 方法将新的 state 放进组件的状态队列里，并调用 enqueueUpdate 来处理将要更新的实例对象；
-  3. 在 enqueueUpdate 方法中引出了一个关键的对象——batchingStrategy，该对象所具备的 isBatchingUpdates 属性直接决定了当下是要走更新流程，还是应该排队等待；如果轮到执行，就调用 batchedUpdates 方法来直接发起更新流程。由此可以推测，batchingStrategy 或许正是 React 内部专门用于管控批量更新的对象。
+  3. 在 enqueueUpdate 方法中引出了一个关键的对象——batchingStrategy，该对象所具备的 isBatchingUpdates 属性直接决定了当下是要走更新流程，还是应该排队等待；如果轮到执行，就调用 batchedUpdates（合并更新） 方法来直接发起更新流程。由此可以推测，batchingStrategy 或许正是 React 内部专门用于管控批量更新的对象。
 
 - 调用后发生了什么
   1. React 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程（Reconciliation）。
@@ -358,6 +352,37 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 - 批量更新
   调用 setState 时，组件的 state 并不会立即改变， setState 只是把要修改的 state 放入一个队列， React 会优化真正的执行时机，并出于性能原因，会将 React 事件处理程序中的多次 React 事件处理程序中的多次 setState 的状态修改合并成一次状态修改。 最终更新只产生一次组件及其子组件的重新渲染，这对于大型应用程序中的性能提升至关重要。
+
+- 怎么进行合并更新
+
+这里 react 用到了事务机制。
+
+React 中的 Batch Update 是通过「Transaction」实现的。在 React 源码关于 Transaction 的部分， Transaction 的作用：
+
+用大白话说就是在实际的 useState/setState 前后各加了段逻辑给包了起来。只要是在同一个事务中的 setState 会进行合并（注意，useState不会进行state的合并）处理。
+
+- 为什么 setTimeout 不能进行事务操作
+
+由于 react 的事件委托机制，调用 onClick 执行的事件，是处于 react 的控制范围的。
+
+而 setTimeout 已经超出了 react 的控制范围，react 无法对 setTimeout 的代码前后加上事务逻辑（除非 react 重写 setTimeout）。
+
+所以当遇到 setTimeout/setInterval/Promise.then(fn)/fetch 回调/xhr 网络回调时，react 都是无法控制的。
+
+相关react 源码如下：
+
+```js
+if (executionContext === NoContext) {
+  // Flush the synchronous work now, unless we're already working or inside
+  // a batch. This is intentionally inside scheduleUpdateOnFiber instead of
+  // scheduleCallbackForFiber to preserve the ability to schedule a callback
+  // without immediately flushing it. We only do this for user-initiated
+  // updates, to preserve historical behavior of legacy mode.
+  flushSyncCallbackQueue()
+}
+```
+
+> executionContext 代表了目前 react 所处的阶段，而 NoContext 你可以理解为是 react 已经没活干了的状态。而 flushSyncCallbackQueue 里面就会去同步调用我们的 this.setState ，也就是说会同步更新我们的 state 。所以，我们知道了，当 executionContext 为 NoContext 的时候，我们的 setState 就是同步的
 
 - 第二个参数
   该函数会在 setState 函数调用完成并且组件开始重渲染的时候被调用，我们可以用该函数来监听渲染是否完成
@@ -474,7 +499,7 @@ context 提供了一种数据传输方式，它使得数据可以直接通过组
 1. 基于 history 库来实现上述不同的客户端路由实现思想，并且能够保存历史记录等，磨平浏览器差异，上层无感知
 2. 通过维护的列表，在每次 URL 发生变化的回收，通过配置的 路由路径，匹配到对应的 Component，并且 render
 
-## 组件设计相关
+## 组件相关
 
 ### 组件划分
 
@@ -482,15 +507,15 @@ context 提供了一种数据传输方式，它使得数据可以直接通过组
 UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
 两者通过 React-Redux 提供 connect 方法联系起来。
 
-## 函数/无状态/展示组件
+### 函数/无状态/展示组件
 
 函数或无状态组件是一个纯函数，它可接受接受参数，并返回 react 元素。这些都是没有任何副作用的纯函数。这些组件没有状态或生命周期方法
 
-## 类/有状态组件
+### 类/有状态组件
 
 类或有状态组件具有状态和生命周期方可能通过 setState()方法更改组件的状态。类组件是通过扩展 React 创建的。它在构造函数中初始化，也可能有子组件
 
-## 异步组件
+### 异步组件
 
 - 场景:路由切换,如果同步加载多个页面路由会导致缓慢
 
@@ -503,17 +528,17 @@ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
 - 使用方法:
   安装 react-loadable ,babel 插件安装 syntax-dynamic-import. react-loadable 是通过 webpack 的异步 import 实现的
 
-## 动态组件
+### 动态组件
 
 场景：做一个 tab 切换时就会涉及到组件动态加载
 实现：条件判断渲染不同组件
 
-## 递归组件
+### 递归组件
 
 场景：tree 组件
 利用 React.Fragment 或者 div 包裹循环
 
-## 受控组件和不受控组件
+### 受控组件和不受控组件
 
 处理表单数据：
 
@@ -524,14 +549,14 @@ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
 
 把组件之间需要共享的状态抽取出来，遵循特定的约定，统一来管理，让状态的变化可以预测
 
-## Flux
+### Flux
 
 是一种强制单向数据流的架构模式。它控制派生数据，并使用具有所有数据权限的中心 store 实现多个组件之间的通信。整个应用中的数据更新必须只能在此处进行。 Flux 为应用提供稳定性并减少运行时的错误。
 
 1. 核心模块:Store,Reduce,Store,Container;
 2. 有多个 store;
 
-## Redux
+### Redux
 
 Redux 是 React 的一个状态管理库，是遵循 Flux 模式的一种实现。 Redux 简化了 React 中的单向数据流。 Redux 将状态管理完全从 React 中抽象出来。
 
@@ -549,11 +574,11 @@ Redux 是 React 的一个状态管理库，是遵循 Flux 模式的一种实现�
   2. 然后，Store 自动调用 Reducer，并且传入两个参数：当前 State 和收到的 Action，Reducer 会返回新的 State
   3. State 一旦有变化，Store 就会调用监听函数，来更新 View。
 
-### redux 异步中间件
+#### redux 异步中间件
 
 redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个 middleware 接受 2 个参数， Store 的 getState 函数和 dispatch 函数，分别获得 store 和 action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
 
-### redux-thunk
+#### redux-thunk
 
 - 优点：
 
@@ -569,7 +594,7 @@ redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源
 - 处理副作用：
   既可以 dispatch action 对象，也可以 dispatch 一个函数。函数的第一个参数为 dispatch 函数，在函数内部我们可以处理一些副作用，完成后再调用 dispatch 函数就又回到了纯函数的流
 
-### redux-saga
+#### redux-saga
 
 - 优点：
 
@@ -593,7 +618,7 @@ redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源
   - takeEvery：可以让多个 saga 任务并行被 fork 执行
   - takeLatest：takeLatest 不允许多个 saga 任务并行地执行。一旦接收到新的发起的 action，它就会取消前面所有 fork 过的任务（如果这些任务还在执行的话）。在处理 AJAX 请求的时候，如果只希望获取最后那个请求的响应， takeLatest 就会非常有用。
 
-## Mobx
+### Mobx
 
 透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
 
@@ -601,7 +626,7 @@ redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源
 2. 有多个 store;
 3. 设计更多偏向于面向对象编程和响应式编程，通常将状态包装成可观察对象，一旦状态对象变更，就能自动获得更新
 
-## Dva
+### Dva
 
 dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了简化开发体验，dva 还额外内置了 react-router 和 fetch，所以也可以理解为一个轻量级的应用框架
 
