@@ -25,13 +25,13 @@
 >
 > 设计泛型的关键目的是在成员之间提供有意义的约束，这些成员可以是：类的实例成员、类的方法、函数参数和函数返回值。
 >
-> 泛型（Generics）是允许同一个函数接受不同类型参数的一种模板。相比于使用any，使用泛型来创建可复用的组件要更好，因为泛型会保留参数。
+> 泛型（Generics）是允许同一个函数接受不同类型参数的一种模板。相比于使用 any，使用泛型来创建可复用的组件要更好，因为泛型会保留参数。
 
 - 使用
-泛型其实是将一种或者多种类型提升，并且用一个自定义的标识符用来表示，比如现在要提升一个函数的参数类型，该参数类型可以是任意值，并且返回的是与其一样的类型
+  泛型其实是将一种或者多种类型提升，并且用一个自定义的标识符用来表示，比如现在要提升一个函数的参数类型，该参数类型可以是任意值，并且返回的是与其一样的类型
 
 - 将泛型当作变量
-比如现在有一个返回该类型的一个数组，则泛型应该表示该数组所有元素的类型
+  比如现在有一个返回该类型的一个数组，则泛型应该表示该数组所有元素的类型
 
 - 泛型也是一个类型
   泛型也是一种类型，泛型本身也可以有接口和类
@@ -46,22 +46,93 @@
 
 - 泛型继承接口，实现泛型的约束
 
-例如现在要实现一个通用类型（有length方法的所有）的函数，打印其的length值并返回其本身，由于不知道其参数类型，可以指定其为泛型
+例如现在要实现一个通用类型（有 length 方法的所有）的函数，打印其的 length 值并返回其本身，由于不知道其参数类型，可以指定其为泛型
 
 ## 工具类
 
 - Typeof：用来获取一个变量声明或对象的类型
 - Keyof：用于获取某种类型的所有键，其返回类型是联合类型
 - In：用来遍历枚举类型
-- Infer：在条件类型语句中，可以用infer声明一个类型变量并且对它进行使用
-- Extends：有时候我们定义的泛型不想过于灵活或者说想继承某些类等，可以通过extends关键字添加泛型约束
+- Infer：在条件类型语句中，可以用 infer 声明一个类型变量并且对它进行使用
+- Extends：有时候我们定义的泛型不想过于灵活或者说想继承某些类等，可以通过 extends 关键字添加泛型约束
 
 ## type 和 interface 的区别
 
-1. type可以声明 基本类型，联合类型，元组 的别名，interface不行
-2. type 语句中可以使用 typeof 获取类型实例
-3. type 支持类型映射，interface不支持
-4. interface能够声明合并，type不能
+### 相同点
+
+1. 对 **接口定义** 的两种不同形式，目的都是一样的，都是用来定义 **对象** 或者 **函数** 的形状
+
+```js
+    interface example {
+        name: string
+        age: number
+    }
+    interface exampleFunc {
+        (name:string,age:number): void
+    }
+
+
+    type example = {
+        name: string
+        age: number
+    }
+    type example = (name:string,age:number) => void
+```
+
+2. 支持 **继承**，并且不是独立的，而是可以 **互相** 继承，只是具体的形式稍有差别
+
+```js
+type exampleType1 = {
+  name: string,
+}
+interface exampleInterface1 {
+  name: string;
+}
+
+type exampleType2 = exampleType1 & {
+  age: number,
+}
+type exampleType2 = exampleInterface1 & {
+  age: number,
+}
+interface exampleInterface2 extends exampleType1 {
+  age: number;
+}
+interface exampleInterface2 extends exampleInterface1 {
+  age: number;
+}
+```
+
+对于 interface 来说，继承是通过 extends 实现的，而 type 的话是通过 & 来实现的，也可以叫做 交叉类型
+
+### 不同点
+
+- type
+
+  - type可以定义 基本类型的别名，如 type myString = string
+  - type可以通过 typeof 操作符来定义，如 type myType = typeof someObj
+  - type可以申明 联合类型，如 type unionType = myType1 | myType2
+  - type可以申明 元组类型，如 type yuanzu = [myType1, myType2]
+
+- interface
+
+```js
+  interface可以 声明合并，示例如下
+    interface test {
+        name: string
+    }
+    interface test {
+        age: number
+    }
+    /*
+        test实际为 {
+            name: string
+            age: number
+        }
+    */
+```
+这种情况下，如果是type的话，就会是 覆盖 的效果，始终只有最后一个type生效
+
 
 很可能忽略一个点：type 只是一个类型别名，并不会产生类型。所以其实 type 和 interface 其实不是同一个概念，其实他们俩不应该用来比较的，只是有时候用起来看着类似
 

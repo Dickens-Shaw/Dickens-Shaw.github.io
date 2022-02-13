@@ -53,7 +53,7 @@
 
   - [Electron-快速构建安装包及自动发布](https://juejin.cn/post/6844904102011338766)☑️
 
-  - [type和interface的区别知多少？](https://juejin.cn/post/7059725643365220366)☑️
+  - [type和interface的区别知多少？](https://juejin.cn/post/7059725643365220366)✅
 
   - [使用Javascript制作BadApple字符画视频 | 创作者训练营第二期](https://juejin.cn/post/6953029932968574984)☑️
 
