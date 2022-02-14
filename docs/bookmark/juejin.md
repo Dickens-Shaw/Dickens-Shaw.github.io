@@ -17,8 +17,6 @@
 
   - [React + TypeScript实践](https://juejin.cn/post/6952696734078369828)☑️
 
-  - [你会用ES6，那倒是用啊！](https://juejin.cn/post/7016520448204603423)☑️
-
   - [前端面试考点多？看这些文章就够了（2019年6月更新版）](https://juejin.cn/post/6844903577220349959)☑️
 
   - [React 开发必须知道的 34 个技巧【近1W字】](https://juejin.cn/post/6844903993278201870)☑️

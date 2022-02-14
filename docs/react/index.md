@@ -285,18 +285,18 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 - 对原有 React 的 API 封装的钩子函数
 
-|        钩子名        | 作用                                                                                                                                                                                                                        |
-| :------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|       useState       | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了                                                                 |
-|      useEffect       | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化                                                                                                                   |
-|      useContext      | 定义一个全局的对象,类似 context                                                                                                                                                                                             |
-|      useReducer      | 可以增强函数提供类似 Redux 的功能                                                                                                                                                                                           |
-|     useCallback      | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
-|       useMemo        | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值                                                                                                                                                       |
-|        useRef        | 获取 ref 属性对应的 dom                                                                                                                                                                                                     |
-| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值                                                                                                                                                                                       |
-|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发                                                                                                                                   |
-|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发                                                                                                                                                                          |
+|  钩子名  | 作用|
+| :------------------: | ------------------ |
+| useState | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了     |
+|useEffect | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化 |
+|useContext| 定义一个全局的对象,类似 context   |
+|useReducer| 可以增强函数提供类似 Redux 的功能 |
+|     useCallback| 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
+| useMemo  | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值 |
+|  useRef  | 获取 ref 属性对应的 dom     |
+| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值   |
+|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发     |
+|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发  |
 
 ## Hooks & Mixin & HOC
 
@@ -313,7 +313,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 ## props 和 state
 
-| 条件                 | State | Props |
+| 条件     | State | Props |
 | -------------------- | :---: | :---: |
 | 从父组件中接收初始值 |  Yes  |  Yes  |
 | 父组件可以改变值     |  No   |  Yes  |
