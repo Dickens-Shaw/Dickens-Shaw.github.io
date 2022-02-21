@@ -68,3 +68,9 @@
 - `object.onerror`
 - `performance.getEntries()`
 - `Error 事件捕获`
+
+## CSS提高页面渲染速度
+
+### 内容可见效(content-visibility)
+
+> 我们可以使用CSS的`content-visibility`来跳过屏幕外的内容渲染。也就是说，如果你有大量的离屏内容（Off-screen Content），这将会大幅减少页面渲染时间
