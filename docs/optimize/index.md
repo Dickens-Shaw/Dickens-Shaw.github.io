@@ -74,3 +74,6 @@
 ### 内容可见效(content-visibility)
 
 > 我们可以使用CSS的`content-visibility`来跳过屏幕外的内容渲染。也就是说，如果你有大量的离屏内容（Off-screen Content），这将会大幅减少页面渲染时间
+
+有了CSS的`content-visibility`属性，影响浏览器的渲染过程就变得更加容易。本质上，这个属性 **改变了一个元素的可见性，并管理其渲染状态**。
+
