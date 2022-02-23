@@ -176,4 +176,5 @@ CSS 的`font-display`属性有五个不同的值：
 }
 ```
 
-
+### 开启GPU渲染动画
+浏览器针对处理CSS动画和不会很好地触发重排（因此也导致绘）的动画属性进行了优化。为了提高性能，可以将被动画化的节点从主线程移到GPU上。将导致合成的属性包括 3D transforms (`transform: translateZ()`, `rotate3d()`等)，`animating`， `transform` 和 `opacity`, `position: fixed`，`will-change`，和 `filter`。一些元素，例如 `<video>`, `<canvas>` 和 `<iframe>`，也位于各自的图层上。 将元素提升为图层（也称为合成）时，动画转换属性将在GPU中完成，从而改善性能，尤其是在移动设备上。
