@@ -166,15 +166,37 @@ CSS 的`font-display`属性有五个不同的值：
 - `optional` ：效果和 fallback 几乎一样，都是先在极短的时间内文本不可见，然后再加载无样式的文本。不过 optional 选项可以让浏览器自由决定是否使用自定义字体，而这个决定很大程度上取决于浏览器的连接速度。如果速度很慢，那你的自定义字体可能就不会被使用。使用 optional 时，阻塞阶段时间会非常小（多数情况下建议低于 100ms），交换阶段时间为 0。
 
 例：
+
 ```css
 @font-face {
-    font-family: "Open Sans Regular";
-    font-weight: 400;
-    font-style: normal;
-    src: url("fonts/OpenSans-Regular-BasicLatin.woff2") format("woff2");
-    font-display: swap;
+  font-family: 'Open Sans Regular';
+  font-weight: 400;
+  font-style: normal;
+  src: url('fonts/OpenSans-Regular-BasicLatin.woff2') format('woff2');
+  font-display: swap;
 }
 ```
 
-### 开启GPU渲染动画
-浏览器针对处理CSS动画和不会很好地触发重排（因此也导致绘）的动画属性进行了优化。为了提高性能，可以将被动画化的节点从主线程移到GPU上。将导致合成的属性包括 3D transforms (`transform: translateZ()`, `rotate3d()`等)，`animating`， `transform` 和 `opacity`, `position: fixed`，`will-change`，和 `filter`。一些元素，例如 `<video>`, `<canvas>` 和 `<iframe>`，也位于各自的图层上。 将元素提升为图层（也称为合成）时，动画转换属性将在GPU中完成，从而改善性能，尤其是在移动设备上。
+### 开启 GPU 渲染动画
+
+浏览器针对处理 CSS 动画和不会很好地触发重排（因此也导致绘）的动画属性进行了优化。为了提高性能，可以将被动画化的节点从主线程移到 GPU 上。将导致合成的属性包括 3D transforms (`transform: translateZ()`, `rotate3d()`等)，`animating`， `transform` 和 `opacity`, `position: fixed`，`will-change`，和 `filter`。一些元素，例如 `<video>`, `<canvas>` 和 `<iframe>`，也位于各自的图层上。 将元素提升为图层（也称为合成）时，动画转换属性将在 GPU 中完成，从而改善性能，尤其是在移动设备上。
+
+### 减少渲染阻止时间
+
+Web 应用为了满足多种形式的需求，包括 PC、平板电脑和手机等，我们必须根据媒体尺寸编写新的样式。当涉及页面渲染时，它无法启动渲染阶段，直到 CSS 对象模型（CSSOM）已准备就绪。
+
+可以根据表单因素将其拆分为多个样式表。在这种情况下，我们可以只让主 CSS 文件阻塞关键路径，并以高优先级下载它，而让其他样式表以低优先级方式下载。
+
+```html
+<!-- style.css contains only the minimal styles needed for the page rendering -->
+<link rel="stylesheet" href="styles.css" media="all" />
+
+<!-- Following stylesheets have only the styles necessary for the form factor -->
+<link rel="stylesheet" href="sm.css" media="(min-width: 20em)" />
+<link rel="stylesheet" href="md.css" media="(min-width: 64em)" />
+<link rel="stylesheet" href="lg.css" media="(min-width: 90em)" />
+<link rel="stylesheet" href="ex.css" media="(min-width: 120em)" />
+<link rel="stylesheet" href="print.css" media="print" />
+```
+
+默认情况下，浏览器假设每个指定的样式表都是阻塞渲染的。通过添加 media 属性附加媒体查询，告诉浏览器何时应用样式表。当浏览器看到一个它知道只会用于特定场景的样式表时，它仍会下载样式，但不会阻塞渲染。通过将 CSS 分成多个文件，主要的 阻塞渲染 文件（本例中为 styles.css）的大小变得更小，从而减少了渲染被阻塞的时间。
