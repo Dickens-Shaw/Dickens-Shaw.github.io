@@ -69,11 +69,70 @@
 - `performance.getEntries()`
 - `Error 事件捕获`
 
-## CSS提高页面渲染速度
+## CSS 提高页面渲染速度
 
 ### 内容可见效(content-visibility)
 
-> 我们可以使用CSS的`content-visibility`来跳过屏幕外的内容渲染。也就是说，如果你有大量的离屏内容（Off-screen Content），这将会大幅减少页面渲染时间
+> 我们可以使用 CSS 的`content-visibility`来跳过屏幕外的内容渲染。也就是说，如果你有大量的离屏内容（Off-screen Content），这将会大幅减少页面渲染时间
 
-有了CSS的`content-visibility`属性，影响浏览器的渲染过程就变得更加容易。本质上，这个属性 **改变了一个元素的可见性，并管理其渲染状态**。
+- 本质： **改变了一个元素的可见性，并管理其渲染状态**。
 
+- 关键能力：**允许我们推迟我们选择的 HTML 元素渲染**
+
+`content-visibility`会将分配给它的元素的高度（`height`）视为`0`，浏览器在渲染之前会将这个元素的高度变为`0`，从而使我们的页面高度和滚动变得混乱。但如果已经为元素或其子元素显式设置了高度，那这种行为就会被覆盖。如果你的元素中没显式设置高度，并且因为显式设置`height`可能会带来一定的副作用而没设置，那么我们可以使用`contain-intrinsic-size`作为一个占位符尺寸来替代渲染内容，来确保元素的正确渲染，同时也保留延迟渲染的好处。
+
+```css
+div {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px; // 固有尺寸
+}
+```
+
+_\* 但如果有大量的元素都设置了 content-visibility: auto，滚动条仍然会有较小的问题。_
+
+`content-visibility`提供的另外两个值`visible`和`hidden`可以让我们实现像元素的显式和隐藏，类似于`display`的`none`和非`none`值的切换，它可以提高频繁显示或隐藏的元素的渲染性能，例如模态框的显示和隐藏。`content-visibility`可以提供这种性能提升，这要归功于其隐藏值（`hidden`）的功能与其他值的不同：
+
+- `display: none`：隐藏元素并破坏其渲染状态。 这意味着取消隐藏元素与渲染具有相同内容的新元素一样昂贵
+- `visibility: hidden`：隐藏元素并保持其渲染状态。 这并不能真正从文档中删除该元素，因为它（及其子树）仍占据页面上的几何空间，并且仍然可以单击。 它也可以在需要时随时更新渲染状态，即使隐藏也是如此
+- `content-visibility: hidden`：隐藏元素并保留其渲染状态。这意味着该元素隐藏时行为和 `display: none` 一样，但再次显示它的成本要低得多
+
+### 合理使用 will-change
+
+以往在动画开发时，会使用 CSS 的 3D 变换（`transform`中的`translate3d()`或`translateZ()`）来开启 GPU 加速，但这会将元素和它的上下文提到另一个“层”，独立于其他元素被渲染。可这种将元素提取到一个新层，相对来说代价也是昂贵的，这可能会使 transform 动画延迟几百毫秒
+
+现在可以直接使用 CSS 的`will-change`属性，该属性可以表明元素将修改特定的属性，让浏览器事先进行必要的优化
+
+- 属性值：
+
+  - `auto`：默认值，浏览器会根据具体情况，自行进行优化
+  - `scroll-position`：表示开发者将要改变元素的滚动位置，比如浏览器通常仅渲染可滚动元素“滚动窗口”中的内容。而某些内容超过该窗口（不在浏览器的可视区域内）。如果 will-change 显式设置了该值，将扩展渲染“滚动窗口”周围的内容，从而顺利地进行更长，更快的滚动（让元素的滚动更流畅）
+  - `content`：表示开发者将要改变元素的内容，比如浏览器常将大部分不经常改变的元素缓存下来。但如果一个元素的内容不断发生改变，那么产生和维护这个缓存就是在浪费时间。如果 will-change 显式设置了该值，可以减少浏览器对元素的缓存，或者完全避免缓存。变为从始至终都重新渲染元素。使用该值时需要尽量在文档树最末尾上使用，因为该值会被应用到它所声明元素的子节点，要是在文档树较高的节点上使用的话，可能会对页面性能造成较大的影响
+  - `<custom-ident>`：表示开发者将要改变的元素属性。如果给定的值是缩写，则默认被扩展全，比如，`will-change`设置的值是 padding，那么会补全所有`padding`的属性，如 `will-change: padding-top, padding-right, padding-bottom, padding-left;`
+
+- 使用：
+
+  - _不要将 `will-change` 应用到太多元素上_：浏览器已经尽力尝试去优化一切可以优化的东西了。有一些更强力的优化，如果与 will-change 结合在一起的话，有可能会消耗很多机器资源，如果过度使用的话，可能导致页面响应缓慢或者消耗非常多的资源。比如 `*{will-change: transform, opacity;}`
+  - _有节制地使用_：通常，当元素恢复到初始状态时，浏览器会丢弃掉之前做的优化工作。但是如果直接在样式表中显式声明了 will-change 属性，则表示目标元素可能会经常变化，浏览器会将优化工作保存得比之前更久。所以最佳实践是当元素变化之前和之后通过脚本来切换 will-change 的值
+  - _不要过早应用 will-change 优化_：如果你的页面在性能方面没什么问题，则不要添加 will-change 属性来榨取一丁点的速度。 will-change 的设计初衷是作为最后的优化手段，用来尝试解决现有的性能问题。它不应该被用来预防性能问题。过度使用 will-change 会导致大量的内存占用，并会导致更复杂的渲染过程，因为浏览器会试图准备可能存在的变化过程。这会导致更严重的性能问题。
+  - _给它足够的工作时间_：这个属性是用来让页面开发者告知浏览器哪些属性可能会变化的。然后浏览器可以选择在变化发生前提前去做一些优化工作。所以给浏览器一点时间去真正做这些优化工作是非常重要的。使用时需要尝试去找到一些方法提前一定时间获知元素可能发生的变化，然后为它加上 will-change 属性。
+
+- 注意：
+  建议在完成所有动画后，将元素的 will-change 删除
+
+```js
+var el = document.getElementById('element')
+
+// 当鼠标移动到该元素上时给该元素设置 will-change 属性
+el.addEventListener('mouseenter', hintBrowser)
+// 当 CSS 动画结束后清除 will-change 属性
+el.addEventListener('animationEnd', removeHint)
+
+function hintBrowser() {
+  // 填写上那些你知道的，会在 CSS 动画中发生改变的 CSS 属性名们
+  this.style.willChange = 'transform, opacity'
+}
+
+function removeHint() {
+  this.style.willChange = 'auto'
+}
+```
