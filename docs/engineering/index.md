@@ -65,16 +65,43 @@
 
 ## Loader
 
-> Loader 本质就是一个函数，在该函数中对接收到的内容进行转换，返回转换后的结果。因为 Webpack 只认识 JavaScript，所以 Loader 就成了翻译官，对其他类型的资源进行转译预处理工作
+> webpack中提供了一种处理多种文件格式的机制，这便是Loader，我们可以把Loader当成一个转换器，它可以将某种格式的文件转换成webpack支持打包的模块。
 
-常用 loader:-
+在Webpack中，一切皆模块，我们常见的Javascript、CSS、Less、Typescript、Jsx、图片等文件都是模块，不同模块的加载是通过模块加载器来统一管理的，当我们需要使用不同的 Loader 来解析不同类型的文件时，我们可以在module.rules字段下配置相关规则。
 
-- file-loader 使得我们可以在 JS 文件中引入 png\jpg 等图片资源
-- url-loader 跟 file-loader 类似；唯一不同的是在于用户可以设置一个文件大小的阈值，当大于阈值时跟 file-loader 一样返回 publicPath，而小于该阈值时则返回文件 base64 形式编码。
-- style-loader css-loader 其中 css-loader 处理 js 中 import require() @import/url 引入的内容；style-loader 负责把样式插入到 DOM 中，方法是在 head 中插入一个 style 标签，并把样式写入到这个标签的 innerHTML 里。
+### 特点
+- loader 本质上是一个函数，output=loader(input) // input可为工程源文件的字符串，也可是上一个loader转化后的结果；
+- 第一个 loader 的传入参数只有一个：资源文件(resource file)的内容；
+- loader支持链式调用，webpack打包时是按照数组从后往前的顺序将资源交给loader处理的。
+- 支持同步或异步函数。
+
+### 代码结构
+```js
+// source：资源输入，对于第一个执行的 loader 为资源文件的内容；后续执行的 loader 则为前一个 loader 的执行结果
+// sourceMap: 可选参数，代码的 sourcemap 结构
+// data: 可选参数，其它需要在 Loader 链中传递的信息，比如 posthtml/posthtml-loader 就会通过这个参数传递参数的 AST 对象
+const loaderUtils = require('loader-utils');
+module.exports = function(source, sourceMap?, data?) {
+  // 获取到用户给当前 Loader 传入的 options
+  const options = loaderUtils.getOptions(this);
+  // TODO： 此处为转换source的逻辑
+  return source;
+};
+```
+
+### 常用 loader
+- babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
+- style-loader 负责把样式插入到 DOM 中，方法是在 head 中插入一个 style 标签，并把样式写入到这个标签的 innerHTML 里
+- css-loader 其中 css-loader 处理 js 中 import require() @import/url 引入的内容
 - sass-loader 把 scss 转成 css
 - less-loader 把 less 转成 css
-- babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
+- postcss-loader 在 css 文件中使用 postcss 插件，比如 autoprefixer，cssnano 等
+- ts-loader 根据 tsconfig.json 的配置，自动编译 ts 文件
+- svg-sprite-loader 将 svg 图标打包成一个雪碧图，并且把雪碧图的内容插入到 html 中
+- markdown-loader 把 markdown 文件编译解析成 html 文件
+- raw-loader 将文件中的内容作为字符串导入，并插入到 html 中
+- file-loader 使得我们可以在 JS 文件中引入 png\jpg 等图片资源
+- url-loader 跟 file-loader 类似；唯一不同的是在于用户可以设置一个文件大小的阈值，当大于阈值时跟 file-loader 一样返回 publicPath，而小于该阈值时则返回文件 base64 形式编码。
 
 ## Plugin
 
