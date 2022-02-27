@@ -111,6 +111,7 @@ module.exports = function(source, sourceMap?, data?) {
 
 常用的 plugin：
 
+- copy-webpack-plugin 将已存在的文件复制到指定目录
 - html-webpack-plugin 自动生成 HTML5 文件，并引入 webpack 打包好的 js 等文件。
 - clean-webpack-plugin 用于打包前先把 dist 文件夹清空
 - hot-module-replacement-plugin 模块热替换插件，即 HMR，webpack4 自带插件，无需安装，在开发模式下配合 devServer 使用
