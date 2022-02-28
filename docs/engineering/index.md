@@ -162,6 +162,25 @@ module.exports = function (content) {
 module.exports.raw = true;
 ```
 
+4. Pitching loader：
+
+loader 是按照从右往左的顺序被调用的，但是实际上，在此之前会有一个按照从左往右执行每一个 loader 的 pitch 方法的过程。 pitch 方法共有三个参数：
+  - remainingRequest：loader 链中排在自己后面的 loader 以及资源文件的绝对路径以!作为连接符组成的字符串。
+  - precedingRequest：loader 链中排在自己前面的 loader 的绝对路径以!作为连接符组成的字符串。
+  - data：每个 loader 中存放在上下文中的固定字段，可用于 pitch 给 loader 传递数据。
+
+在 pitch 中传给 data 的数据，在后续的调用执行阶段，是可以在 `this.data` 中获取到的：
+```js
+module.exports = function (content) {
+  return someSyncOperation(content, this.data.value);// 这里的 this.data.value === 42
+};
+
+module.exports.pitch = function (remainingRequest, precedingRequest, data) {
+  data.value = 42;
+  // return 如果某一个 loader 的 pitch 方法中返回了值，那么他会直接跳过后续的步骤
+};
+```
+
 ### 常用 loader
 
 - babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
