@@ -136,7 +136,19 @@ module.exports = function (content) {
 
 _\*从 webpack 5 开始，this.getOptions 可以获取到 loader 上下文对象_
 
+2. 异步 loader：
 
+当我们遇到譬如需要网络请求等场景，那么为了避免阻塞构建步骤，我们会采取异步构建的方式，异步 loader 可以使用 `this.async()` 方法来告知 webpack 这次构建操作是异步的：
+
+```js
+module.exports = function (content) {
+  var callback = this.async()
+  someAsyncOperation(content, function (err, result) {
+    if (err) return callback(err)
+    callback(null, result, sourceMaps, meta)
+  })
+}
+```
 
 ### 常用 loader
 
