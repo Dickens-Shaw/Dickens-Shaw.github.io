@@ -1,4 +1,5 @@
 # 工程化
+
 ## 概念
 
 > 工程化是一种思想，而不是某种技术。其主要目的为了提高效率和降低成本，即提高开发过程中的开发效率，减少不必要的重复工作时间等
@@ -17,6 +18,7 @@
 - 规范化
 
   在项目规划初期制定的好坏对于后期的开发有一定影响。包括的规范有
+
   - 目录结构的制定
   - 编码规范
   - 前后端接口规范
@@ -38,14 +40,15 @@
 作用：代码分割、文件压缩合并、编译兼容、模块合并、高级语法翻译、按需加载、代码校验、自动刷新、模块热替换、Tree Shaking
 
 ## 核心概念
+
 - Entry：入口，指示 Webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始。
 - Output：输出结果，告诉 Webpack 在哪里输出它所创建的 bundle，以及如何命名这些文件。
 - Module：模块，在 Webpack 里一切皆模块，一个模块对应着一个文件。Webpack 会从配置的 Entry 开始递归找出所有依赖的模块。
 - Chunk：代码块，一个 Chunk 由多个模块组合而成，用于代码合并与分割。
-- Loader：模块代码转换器，让webpack能够去处理除了JS、JSON之外的其他类型的文件，并将它们转换为有效 模块，以供应用程序使用，以及被添加到依赖图中。
-- Plugin：扩展插件。在webpack运行的生命周期中会广播出许多事件，plugin可以监听这些事件，在合适的时机通过webpack提供的api改变输出结果。常见的有：打包优化，资源管理，注入环境变量。
+- Loader：模块代码转换器，让 webpack 能够去处理除了 JS、JSON 之外的其他类型的文件，并将它们转换为有效 模块，以供应用程序使用，以及被添加到依赖图中。
+- Plugin：扩展插件。在 webpack 运行的生命周期中会广播出许多事件，plugin 可以监听这些事件，在合适的时机通过 webpack 提供的 api 改变输出结果。常见的有：打包优化，资源管理，注入环境变量。
 - Mode：模式，告知 webpack 使用相应模式的内置优化
-- Browser Compatibility：浏览器兼容性，Webpack 支持所有符合 ES5 标准 的浏览器（IE8以上版本）
+- Browser Compatibility：浏览器兼容性，Webpack 支持所有符合 ES5 标准 的浏览器（IE8 以上版本）
 
 ## 构建流程
 
@@ -65,31 +68,78 @@
 
 ## Loader
 
-> webpack中提供了一种处理多种文件格式的机制，这便是Loader，我们可以把Loader当成一个转换器，它可以将某种格式的文件转换成webpack支持打包的模块。
+> webpack 中提供了一种处理多种文件格式的机制，这便是 Loader，我们可以把 Loader 当成一个转换器，它可以将某种格式的文件转换成 webpack 支持打包的模块。
 
-在Webpack中，一切皆模块，我们常见的Javascript、CSS、Less、Typescript、Jsx、图片等文件都是模块，不同模块的加载是通过模块加载器来统一管理的，当我们需要使用不同的 Loader 来解析不同类型的文件时，我们可以在module.rules字段下配置相关规则。
+在 Webpack 中，一切皆模块，我们常见的 Javascript、CSS、Less、Typescript、Jsx、图片等文件都是模块，不同模块的加载是通过模块加载器来统一管理的，当我们需要使用不同的 Loader 来解析不同类型的文件时，我们可以在 module.rules 字段下配置相关规则：
+
+- test 属性，识别出哪些文件会被转换。
+- use 属性，定义出在进行转换时，应该使用哪个 loader。
 
 ### 特点
-- loader 本质上是一个函数，output=loader(input) // input可为工程源文件的字符串，也可是上一个loader转化后的结果；
+
+- loader 本质上是一个函数，output=loader(input) // input 可为工程源文件的字符串，也可是上一个 loader 转化后的结果；
 - 第一个 loader 的传入参数只有一个：资源文件(resource file)的内容；
-- loader支持链式调用，webpack打包时是按照数组从后往前的顺序将资源交给loader处理的。
+- loader 支持链式调用，webpack 打包时是按照数组从后往前的顺序将资源交给 loader 处理的。
 - 支持同步或异步函数。
 
 ### 代码结构
+
 ```js
 // source：资源输入，对于第一个执行的 loader 为资源文件的内容；后续执行的 loader 则为前一个 loader 的执行结果
 // sourceMap: 可选参数，代码的 sourcemap 结构
 // data: 可选参数，其它需要在 Loader 链中传递的信息，比如 posthtml/posthtml-loader 就会通过这个参数传递参数的 AST 对象
-const loaderUtils = require('loader-utils');
-module.exports = function(source, sourceMap?, data?) {
-  // 获取到用户给当前 Loader 传入的 options
-  const options = loaderUtils.getOptions(this);
-  // TODO： 此处为转换source的逻辑
-  return source;
-};
+const loaderUtils = require('loader-utils')
+module.exports = function (source, sourceMap?, data?) {
+  // 获取到用户给当前 Loader 传入的 options
+  const options = loaderUtils.getOptions(this) // TODO： 此处为转换source的逻辑
+  return source
+}
 ```
 
+### 类型
+
+1. 同步 loader：
+
+一般的 loader 转换都是同步的，我们可以采用上面说的直接 return 结果的方式，返回我们的处理结果：
+
+```js
+module.exports = function (source) {
+  // 对 source 进行一些处理
+  const res = doSomething(source)
+  return res
+}
+```
+
+也可以直接使用 `this.callback()` 这个 api，然后在最后直接 **return undefined** 的方式告诉 webpack 去 `this.callback()` 寻找他要的结果，这个 api 接受这些参数：
+
+```js
+this.callback(
+  err: Error | null, // 一个无法正常编译时的 Error 或者 直接给个 null
+  content: string | Buffer,// 我们处理后返回的内容 可以是 string 或者 Buffer（）
+  sourceMap?: SourceMap, // 可选 可以是一个被正常解析的 source map
+  meta?: any // 可选 可以是任何东西，比如一个公用的 AST 语法树
+);
+```
+
+例：
+
+```js
+module.exports = function (content) {
+  // 获取到用户传给当前 loader 的参数
+  const options = this.getOptions()
+  const res = someSyncOperation(content, options)
+  this.callback(null, res, sourceMaps)
+  // 注意这里由于使用了 this.callback 直接 return 就行
+  return
+}
+```
+
+_\*从 webpack 5 开始，this.getOptions 可以获取到 loader 上下文对象_
+
+
+
 ### 常用 loader
+
 - babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
 - style-loader 负责把样式插入到 DOM 中，方法是在 head 中插入一个 style 标签，并把样式写入到这个标签的 innerHTML 里
 - css-loader 其中 css-loader 处理 js 中 import require() @import/url 引入的内容
@@ -113,9 +163,9 @@ module.exports = function(source, sourceMap?, data?) {
 
 - copy-webpack-plugin 将已存在的文件复制到指定目录
 - html-webpack-plugin 自动生成 HTML5 文件，并引入 webpack 打包好的 js 等文件。
-  - 单页应用可以生成一个html入口，多页应用可以配置多个html-webpack-plugin实例来生成多个页面入口
-  - 为html引入外部资源如script、link，将entry配置的相关入口chunk以及mini-css-extract-plugin抽取的css文件插入到基于该插件设置的template文件生成的html文件里面，具体的方式是link插入到head中，script插入到head或body中。
-- clean-webpack-plugin 用于打包前先把 dist 文件夹清空，删除webpack的output.path中的所有文件，以及每次成功重新构建后所有未使用的资源
+  - 单页应用可以生成一个 html 入口，多页应用可以配置多个 html-webpack-plugin 实例来生成多个页面入口
+  - 为 html 引入外部资源如 script、link，将 entry 配置的相关入口 chunk 以及 mini-css-extract-plugin 抽取的 css 文件插入到基于该插件设置的 template 文件生成的 html 文件里面，具体的方式是 link 插入到 head 中，script 插入到 head 或 body 中。
+- clean-webpack-plugin 用于打包前先把 dist 文件夹清空，删除 webpack 的 output.path 中的所有文件，以及每次成功重新构建后所有未使用的资源
 - hot-module-replacement-plugin 模块热替换插件，即 HMR，webpack4 自带插件，无需安装，在开发模式下配合 devServer 使用
   - 保留在完全重新加载页面期间丢失的应用程序状态。
   - 只更新变更内容，以节省宝贵的开发时间。
