@@ -148,6 +148,18 @@ module.exports = function (content) {
     callback(null, result, sourceMaps, meta)
   })
 }
+``` 
+
+3. Raw loader：
+默认情况下，资源文件会被转化为 UTF-8 字符串，然后传给 loader。通过设置 raw 为 true，loader 可以接收原始的 Buffer。每一个 loader 都可以用 String 或者 Buffer 的形式传递它的处理结果。complier 将会把它们在 loader 之间相互转换。大家熟悉的 `file-loader` 就是用了这个。
+
+```js
+module.exports = function (content) {
+  console.log(content instanceof Buffer); // true
+  return doSomeOperation(content)
+}
+
+module.exports.raw = true;
 ```
 
 ### 常用 loader
