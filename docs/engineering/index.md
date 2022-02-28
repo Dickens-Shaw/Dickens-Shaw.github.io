@@ -113,15 +113,19 @@ module.exports = function(source, sourceMap?, data?) {
 
 - copy-webpack-plugin 将已存在的文件复制到指定目录
 - html-webpack-plugin 自动生成 HTML5 文件，并引入 webpack 打包好的 js 等文件。
-- clean-webpack-plugin 用于打包前先把 dist 文件夹清空
+  - 单页应用可以生成一个html入口，多页应用可以配置多个html-webpack-plugin实例来生成多个页面入口
+  - 为html引入外部资源如script、link，将entry配置的相关入口chunk以及mini-css-extract-plugin抽取的css文件插入到基于该插件设置的template文件生成的html文件里面，具体的方式是link插入到head中，script插入到head或body中。
+- clean-webpack-plugin 用于打包前先把 dist 文件夹清空，删除webpack的output.path中的所有文件，以及每次成功重新构建后所有未使用的资源
 - hot-module-replacement-plugin 模块热替换插件，即 HMR，webpack4 自带插件，无需安装，在开发模式下配合 devServer 使用
-- mini-css-extract-plugin 将 CSS 提取到单独的文件中
-- PurgecssPlugin 可以去除未使用的 css, 一般与 glob、glob-all 配合使用。
+  - 保留在完全重新加载页面期间丢失的应用程序状态。
+  - 只更新变更内容，以节省宝贵的开发时间。
+  - 在源代码中 CSS/JS 产生修改时，会立刻在浏览器中进行更新，这几乎相当于在浏览器 devtools 直接更改样式。
+- mini-css-extract-plugin 将 CSS 提取到单独的文件中，为每个包含 CSS 的 JS 文件创建一个 CSS 文件
+- purge-css-plugin 可以去除未使用的 css, 一般与 glob、glob-all 配合使用。
 - optimize-css-assets-webpack-plugin 用于 CSS 压缩
-- split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。相比于 commons-chunk-plugin 的优点：
+- split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。
 - webpack-bundle-analyzer 可视化 webpack 输出文件的体积
-- terser-webpack-plugin
-- add-asset-html-webpack-plugin
+- terser-webpack-plugin 用于处理 js 的压缩和混淆
 
 ### 实现插件
 
