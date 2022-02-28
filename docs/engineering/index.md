@@ -181,6 +181,19 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 };
 ```
 
+### API
+- this.addDependency：加入一个文件进行监听，一旦文件产生变化就会重新调用这个 loader 进行处理
+- this.cacheable：默认情况下 loader 的处理结果会有缓存效果，给这个方法传入 false 可以关闭这个效果
+- this.clearDependencies：清除 loader 的所有依赖
+- this.context：文件所在的目录（不包含文件名）
+- this.data：pitch 阶段和正常调用阶段共享的对象
+- this.getOptions(schema)：用来获取配置的 loader 参数选项
+- this.resolve：像 require 表达式一样解析一个 `request。resolve(context: string, request: string, callback: function(err, result: string))`
+- this.loaders：所有 loader 组成的数组。它在 pitch 阶段的时候是可以写入的。
+- this.resource：获取当前请求路径，包含参数：`'/abc/resource.js?rrr'`
+- this.resourcePath：不包含参数的路径：`'/abc/resource.js'`
+- this.sourceMap：bool 类型，是否应该生成一个 sourceMap
+
 ### 常用 loader
 
 - babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
