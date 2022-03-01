@@ -249,6 +249,28 @@ class HelloPlugin{
 module.exports = HelloPlugin
 ```
 
+### Compiler and Compilation
+- `compiler` 对象可以理解为一个和 webpack 环境整体绑定的一个对象，它包含了所有的环境配置，包括 options，loader 和 plugin，当 webpack 启动时，这个对象会被实例化，并且他是**全局唯一**的，上面我们说到的 apply 方法传入的参数就是它。
+
+- `compilation` 在每次构建资源的过程中都会被创建出来，一个 compilation 对象表现了当前的模块资源、编译生成资源、变化的文件、以及被跟踪依赖的状态信息。它同样也提供了很多的 hook 。
+
+Compiler 和 Compilation 提供了非常多的钩子供我们使用，这些方法的组合可以让我们在构建过程的不同时间获取不同的内容。
+```js
+class HelloCompilationPlugin {
+  apply(compiler) {
+    // 指定一个挂载到 compilation 的钩子，回调函数的参数为 compilation 。
+    compiler.hooks.compilation.tap('HelloCompilationPlugin', (compilation) => {
+      // 现在可以通过 compilation 对象绑定各种钩子
+      compilation.hooks.optimize.tap('HelloCompilationPlugin', () => {
+        console.log('资源已经优化完毕。');
+      });
+    });
+  }
+}
+
+module.exports = HelloCompilationPlugin;
+```
+
 ### 常用的 plugin
 
 - copy-webpack-plugin 将已存在的文件复制到指定目录
