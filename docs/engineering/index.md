@@ -271,6 +271,55 @@ class HelloCompilationPlugin {
 module.exports = HelloCompilationPlugin;
 ```
 
+### 同步与异步
+
+plugin 的 hooks 是有同步和异步区分的，在同步的情况下，我们使用 `<hookName>.tap` 的方式进行调用，而在异步 hook 内我们可以进行一些异步操作，并且有异步操作的情况下，请使用 `tapAsync` 或者 `tapPromise` 方法来告知 webpack 这里的内容是异步的
+
+- tapAsync
+
+使用 `tapAsync` 的时候，我们需要多传入一个 `callback` 回调，并且在结束的时候一定要调用这个回调告知 webpack 这段异步操作结束了
+
+```js
+class HelloAsyncPlugin {
+  apply(compiler) {
+    compiler.hooks.emit.tapAsync(
+      'HelloAsyncPlugin',
+      (compilation, callback) => {
+        // 执行某些异步操作...
+        setTimeout(function () {
+          console.log('异步任务完成...');
+          callback();
+        }, 1000);
+      }
+    );
+  }
+}
+
+module.exports = HelloAsyncPlugin;
+```
+
+- tapPromise
+
+当使用 `tapPromise` 来处理异步的时候，我们需要返回一个 `Promise` 对象并且让它在结束的时候 `resolve`
+
+```js
+class HelloAsyncPlugin {
+  apply(compiler) {
+    compiler.hooks.emit.tapPromise('HelloAsyncPlugin', (compilation) => {
+      // 返回一个 promise ，异步任务完成后 resolve
+      return new Promise((resolve, reject) => {
+        setTimeout(function () {
+          console.log('异步任务完成...');
+          resolve();
+        }, 1000);
+      });
+    });
+  }
+}
+
+module.exports = HelloAsyncPlugin;
+```
+
 ### 常用的 plugin
 
 - copy-webpack-plugin 将已存在的文件复制到指定目录
