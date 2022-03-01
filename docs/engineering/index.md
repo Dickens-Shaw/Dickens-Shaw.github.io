@@ -148,40 +148,43 @@ module.exports = function (content) {
     callback(null, result, sourceMaps, meta)
   })
 }
-``` 
+```
 
 3. Raw loader：
-默认情况下，资源文件会被转化为 UTF-8 字符串，然后传给 loader。通过设置 raw 为 true，loader 可以接收原始的 Buffer。每一个 loader 都可以用 String 或者 Buffer 的形式传递它的处理结果。complier 将会把它们在 loader 之间相互转换。大家熟悉的 `file-loader` 就是用了这个。
+   默认情况下，资源文件会被转化为 UTF-8 字符串，然后传给 loader。通过设置 raw 为 true，loader 可以接收原始的 Buffer。每一个 loader 都可以用 String 或者 Buffer 的形式传递它的处理结果。complier 将会把它们在 loader 之间相互转换。大家熟悉的 `file-loader` 就是用了这个。
 
 ```js
 module.exports = function (content) {
-  console.log(content instanceof Buffer); // true
+  console.log(content instanceof Buffer) // true
   return doSomeOperation(content)
 }
 
-module.exports.raw = true;
+module.exports.raw = true
 ```
 
 4. Pitching loader：
 
 loader 是按照从右往左的顺序被调用的，但是实际上，在此之前会有一个按照从左往右执行每一个 loader 的 pitch 方法的过程。 pitch 方法共有三个参数：
-  - remainingRequest：loader 链中排在自己后面的 loader 以及资源文件的绝对路径以!作为连接符组成的字符串。
-  - precedingRequest：loader 链中排在自己前面的 loader 的绝对路径以!作为连接符组成的字符串。
-  - data：每个 loader 中存放在上下文中的固定字段，可用于 pitch 给 loader 传递数据。
+
+- remainingRequest：loader 链中排在自己后面的 loader 以及资源文件的绝对路径以!作为连接符组成的字符串。
+- precedingRequest：loader 链中排在自己前面的 loader 的绝对路径以!作为连接符组成的字符串。
+- data：每个 loader 中存放在上下文中的固定字段，可用于 pitch 给 loader 传递数据。
 
 在 pitch 中传给 data 的数据，在后续的调用执行阶段，是可以在 `this.data` 中获取到的：
+
 ```js
 module.exports = function (content) {
-  return someSyncOperation(content, this.data.value);// 这里的 this.data.value === 42
-};
+  return someSyncOperation(content, this.data.value) // 这里的 this.data.value === 42
+}
 
 module.exports.pitch = function (remainingRequest, precedingRequest, data) {
-  data.value = 42;
+  data.value = 42
   // return 如果某一个 loader 的 pitch 方法中返回了值，那么他会直接跳过后续的步骤
-};
+}
 ```
 
 ### API
+
 - this.addDependency：加入一个文件进行监听，一旦文件产生变化就会重新调用这个 loader 进行处理
 - this.cacheable：默认情况下 loader 的处理结果会有缓存效果，给这个方法传入 false 可以关闭这个效果
 - this.clearDependencies：清除 loader 的所有依赖
@@ -215,7 +218,25 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 
 > Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展 Webpack 的功能，在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。Webpack 的事件流机制保证了插件的有序性，使得整个系统扩展性很好。
 
-常用的 plugin：
+### 基本结构
+
+- 一个 JavaScript 类
+- 一个 `apply` 方法，`apply` 方法在 webpack 装载这个插件的时候被调用，并且会传入 `compiler` 对象。
+- 使用不同的 hooks 来指定自己需要发生的处理行为
+- 在异步调用时最后需要调用 webpack 提供给我们的 `callback` 或者通过 `Promise` 的方式（后续**异步编译部分**会详细说）
+
+```js
+class HelloPlugin{
+  apply(compiler){
+    compiler.hooks.<hookName>.tap(PluginName,(params)=>{
+      /** do some thing */
+    })
+  }
+}
+module.exports = HelloPlugin
+```
+
+### 常用的 plugin
 
 - copy-webpack-plugin 将已存在的文件复制到指定目录
 - html-webpack-plugin 自动生成 HTML5 文件，并引入 webpack 打包好的 js 等文件。
@@ -232,12 +253,6 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 - split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。
 - webpack-bundle-analyzer 可视化 webpack 输出文件的体积
 - terser-webpack-plugin 用于处理 js 的压缩和混淆
-
-### 实现插件
-
-调用插件 apply 函数传入 compiler 对象
-
-通过 compiler 对象监听事件
 
 ## 动态加载
 
