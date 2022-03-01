@@ -220,16 +220,29 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 
 ### 基本结构
 
-- 一个 JavaScript 类
-- 一个 `apply` 方法，`apply` 方法在 webpack 装载这个插件的时候被调用，并且会传入 `compiler` 对象。
-- 使用不同的 hooks 来指定自己需要发生的处理行为
-- 在异步调用时最后需要调用 webpack 提供给我们的 `callback` 或者通过 `Promise` 的方式（后续**异步编译部分**会详细说）
+- 一个 JavaScript 命名函数或 JavaScript 类。
+- 在插件函数的 prototype 上定义一个 apply 方法。
+- 指定一个绑定到 webpack 自身的事件钩子。
+- 处理 webpack 内部实例的特定数据。
+- 功能完成后调用 webpack 提供的回调。
 
 ```js
+// 一个 JavaScript 类
 class HelloPlugin{
+  // 在插件函数的 prototype 上定义一个 `apply` 方法，以 compiler 为参数。
   apply(compiler){
-    compiler.hooks.<hookName>.tap(PluginName,(params)=>{
-      /** do some thing */
+    // 指定一个挂载到 webpack 自身的事件钩子。
+    compiler/compilation.hooks.<hookName>.tap/tapAsync/tapPromise(PluginName,(compilation, callback)=>{
+      console.log('这是一个示例插件！');
+      console.log(
+        '这里表示了资源的单次构建的 `compilation` 对象：',
+        compilation
+      );
+
+      // 用 webpack 提供的插件 API 处理构建过程
+      compilation.addModule(/* ... */);
+
+      callback();
     })
   }
 }
