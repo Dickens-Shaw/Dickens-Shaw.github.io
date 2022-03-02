@@ -20,6 +20,183 @@
 - 在数据结构中，栈中数据的存取方式为先进后出。
 - 堆是一个优先队列，是按优先级来进行排序的，优先级可以按照大小来规定。`完全二叉树`是堆的一种实现方式。
 
+## 类型判断
+
+### typeof
+
+对于基本类型，除了 null 都可以显示正确的类型
+
+```js
+typeof 1 // 'number'
+typeof '1' // 'string'
+typeof undefined // 'undefined'
+typeof true // 'boolean'
+typeof Symbol() // 'symbol'
+typeof b // b 没有声明，但是还会显示 undefined
+```
+
+对于对象，除了函数都会显示 object
+
+```js
+typeof [] // 'object'
+typeof {} // 'object'
+typeof console.log // 'function'
+```
+
+对于 null 来说，虽然它是基本类型，但是会显示 object，这是一个存在很久了的 Bug
+
+```js
+// 在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象
+// 然而 null 表示为全零，所以将它错误的判断为 object
+
+typeof null // 'object'
+```
+
+### instanceof
+
+> 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
+
+```js
+console.log(2 instanceof Number) // false
+console.log(true instanceof Boolean) // false
+console.log('str' instanceof String) // false
+console.log([] instanceof Array) // true
+console.log(function () {} instanceof Function) // true
+console.log({} instanceof Object) // true
+// console.log(undefined instanceof Undefined);
+// console.log(null instanceof Null);
+```
+
+可以看出直接的字面量值判断数据类型， `instanceof` 可以精准判断引用数据类型（Array，Function，Object），而基本数据类型不能被`instanceof`精准判断。
+
+在 MDN 中的解释：`instanceof`  运算符用来测试一个对象在其原型链中是否存在一个构造函数的  prototype  属性。其意思就是判断对象是否是某一数据类型（如 Array）的实例，请重点关注一下是判断一个对象是否是数据类型的实例。在这里字面量值，2， true ，'str'不是实例，所以判断值为 false。
+
+- 实现分析
+
+  1. 首先获取类型的原型
+  2. 然后获得对象的原型
+  3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
+
+- 手撕
+
+```js
+function instanceOf(left, right) {
+  let proto = right.prototype // 获取类型的原型
+  left = left.__proto__ // 获取对象的原型
+  // 判断对象的类型是否等于类型的原型
+  while (true) {
+    if (left === null || left === undefined) return false
+    if (left === proto) return true
+    left = left.__proto__
+  }
+}
+```
+
+### constructor
+
+```js
+console.log((2).constructor === Number) // true
+console.log(true.constructor === Boolean) // true
+console.log('str'.constructor === String) // true
+console.log([].constructor === Array) // true
+console.log(function () {}.constructor === Function) // true
+console.log({}.constructor === Object) // true
+```
+
+但是如果创建一个对象，更改它的原型，那么它的 constructor 就会变得不可靠了
+
+```js
+function Fn() {}
+
+Fn.prototype = new Array()
+
+var f = new Fn()
+
+console.log(f.constructor === Fn) // false
+console.log(f.constructor === Array) // true
+```
+
+### Object.prototype.toString.call
+
+> 使用 Object 对象的原型方法 toString ，使用 call 进行狸猫换太子，借用 Object 的 toString 方法
+
+```js
+var a = Object.prototype.toString
+
+console.log(a.call(2)) // [object Number]
+console.log(a.call(true)) // [object Boolean]
+console.log(a.call('str')) // [object String]
+console.log(a.call([])) // [object Array]
+console.log(a.call(function () {})) // [object Function]
+console.log(a.call({})) // [object Object]
+console.log(a.call(undefined)) // [object Undefined]
+console.log(a.call(null)) // [object Null]
+```
+
+## 内置对象
+
+> js 中的内置对象主要指的是在程序执行前存在全局作用域里的由 js 定义的一些全局值属性、函数和用来实例化其他对象的构造函 数对象。
+
+**全局的对象（ global objects ）**或称标准内置对象，不要和 **全局对象（global object）** 混淆。
+
+这里说的全局的对象是说在全局作用域里的对象。全局作用域中的其他对象可以由用户的脚本创建或由宿主程序提供。
+
+标准内置对象的分类:
+
+- 1）**值属性**，这些全局属性返回一个简单值，这些值没有自己的属性和方法。
+
+  例如：`Infinity、NaN、undefined、null` 字面量
+
+- 2）**函数属性**，全局函数可以直接调用，不需要在调用时指定所属对象，执行结束后会将结果直接返回给调用者。
+
+  例如：`eval()、parseFloat()、parseInt()` 等
+
+- 3）**基本对象**，基本对象是定义或使用其他对象的基础。基本对象包括一般对象、函数对象和错误对象。
+
+  例如：`Object、Function、Boolean、Symbol、Error` 等
+
+- 4）**数字和日期对象**，用来表示数字、日期和执行数学计算的对象。
+
+  例如：`Number、Math、Date`
+
+- 5）**字符串**，用来表示和操作字符串的对象。
+
+  例如：`String、RegExp`
+
+- 6）**可索引的集合对象**，这些对象表示按照索引值来排序的数据集合，包括数组和类型数组，以及类数组结构的对象。
+
+  例如：`Array`
+
+- 7）**使用键的集合对象**，这些集合对象在存储数据时会使用到键，支持按照插入顺序来迭代元素。
+
+  例如：`Map、Set、WeakMap、WeakSet`
+
+- 8）**矢量集合**，`SIMD` 矢量集合中的数据会被组织为一个数据序列。
+
+  例如：`SIMD` 等
+
+- 9）**结构化数据**，这些对象用来表示和操作结构化的缓冲区数据，或使用 JSON 编码的数据。
+
+  例如：`JSON` 等
+
+- 10）**控制抽象对象**
+
+  例如：`Promise、Generator` 等
+
+- 11）**反射**
+
+  例如：`Reflect、Proxy`
+
+- 12）**国际化**，为了支持多语言处理而加入 ECMAScript 的对象。
+
+  例如：`Intl、Intl.Collator` 等
+
+- 13）**WebAssembly**
+
+- 14）**其他**
+
+  例如：`arguments`
+
 ## 闭包
 
 > `红宝书`：闭包是指有权访问另外一个函数作用域中的变量的函数
@@ -332,6 +509,7 @@ function deepClone(obj) {
 - `闭包`： 不合理的使用闭包，从而导致某些变量一直被留在内存当中。
 
 ## 垃圾回收机制
+
 V8 实现了准确式 GC，GC 算法采用了分代式垃圾回收机制。因此，V8 将内存（堆）分为新生代和老生代两部分
 
 - 新生代：
@@ -343,10 +521,12 @@ V8 实现了准确式 GC，GC 算法采用了分代式垃圾回收机制。因�
 - 老生代
 
 老生代中的对象一般存活时间较长且数量也多，使用两个算法：
+
 1. 标记清除：先所有都加上标记，再把环境中引用到的变量去除标记。剩下的就是没用的了
-2. 引用计数：跟踪记录每个值被引用的次数。清除引用次数为0的变量。(会有循环引用问题:循环引用如果大量存在就会导致内存泄露。)
+2. 引用计数：跟踪记录每个值被引用的次数。清除引用次数为 0 的变量。(会有循环引用问题:循环引用如果大量存在就会导致内存泄露。)
 
 出现在老生代的情况：
+
 1. 新生代中的对象是否已经经历过一次 Scavenge 算法，如果经历过的话，会将对象从新生代空间移到老生代空间中。
 2. To 空间的对象占比大小超过 25 %。在这种情况下，为了不影响到内存分配，会将对象从新生代空间移到老生代空间中。
 
@@ -379,118 +559,6 @@ function Person(name) {
 var p = new Person('张三')
 console.log(p._name) // undefined
 console.log(p.getName()) // '张三'
-```
-
-## 类型判断
-
-### typeof
-
-对于基本类型，除了 null 都可以显示正确的类型
-
-```js
-typeof 1 // 'number'
-typeof '1' // 'string'
-typeof undefined // 'undefined'
-typeof true // 'boolean'
-typeof Symbol() // 'symbol'
-typeof b // b 没有声明，但是还会显示 undefined
-```
-
-对于对象，除了函数都会显示 object
-
-```js
-typeof [] // 'object'
-typeof {} // 'object'
-typeof console.log // 'function'
-```
-
-对于 null 来说，虽然它是基本类型，但是会显示 object，这是一个存在很久了的 Bug
-
-```js
-// 在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象
-// 然而 null 表示为全零，所以将它错误的判断为 object 
-
-typeof null // 'object'
-```
-
-### instanceof
-
-> 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
-
-```js
-console.log(2 instanceof Number);                    // false
-console.log(true instanceof Boolean);                // false 
-console.log('str' instanceof String);                // false  
-console.log([] instanceof Array);                    // true
-console.log(function(){} instanceof Function);       // true
-console.log({} instanceof Object);                   // true    
-// console.log(undefined instanceof Undefined);
-// console.log(null instanceof Null);
-```
-
-可以看出直接的字面量值判断数据类型， `instanceof` 可以精准判断引用数据类型（Array，Function，Object），而基本数据类型不能被`instanceof`精准判断。
-
-在MDN中的解释：`instanceof` 运算符用来测试一个对象在其原型链中是否存在一个构造函数的 prototype 属性。其意思就是判断对象是否是某一数据类型（如Array）的实例，请重点关注一下是判断一个对象是否是数据类型的实例。在这里字面量值，2， true ，'str'不是实例，所以判断值为false。
-
-- 实现分析
-  1. 首先获取类型的原型
-  2. 然后获得对象的原型
-  3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
-
-- 手撕
-
-```js
-function instanceOf(left, right) {
-  let proto = right.prototype // 获取类型的原型
-  left = left.__proto__ // 获取对象的原型
-  // 判断对象的类型是否等于类型的原型
-  while (true) {
-    if (left === null || left === undefined) return false
-    if (left === proto) return true
-    left = left.__proto__
-  }
-}
-```
-
-### constructor
-
-```js
-console.log((2).constructor === Number);               // true
-console.log((true).constructor === Boolean);           // true
-console.log(('str').constructor === String);           // true
-console.log(([]).constructor === Array);               // true
-console.log((function() {}).constructor === Function); // true
-console.log(({}).constructor === Object);              // true
-```
-
-但是如果创建一个对象，更改它的原型，那么它的 constructor 就会变得不可靠了
-
-```js
-function Fn(){};
- 
-Fn.prototype=new Array();
- 
-var f=new Fn();
-
-console.log(f.constructor===Fn);    // false
-console.log(f.constructor===Array); // true 
-```
-
-### Object.prototype.toString.call
-
-> 使用 Object 对象的原型方法 toString ，使用 call 进行狸猫换太子，借用Object的 toString 方法
-
-```js
-var a = Object.prototype.toString;
- 
-console.log(a.call(2));                        // [object Number]
-console.log(a.call(true));                     // [object Boolean]
-console.log(a.call('str'));                    // [object String]
-console.log(a.call([]));                       // [object Array]
-console.log(a.call(function(){}));             // [object Function]
-console.log(a.call({}));                       // [object Object]
-console.log(a.call(undefined));                // [object Undefined]
-console.log(a.call(null));                     // [object Null]
 ```
 
 ## 请求方法
