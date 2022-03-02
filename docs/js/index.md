@@ -8,7 +8,7 @@
 这些数据可以分为原始数据类型和引用数据类型：
 
 - 栈：原始数据类型（`Undefined、Null、Boolean、Number、String`）
-- 堆：引用数据类型（对象、数组和函数）
+- 堆：引用数据类型（`Object`对象、数组和函数）
 
 两种类型的区别是：存储位置不同。
 
@@ -407,6 +407,9 @@ typeof console.log // 'function'
 对于 null 来说，虽然它是基本类型，但是会显示 object，这是一个存在很久了的 Bug
 
 ```js
+// 在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象
+// 然而 null 表示为全零，所以将它错误的判断为 object 
+
 typeof null // 'object'
 ```
 
@@ -414,8 +417,22 @@ typeof null // 'object'
 
 > 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
 
-- 实现分析
+```js
+console.log(2 instanceof Number);                    // false
+console.log(true instanceof Boolean);                // false 
+console.log('str' instanceof String);                // false  
+console.log([] instanceof Array);                    // true
+console.log(function(){} instanceof Function);       // true
+console.log({} instanceof Object);                   // true    
+// console.log(undefined instanceof Undefined);
+// console.log(null instanceof Null);
+```
 
+可以看出直接的字面量值判断数据类型， `instanceof` 可以精准判断引用数据类型（Array，Function，Object），而基本数据类型不能被`instanceof`精准判断。
+
+在MDN中的解释：`instanceof` 运算符用来测试一个对象在其原型链中是否存在一个构造函数的 prototype 属性。其意思就是判断对象是否是某一数据类型（如Array）的实例，请重点关注一下是判断一个对象是否是数据类型的实例。在这里字面量值，2， true ，'str'不是实例，所以判断值为false。
+
+- 实现分析
   1. 首先获取类型的原型
   2. 然后获得对象的原型
   3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
@@ -435,6 +452,47 @@ function instanceOf(left, right) {
 }
 ```
 
+### constructor
+
+```js
+console.log((2).constructor === Number);               // true
+console.log((true).constructor === Boolean);           // true
+console.log(('str').constructor === String);           // true
+console.log(([]).constructor === Array);               // true
+console.log((function() {}).constructor === Function); // true
+console.log(({}).constructor === Object);              // true
+```
+
+但是如果创建一个对象，更改它的原型，那么它的 constructor 就会变得不可靠了
+
+```js
+function Fn(){};
+ 
+Fn.prototype=new Array();
+ 
+var f=new Fn();
+
+console.log(f.constructor===Fn);    // false
+console.log(f.constructor===Array); // true 
+```
+
+### Object.prototype.toString.call
+
+> 使用 Object 对象的原型方法 toString ，使用 call 进行狸猫换太子，借用Object的 toString 方法
+
+```js
+var a = Object.prototype.toString;
+ 
+console.log(a.call(2));                        // [object Number]
+console.log(a.call(true));                     // [object Boolean]
+console.log(a.call('str'));                    // [object String]
+console.log(a.call([]));                       // [object Array]
+console.log(a.call(function(){}));             // [object Function]
+console.log(a.call({}));                       // [object Object]
+console.log(a.call(undefined));                // [object Undefined]
+console.log(a.call(null));                     // [object Null]
+```
+
 ## 请求方法
 
 - ajax
@@ -443,7 +501,6 @@ function instanceOf(left, right) {
 const ajax = (url,method,async,data){
   return new Promise((resolve,reject)=>{
     const xhr = new XMLHttpRequest()
-
     xhr.onreadystatechange = ()=>{
       if(xhr.readyState === 4){
         if(xhr.status === 200){

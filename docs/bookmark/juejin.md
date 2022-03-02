@@ -153,8 +153,6 @@
 
 ## Webpack
 
-  - [Webpack - 手把手教你写一个 loader / plugin](https://juejin.cn/post/6976052326947618853)☑️
-
   - [深入理解Vite核心原理](https://juejin.cn/post/7064853960636989454)☑️
 
   - [打包的3种hash值你知道吗？当年我校招时被这题难倒了！](https://juejin.cn/post/7060688758370205733)☑️
