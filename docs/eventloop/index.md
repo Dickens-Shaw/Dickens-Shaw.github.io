@@ -40,5 +40,5 @@ JavaScript的单线程，与它的用途有关。作为浏览器脚本语言，J
 
 这里需要注意的是new Promise是会进入到主线程中立刻执行，而promise.then则属于微任务
 
-- 宏任务(macro-task)：整体代码script、setTimeOut、setInterval，ES6规范称为task
-- 微任务(micro-task)：promise.then、promise.nextTick(node)，ES6规范称为jobs
+- 宏任务(macro-task)：整体代码script、setTimeOut、setInterval、setImmediate一类的定时事件，还有如 I/O 操作、UI 渲染等，ES6规范称为task
+- 微任务(micro-task)：promise.then、process.nextTick(node)、对 Dom 变化监听的 MutationObserver，ES6规范称为jobs

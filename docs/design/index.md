@@ -4,7 +4,7 @@
 
 ## 开放封闭原则
 
-> 核心的思想是软件实体（类、模块、函数等）是可扩展的、但不可修改的。也就是说,对扩展是开放的,而对修改是封闭的
+> 核心的思想是软件实体(类、模块、函数等)是可扩展的、但不可修改的。也就是说,对扩展是开放的,而对修改是封闭的
 
 ## 单例模式
 
@@ -141,7 +141,7 @@ class EventEmitter {
 ## 装饰器模式
 
 - 概念： 装饰器模式，可以理解为对类的一个包装，动态地拓展类的功能
-- 应用： ES7 的装饰器语法以及 React 中的高阶组件（HoC）都是这一模式的实现。react-redux 的 connect()也运用了装饰器模式
+- 应用： ES7 的装饰器语法以及 React 中的高阶组件(HoC)都是这一模式的实现。react-redux 的 connect()也运用了装饰器模式
 
 ```js
 function info(target) {
@@ -232,7 +232,7 @@ function currying(fn, length) {
     // currying 包裹之后返回一个新函数，接收参数为 ...args
     return args.length >= length // 新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度
       ? fn.apply(this, args) // 满足要求，执行 fn 函数，传入新函数的参数
-      : currying(fn.bind(this, ...args), length - args.length) // 不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度
+      : currying(fn.bind(this, ...args), length - args.length) // 不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数(bind 绑定了 ...args 参数，未执行)，新的 length 为 fn 剩余参数的长度
   }
 }
 ```
@@ -250,7 +250,7 @@ function curryingES6 = fn =>
 
 ## 属性描述符
 
-属性描述符（Property Descriptor）是对 JavaScript 属性的描述，包括：value、writable、enumerable、configurable，除 value 其他默认为 true：
+属性描述符(Property Descriptor)是对 JavaScript 属性的描述，包括：value、writable、enumerable、configurable，除 value 其他默认为 true：
 
 1. writable[对象是否可以再赋值]
 2. enumerable[对象是否可以迭代]
@@ -259,6 +259,11 @@ function curryingES6 = fn =>
 ## 函数式和响应式
 
 - 在函数式中，函数是一等公民，函数能作为变量的值，函数可以是另一个函数的参数，函数可以返回另一个函数
+  - 赋值`(var func = function(){})`
+  - 传参`(function func(x,callback){callback();})`
+  - 返回`(function(){return function(){}})`
+
+    这样的函数也称之为第一级函数`(First-class Function)`。不仅如此，JavaScript中的函数还充当了类的构造函数的作用，同时又是一个Function类的实例`(instance)`。这样的多重身份让JavaScript的函数变得非常重要。
 - 响应式编程是一种面向数据流和变化传播的编程范式，数据更新是相关联的。
 - 把函数范式里的一套思路和响应式编程合起来就是函数响应式编程。
 
@@ -274,7 +279,7 @@ function curryingES6 = fn =>
 
 ## 控制反转、依赖注入
 
-> 控制反转（Inversion of Control，缩写为 IoC），是面向对象编程中的一种设计原则，可以用来减低计算机代码之间的耦合度。其中最常见的方式叫做依赖注入（Dependency Injection，简称 DI），还有一种方式叫“依赖查找”（Dependency Lookup）。通过控制反转，对象在被创建的时候，由一个调控系统内所有对象的外界实体，将其所依赖的对象的引用传递给它。也可以说，依赖被注入到对象中。
+> 控制反转(Inversion of Control，缩写为 IoC)，是面向对象编程中的一种设计原则，可以用来减低计算机代码之间的耦合度。其中最常见的方式叫做依赖注入(Dependency Injection，简称 DI)，还有一种方式叫“依赖查找”(Dependency Lookup)。通过控制反转，对象在被创建的时候，由一个调控系统内所有对象的外界实体，将其所依赖的对象的引用传递给它。也可以说，依赖被注入到对象中。
 
 原则：
 
@@ -310,5 +315,5 @@ React 反模式：
 - 尾调用优化：只保留内层函数的调用记录。
 - 意义： 如果所有函数都是尾调用，那么完全可以做到每次执行时，调用记录只有一项，这将大大节省内存。
 - 尾递归：函数调用自身，称为递归。如果尾调用自身，就称为尾递归。
-  - 递归非常耗费内存，因为需要同时保存成千上百个调用记录，很容易发生"栈溢出"错误（stack overflow）。但对于尾递归来说，由于只存在一个调用记录，所以永远不会发生"栈溢出"错误。
+  - 递归非常耗费内存，因为需要同时保存成千上百个调用记录，很容易发生"栈溢出"错误(stack overflow)。但对于尾递归来说，由于只存在一个调用记录，所以永远不会发生"栈溢出"错误。
   - 实现：柯里化、ES6函数默认参数
