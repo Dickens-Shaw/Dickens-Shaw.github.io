@@ -1,8 +1,6 @@
 
 ## JavaScript
 
-  - [由浅入深，66条JavaScript面试知识点](https://juejin.cn/post/6844904200917221389)☑️
-
   - [2020年了,再不会webpack敲得代码就不香了(近万字实战)](https://juejin.cn/post/6844904031240863758)☑️
 
   - [32个手写JS，巩固你的JS基础（面试高频）](https://juejin.cn/post/6875152247714480136)☑️
