@@ -378,3 +378,25 @@ Object.getOwnPropertyDescriptors(obj2)
 
 - ShareArrayBuffer和Atomics对象，用于从共享内存位置读取和写入
 
+## ES9(2018)
+
+- 异步迭代(asynchronous iterators)
+
+ES2018引入异步迭代器（asynchronous iterators），这就像常规迭代器，除了next()方法返回一个Promise。因此await可以和for...of循环一起使用，以串行的方式运行异步操作
+
+```js
+async function process(array) {
+  for await (let i of array) {
+    doSomething(i);
+  }
+}
+```
+
+- Promise.finally()
+- Rest/Spread 属性
+- 正则表达式命名捕获组（Regular Expression Named Capture Groups）
+- 正则表达式反向断言（lookbehind）
+- 正则表达式dotAll模式
+- 正则表达式 Unicode 转义
+- 非转义序列的模板字符串
+
