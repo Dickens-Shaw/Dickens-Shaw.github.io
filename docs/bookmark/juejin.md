@@ -19,8 +19,6 @@
 
   - [最全的手写JS面试题](https://juejin.cn/post/6968713283884974088)☑️
 
-  - [ES6、ES7、ES8、ES9、ES10新特性一览](https://juejin.cn/post/6844903811622912014)☑️
-
   - [可视化拖拽组件库一些技术要点原理分析](https://juejin.cn/post/6908502083075325959)☑️
 
   - [玩转 webpack，使你的打包速度提升 90%](https://juejin.cn/post/6844904071736852487)☑️

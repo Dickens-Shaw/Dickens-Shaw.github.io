@@ -301,7 +301,6 @@ console.log(2**10);// 输出1024
 ## ES8(2017)
 
 - async/await
-
 - Object.values()
 
 ```js
@@ -400,3 +399,27 @@ async function process(array) {
 - 正则表达式 Unicode 转义
 - 非转义序列的模板字符串
 
+## ES10(2019)
+
+- 行分隔符（U + 2028）和段分隔符（U + 2029）符号现在允许在字符串文字中，与JSON匹配
+- 更加友好的 JSON.stringify
+- 新增了Array的flat()方法和flatMap()方法
+
+flat()和flatMap()本质上就是是归纳（reduce） 与 合并（concat）的操作。
+
+- 新增了String的trimStart()方法和trimEnd()方法，去除字符串首尾空白字符
+- Object.fromEntries()
+- Symbol.prototype.description
+- String.prototype.matchAll
+- Function.prototype.toString()现在返回精确字符，包括空格和注释
+- 简化try {} catch {},修改 catch 绑定
+
+```js
+// 在 ES10 之前，我们必须通过语法为 catch 子句绑定异常变量，无论是否有必要。很多时候 catch 块是多余的。 ES10 提案使我们能够简单的把变量省略掉。
+try {} catch(e) {}  => try {} catch {}
+```
+- 新的基本数据类型BigInt
+- globalThis
+- import()
+- Legacy RegEx
+- 私有的实例方法和访问器
