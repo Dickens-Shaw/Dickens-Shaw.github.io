@@ -1,41 +1,7 @@
 
-## Webpack
-
-  - [120 行代码帮你了解 Webpack 下的 HMR 机制](https://juejin.cn/post/6973825927708934174)☑️
-
-  - [深入理解Vite核心原理](https://juejin.cn/post/7064853960636989454)☑️
-
-  - [打包的3种hash值你知道吗？当年我校招时被这题难倒了！](https://juejin.cn/post/7060688758370205733)☑️
-
-  - [「吐血整理」再来一打Webpack面试题](https://juejin.cn/post/6844904094281236487)☑️
-
-  - [【前端工程化】我写了万字，带你快速上手webpack](https://juejin.cn/post/7049160267124441102)☑️
-
-  - [[万字总结] 一文吃透 Webpack 核心原理](https://juejin.cn/post/6949040393165996040)☑️
-
-  - [前端工程化===Webpack？No，我来告诉你什么是前端工程化！](https://juejin.cn/post/6847009773305462791)☑️
-
-  - [嘿，不要给 async 函数写那么多 try/catch 了](https://juejin.cn/post/6844903886898069511)☑️
-
-  - [webpack打包原理 ? 看完这篇你就懂了 !](https://juejin.cn/post/6844904038543130637)☑️
-
-  - [面试官：webpack原理都不会？](https://juejin.cn/post/6859538537830858759)☑️
-
-  - [webpack 十连问你能接住几题](https://juejin.cn/post/7002839760792190989)☑️
-
-  - [Webpack5，了解从0到1搭建一个项目的细节](https://juejin.cn/post/7031813766098452493)☑️
-
-  - [做了一夜动画，让大家十分钟搞懂Webpack](https://juejin.cn/post/6961961165656326152)☑️
-
-  - [leader要我三天时间搭一套“ react-cli ”出来，我答应了...](https://juejin.cn/post/7033959447017816077)☑️
-
-  - [webpack 最佳实践](https://juejin.cn/post/6982361231071903781)☑️
-
-  - [webpack4 的30个步骤打造优化到极致的 react 开发环境，如约而至](https://juejin.cn/post/6844903862898262024)☑️
-
 ## 前端
 
-  - [宝啊～谈谈Tapable](https://juejin.cn/post/6974573181356998669)☑️
+  - [一名【合格】前端工程师的自检清单](https://juejin.cn/post/7070233509939380254)☑️
 
   - [微前端落地的那些事](https://juejin.cn/post/7065559452908257311)☑️
 
@@ -94,6 +60,54 @@
   - [从零使用 Webpack5 搭建一个完整的 Vue3 的开发环境](https://juejin.cn/post/6924180659829211143)☑️
 
   - [如何突破自己的技术瓶颈期](https://juejin.cn/post/6892315162657685518)☑️
+
+## TypeScript
+
+  - [「1.9W字总结」一份通俗易懂的 TS 教程，入门 + 实战！](https://juejin.cn/post/7068081327857205261)☑️
+
+  - [一份不可多得的 TS 学习指南（1.8W字）](https://juejin.cn/post/6872111128135073806)☑️
+
+  - [1.2W字 | 了不起的 TypeScript 入门教程](https://juejin.cn/post/6844904182843965453)☑️
+
+  - [总结了13道 Typescript 项目常用语法练习，学会它，90%的场景都不再害怕！（补加两道）](https://juejin.cn/post/7004098142282973215)☑️
+
+  - [如何优雅地在 React 中使用TypeScript，看这一篇就够了！](https://juejin.cn/post/7021674818621669389)☑️
+
+  - [总结TypeScript在项目开发中的应用实践体会](https://juejin.cn/post/6970841540776329224)☑️
+
+## Webpack
+
+  - [微医前端带你从头建立构建体系【开篇】](https://juejin.cn/post/6963056815420473357)☑️
+
+  - [深入理解Vite核心原理](https://juejin.cn/post/7064853960636989454)☑️
+
+  - [打包的3种hash值你知道吗？当年我校招时被这题难倒了！](https://juejin.cn/post/7060688758370205733)☑️
+
+  - [「吐血整理」再来一打Webpack面试题](https://juejin.cn/post/6844904094281236487)☑️
+
+  - [【前端工程化】我写了万字，带你快速上手webpack](https://juejin.cn/post/7049160267124441102)☑️
+
+  - [[万字总结] 一文吃透 Webpack 核心原理](https://juejin.cn/post/6949040393165996040)☑️
+
+  - [前端工程化===Webpack？No，我来告诉你什么是前端工程化！](https://juejin.cn/post/6847009773305462791)☑️
+
+  - [嘿，不要给 async 函数写那么多 try/catch 了](https://juejin.cn/post/6844903886898069511)☑️
+
+  - [webpack打包原理 ? 看完这篇你就懂了 !](https://juejin.cn/post/6844904038543130637)☑️
+
+  - [面试官：webpack原理都不会？](https://juejin.cn/post/6859538537830858759)☑️
+
+  - [webpack 十连问你能接住几题](https://juejin.cn/post/7002839760792190989)☑️
+
+  - [Webpack5，了解从0到1搭建一个项目的细节](https://juejin.cn/post/7031813766098452493)☑️
+
+  - [做了一夜动画，让大家十分钟搞懂Webpack](https://juejin.cn/post/6961961165656326152)☑️
+
+  - [leader要我三天时间搭一套“ react-cli ”出来，我答应了...](https://juejin.cn/post/7033959447017816077)☑️
+
+  - [webpack 最佳实践](https://juejin.cn/post/6982361231071903781)☑️
+
+  - [webpack4 的30个步骤打造优化到极致的 react 开发环境，如约而至](https://juejin.cn/post/6844903862898262024)☑️
 
 ## JavaScript
 
@@ -474,18 +488,6 @@
 ## NPM
 
   - [前端工程化 - 剖析npm的包管理机制](https://juejin.cn/post/6844904022080667661)☑️
-
-## TypeScript
-
-  - [一份不可多得的 TS 学习指南（1.8W字）](https://juejin.cn/post/6872111128135073806)☑️
-
-  - [1.2W字 | 了不起的 TypeScript 入门教程](https://juejin.cn/post/6844904182843965453)☑️
-
-  - [总结了13道 Typescript 项目常用语法练习，学会它，90%的场景都不再害怕！（补加两道）](https://juejin.cn/post/7004098142282973215)☑️
-
-  - [如何优雅地在 React 中使用TypeScript，看这一篇就够了！](https://juejin.cn/post/7021674818621669389)☑️
-
-  - [总结TypeScript在项目开发中的应用实践体会](https://juejin.cn/post/6970841540776329224)☑️
 
 ## uni-app
 
