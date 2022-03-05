@@ -297,3 +297,84 @@ console.log(Math.pow(2, 10)); // 输出1024
 // 指数运算符
 console.log(2**10);// 输出1024
 ```
+
+## ES8(2017)
+
+- async/await
+
+- Object.values()
+
+```js
+const obj = {a: 1, b: 2, c: 3};
+
+const values1=Object.keys(obj).map(key=>obj[key]); // ES7
+
+const values2=Object.values(obj); // ES8
+```
+
+- Object.entries()，函数返回一个给定对象自身可枚举属性的键值对的数组
+
+```js
+Object.keys(obj).forEach(key=>{
+	console.log('key:'+key+' value:'+obj[key]);
+}) // ES7
+
+Object.entries(obj).forEach(entry=>{
+  console.log('key:'+entry[0]+' value:'+entry[1]);
+}) // ES8
+```
+
+- String padding: padStart()和padEnd()，填充字符串达到当前长度
+
+> String.padStart(targetLength,[padString])
+
+  1. targetLength:当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
+  2. padString:(可选)填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数的缺省值为 " "。
+
+```js
+console.log('0.0'.padStart(4,'10')) //10.0
+console.log('0.0'.padStart(20))// 0.00    
+```
+
+> String.padEnd(targetLength,[padString])
+
+  1. targetLength:当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
+  2. padString:(可选) 填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数的缺省值为 " "；
+
+```js
+console.log('0.0'.padEnd(4,'0')) //0.00    
+console.log('0.0'.padEnd(10,'0'))//0.00000000
+```
+
+- 函数参数列表结尾允许逗号
+
+主要作用是方便使用git进行多人协作开发时修改同一个函数减少不必要的行变更。
+
+- Object.getOwnPropertyDescriptors()
+
+获取一个对象的所有自身属性的描述符,如果没有任何自身属性，则返回空对象。
+
+```js
+const obj2 = {
+	name: 'Jine',
+	get age() { return '18' }
+};
+Object.getOwnPropertyDescriptors(obj2)
+// {
+//   age: {
+//     configurable: true,
+//     enumerable: true,
+//     get: function age(){}, //the getter function
+//     set: undefined
+//   },
+//   name: {
+//     configurable: true,
+//     enumerable: true,
+//		value:"Jine",
+//		writable:true
+//   }
+// }
+```
+
+- ShareArrayBuffer和Atomics对象，用于从共享内存位置读取和写入
+
