@@ -189,9 +189,9 @@ cookie，localStorage，sessionStorage，indexDB
   - AJAX 请求发送后，结果被浏览器拦截了
 
 - 但是有三个标签是允许跨域加载资源：
-  - <img src=XXX>
-  - <link href=XXX>
-  - <script src=XXX>
+  - `<img src=XXX>`
+  - `<link href=XXX>`
+  - `<script src=XXX>`
 
 ### JSONP
 
@@ -244,6 +244,12 @@ CORS 需要浏览器和后端同时支持。IE 8 和 9 需要通过 XDomainReque
   对于复杂请求来说，首先会发起一个预检请求，该请求是 option 方法的，通过该请求来知道服务端是否允许跨域请求。
 
 ### Nginx 和 nodejs 中间件代理原理相同
+
+实现原理：**同源策略是浏览器需要遵循的标准，而如果是服务器向服务器请求就无需遵循同源策略**。 代理服务器，需要做以下几个步骤：
+- 接受客户端请求。
+- 将请求转发给服务器。
+- 拿到服务器响应数据。
+- 将响应转发给客户端。
 
 ### document.domain
 
