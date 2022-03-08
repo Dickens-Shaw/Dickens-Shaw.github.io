@@ -1,10 +1,4 @@
-## 时间复杂度
-
-通常使用最差的时间复杂度来衡量一个算法的好坏
-
-对于一个算法来说，可能会计算出操作次数为 aN + 1，N 代表数据量。那么该算法的时间复杂度就是 O(N)。因为我们在计算时间复杂度的时候，数据量通常是非常大的，这时候低阶项和常数项可以忽略不计
-
-当然可能会出现两个算法都是 O(N) 的时间复杂度，那么对比两个算法的好坏就要通过对比低阶项和常数项了
+# 数据结构
 
 ## 栈
 
@@ -293,6 +287,55 @@ function reverseList(head) {
 }
 ```
 
+## 字典
+
+字典：类似对象，以 key，value 存贮值
+
+```js
+class Dictionary {
+  constructor() {
+    this.items = {}
+  }
+  set(key, value) {
+    this.items[key] = value
+  }
+
+  get(key) {
+    return this.items[key]
+  }
+
+  remove(key) {
+    delete this.items[key]
+  }
+
+  get keys() {
+    return Object.keys(this.items)
+  }
+
+  get values() {
+    /*
+    也可以使用ES7中的values方法
+    return Object.values(this.items)
+    */
+
+    // 在这里我们通过循环生成一个数组并输出
+    return Object.keys(this.items).reduce((r, c, i) => {
+      r.push(this.items[c])
+      return r
+    }, [])
+  }
+}
+const dictionary = new Dictionary()
+dictionary.set('Gandalf', 'gandalf@email.com')
+dictionary.set('John', 'johnsnow@email.com')
+dictionary.set('Tyrion', 'tyrion@email.com')
+
+console.log(dictionary)
+console.log(dictionary.keys)
+console.log(dictionary.values)
+console.log(dictionary.items)
+```
+
 ## 堆
 
 堆通常是一个可以被看做一棵树的数组对象。
@@ -475,6 +518,8 @@ function getDepth(root) {
   return Math.max(getDepth(root.left), getDepth(root.right)) + 1
 }
 ```
+
+# 算法
 
 ## 动态规划
 
