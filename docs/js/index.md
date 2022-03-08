@@ -1,6 +1,4 @@
-# 数据类型
-
-## 类型
+## 数据类型
 > JavaScript 共有七种基本数据类型，分别是 `Undefined、Null、Boolean、Number、String`，还有在 ES6 中新增的 `Symbol` 和 `BigInt` 类型
 
 - `Symbol` 代表创建后独一无二且不可变的数据类型，它的出现我认为主要是为了解决可能出现的全局变量冲突的问题。
@@ -287,198 +285,11 @@ console.log(a.call(null)) // [object Null]
 
 当我们查找一个变量时，如果当前执行环境中没有找到，我们可以沿着作用域链向后查找。
 
-## 原型、原型链
-
-`原型`：当构造函数被创建时，会在内存空间新建一个对象，构造函数内有一个属性 `prototype` 会指向这个对象的存储空间，这个对象称为构造函数的原型对象
-
-除了 `Function.prototype.bind()` 之外每个函数都有 `prototype` 属性就是原型，原型的 `constructor` 属性指向构造函数，构造函数又通过 `prototype` 属性指回原型
-
-`原型链`：每个对象拥有一个原型对象，通过 `__proto__` 指针指向上一个原型 ，并从中继承方法和属性，同时原型对象也可能拥有原型，这样一层一层，最终指向 null，这种关系被称为原型链 (prototype chain)
-
-1. `Object` 是所有对象的爸爸，所有对象都可以通过 `__proto__` 找到它
-2. `Function` 是所有函数的爸爸，所有函数都可以通过 `__proto__` 找到它
-3. `Function.prototype` 和 `Object.prototype` 是两个特殊的对象，他们由引擎来创建
-4. 除了以上两个特殊对象，其他对象都是通过构造器 `new` 出来的
-
-![blockchain](../_media/imgs/prototype.png)
-
 ## 变量提升
 
 在生成执行环境时，会有两个阶段。第一个阶段是创建的阶段，JS 解释器会找出需要提升的变量和函数，并且给他们提前在内存中开辟好空间，函数的话会将整个函数存入内存中，变量只声明并且赋值为 `undefined`，所以在第二个阶段，也就是代码执行阶段，我们可以直接提前使用。
 
 在提升的过程中，相同的函数会覆盖上一个函数，并且函数优先于变量提升
-
-## 防抖
-
-即短时间内大量触发同一事件，只会执行一次函数，实现原理为设置一个定时器，约定在 xx 毫秒后再触发事件处理，`每次触发事件都会重新设置计时器`，直到 xx 毫秒内无第二次操作。
-
-常用于搜索框/滚动条的监听事件处理，如果不做防抖，每输入一个字/滚动屏幕，都会触发事件处理，造成性能浪费。
-
-- 手撕：
-
-```js
-function debounce(func, wait) {
-  let timeout = null
-  return function () {
-    let context = this
-    let args = arguments
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      func.apply(context, args)
-    }, wait)
-  }
-}
-```
-
-## 节流
-
-防抖是延迟执行，而节流是间隔执行，函数节流即每隔一段时间就执行一次，实现原理为设置一个定时器，约定 xx 毫秒后执行事件，如果时间到了，那么执行函数并重置定时器，和防抖的区别在于，防抖每次触发事件都重置定时器，而节流在`定时器到时间后再清空定时器`
-
-节流可以使用在 scroll 函数的事件监听上
-
-- 手撕：
-
-```js
-function throttle(func, wait) {
-  let timeout = null
-  return function () {
-    let context = this
-    let args = arguments
-    if (!timeout) {
-      timeout = setTimeout(() => {
-        timeout = null
-        func.apply(context, args)
-      }, wait)
-    }
-  }
-}
-```
-
-## this
-
-> 绑定优先级 new > 显示 > 隐示
-
-1. 默认绑定：全局环境中，`this` 默认绑定到 `window`。
-2. 隐式绑定：一般地，被直接对象所包含的函数调用时，也称为方法调用，`this` 隐式绑定到该直接对象。
-   隐式丢失：隐式丢失是指被隐式绑定的函数丢失绑定对象，从而默认绑定到 `window`。
-3. 显式绑定：通过 `call()、apply()、bind()` 方法把对象绑定到 `this` 上，叫做显式绑定。
-4. new 绑定：如果函数或者方法调用之前带有关键字 `new`，它就构成构造函数调用。对于 `this` 绑定来说，称为 `new` 绑定。
-
-### call
-
-> `call()` 方法使用一个指定的 `this` 值和单独给出的一个或多个参数来调用一个函数。
-
-- 应用：
-
-  1. 对象的继承
-  2. 借用方法：类数组使用`Array`原型链上的方法
-
-- 实现分析：
-
-  1. 首先 `context` 为可选参数，如果不传的话默认上下文为 `window`
-  2. 接下来给 `context` 创建一个 `fn` 属性，并将值设置为需要调用的函数
-  3. 因为 `call` 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
-  4. 然后调用函数并将对象上的函数删除
-
-- 手撕：
-
-```js
-Function.prototype.myCall = function (context) {
-  if (typeof this !== 'function') {
-    throw new TypeError('Error')
-  }
-  context = context || window
-  context.fn = this
-  const args = [...arguments].slice(1)
-  const result = context.fn(...args)
-  delete context.fn
-  return result
-}
-```
-
-### apply
-
-> `apply()` 方法调用一个具有给定 this 值的函数，以及作为一个数组（或类似数组对象）提供的参数。
-
-- 应用：
-
-  1. `Math.max`。用它来获取数组中最大的一项
-  2. 实现两个数组合并。在 ES6 的扩展运算符出现之前，我们可以用`Array.prototype.push`来实现。
-
-- 手撕：
-
-```js
-Function.prototype.myApply = function (context) {
-  if (typeof this !== 'function') {
-    throw new TypeError('Error')
-  }
-  context = context || window
-  context.fn = this
-  let result
-  if (arguments[1]) {
-    result = context.fn(...arguments[1])
-  } else {
-    result = context.fn()
-  }
-  delete context.fn
-  return result
-}
-```
-
-### bind
-
-> `bind()` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
-
-- 实现分析：
-
-1. 前几步和之前的实现差不多，就不赘述了
-2. bind 返回了一个函数，对于函数来说有两种方式调用，一种是直接调用，一种是通过 `new` 的方式，我们先来说直接调用的方式
-3. 对于直接调用来说，这里选择了 `apply` 的方式实现，但是对于参数需要注意以下情况：因为 `bind` 可以实现类似这样的代码 `f.bind(obj, 1)(2)`，所以我们需要将两边的参数拼接起来，于是就有了这样的实现 `args.concat(...arguments)`
-4. 最后来说通过 `new` 的方式，在之前的章节中我们学习过如何判断 `this`，对于 `new` 的情况来说，不会被任何方式改变 `this`，所以对于这种情况我们需要忽略传入的 `this`
-
-- 手撕：
-
-```js
-Function.prototype.myBind = function (context) {
-  if (typeof this !== 'function') {
-    throw new TypeError('Error')
-  }
-  const self = this
-  const args = [...arguments].slice(1)
-  return function F() {
-    if (this instanceof F) {
-      return new self(...args, ...arguments)
-    }
-    return self.apply(context, args.concat(...arguments))
-  }
-}
-```
-
-## new
-
-- 实现分析：
-
-  1. 创建一个空对象
-  2. 获取构造函数
-  3. 设置空对象的原型
-  4. 绑定 `this` 并执行构造函数
-  5. 确保返回值为对象
-
-- 手撕：
-
-```js
-function myNew() {
-  const obj = {}
-  //取得该方法的第一个参数(并删除第一个参数)，该参数是构造函数
-  const constructor = [].shift.call(arguments)
-  //将新对象的内部属性__proto__指向构造函数的原型，这样新对象就可以访问原型中的属性和方法
-  obj.__proto__ = constructor.prototype
-  //取得构造函数的返回值
-  const result = constructor.apply(obj, arguments)
-  //如果返回值是一个对象就返回该对象，否则返回构造函数的一个实例对象
-  return result instanceof Object ? result : obj
-}
-```
 
 ## 计算精度
 
@@ -508,67 +319,6 @@ console.log(0.100000000000000002) // 0.1
 
 ```js
 parseFloat((0.1 + 0.2).toFixed(10)) === 0.3 // true
-```
-
-## 浅拷贝
-
-> 创建一个新对象，这个对象有着原始对象属性值的一份`精确拷贝`。
->
-> 如果属性是`基本类型`，拷贝的就是基本类型的`值`，如果属性是`引用类型`，拷贝的就是`内存地址` ，所以如果其中一个对象改变了这个地址，就会影响到另一个对象。
->
-> 浅拷贝只解决了`第一层`的问题，拷贝第一层的基本类型值，以及第一层的引用类型地址
-
-- `Object.assign()`
-  只会拷贝所有的属性值到新的对象中，如果属性值是对象的话，拷贝的是地址，所以并不是深拷贝
-
-- 拓展运算符 `...`
-
-- **Array.prototype.slice()**：slice() 方法返回一个新的数组对象，这一对象是一个由 begin 和 end（不包括 end）决定的原数组的浅拷贝。原始数组不会被改变。
-
-## 深拷贝
-
-> 深拷贝会拷贝`所有的属性`，并拷贝属性指向的`动态分配的内存`。
->
-> 当对象和它所引用的对象一起拷贝时即发生深拷贝。
->
-> 深拷贝相比于浅拷贝速度较慢并且`花销较大`。拷贝前后两个对象`互不影响`
-
-- `JSON.parse(JSON.stringify(object))`
-
-局限性：
-
-只能拷贝`基本类型`和`引用类型`，不能拷贝`函数`，`对象`，`数组`，`正则`，`日期`，`Map`，`Set`，`WeakMap`，`WeakSet`，会忽略 `undefined`，`symbol`
-
-- `MessageChannel`
-
-```js
-function structuralClone(obj) {
-  return new Promise((resolve) => {
-    const { port1, port2 } = new MessageChannel()
-    port2.onmessage = (ev) => resolve(ev.data)
-    port1.postMessage(obj)
-  })
-}
-```
-
-- 手撕
-
-```js
-// 简单实现
-function deepClone(obj) {
-  function isObject(o) {
-    return (typeof o === 'object' || typeof o === 'function') && o !== null
-  }
-  if (!isObject(obj)) {
-    throw new Error('非对象')
-  }
-  let isArray = Array.isArray(obj)
-  let newObj = isArray ? [...obj] : { ...obj }
-  Reflect.ownKeys(newObj).forEach((key) => {
-    newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key]
-  })
-  return newObj
-}
 ```
 
 ## 内存泄漏
@@ -685,46 +435,225 @@ const ajax = (url,method,async,data){
     - fetch 不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
     - fetch 没有办法原生监测请求的进度，而`XHR`可以
 
-## 高阶函数
+# 函数
 
-> 高阶函数英文叫 `Higher-order function`，它的定义很简单，就是至少满足下列一个条件的函数：
->
-> - 接受一个或多个函数作为输入
-> - 输出一个函数
+## 定义方法
 
-也就是说高阶函数是对其他函数进行操作的函数，可以将它们作为参数传递，或者是返回它们。
+1. 函数声明
 
-简单来说，高阶函数是一个`接收函数作为参数`传递或者`将函数作为返回值`输出的函数
-
-- 函数作为参数传递
-
-  JavaScript 语言中内置了一些高阶函数，比如
-
-  - `Array.prototype.map`：创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果，原始数组不会改变
-  - `Array.prototype.filter`：创建一个新数组, 其包含通过提供函数实现的测试的所有元素，原始数组不会改变
-  - `Array.prototype.reduce`：对数组中的每个元素执行一个提供的 `reducer` 函数(升序执行)，将其结果汇总为单个返回值
-
-  它们接受一个函数作为参数，并应用这个函数到列表的每一个元素。
-
-- 函数作为返回值输出
-
-  - Add 无限累加函数
+函数声明有预解析,而且函数声明的优先级高于变量
 
 ```js
-function add(a) {
-  function sum(b) { // 使用闭包
-    a = a + b; // 累加
-    return sum;
+//ES5
+function getSum(){}
+function (){}//匿名函数
+//ES6
+()=>{}//如果{}内容只有一行{}和return关键字可省,
+```
+
+2. 函数表达式(函数字面量)
+
+```js
+//ES5
+var sum=function(){}
+//ES6
+let sum=()=>{}//如果{}内容只有一行{}和return关键字可省,
+```
+
+3. 构造函数
+
+使用Function构造函数定义函数的方式是一个函数表达式,这种方式会导致解析两次代码，影响性能。第一次解析常规的JavaScript代码，第二次解析传入构造函数的字符串
+
+```js
+const sum = new Function('a', 'b' , 'return a + b') 
+```
+
+
+## this
+
+> 绑定优先级 new > 显示 > 隐示
+
+1. 默认绑定：全局环境中，`this` 默认绑定到 `window`。
+2. 隐式绑定：一般地，被直接对象所包含的函数调用时，也称为方法调用，`this` 隐式绑定到该直接对象。
+   隐式丢失：隐式丢失是指被隐式绑定的函数丢失绑定对象，从而默认绑定到 `window`。
+3. 显式绑定：通过 `call()、apply()、bind()` 方法把对象绑定到 `this` 上，叫做显式绑定。
+4. new 绑定：如果函数或者方法调用之前带有关键字 `new`，它就构成构造函数调用。对于 `this` 绑定来说，称为 `new` 绑定。
+
+### call
+
+> `call()` 方法使用一个指定的 `this` 值和单独给出的一个或多个参数来调用一个函数。
+
+- 应用：
+
+  1. 对象的继承
+  2. 借用方法：类数组使用`Array`原型链上的方法
+
+- 实现分析：
+
+  1. 首先 `context` 为可选参数，如果不传的话默认上下文为 `window`
+  2. 接下来给 `context` 创建一个 `fn` 属性，并将值设置为需要调用的函数
+  3. 因为 `call` 可以传入多个参数作为调用函数的参数，所以需要将参数剥离出来
+  4. 然后调用函数并将对象上的函数删除
+
+- 手撕：
+
+```js
+Function.prototype.myCall = function (context) {
+  if (typeof this !== 'function') {
+    throw new TypeError('Error')
   }
-  sum.toString = function() { // 重写toString()方法
-    return a;
-  }
-  return sum; // 返回一个函数
+  context = context || window
+  context.fn = this
+  const args = [...arguments].slice(1)
+  const result = context.fn(...args)
+  delete context.fn
+  return result
 }
-add(1); // 1
-add(1)(2);  // 3
-add(1)(2)(3)； // 6
-add(1)(2)(3)(4)； // 10
+```
+
+### apply
+
+> `apply()` 方法调用一个具有给定 this 值的函数，以及作为一个数组（或类似数组对象）提供的参数。
+
+- 应用：
+
+  1. `Math.max`。用它来获取数组中最大的一项
+  2. 实现两个数组合并。在 ES6 的扩展运算符出现之前，我们可以用`Array.prototype.push`来实现。
+
+- 手撕：
+
+```js
+Function.prototype.myApply = function (context) {
+  if (typeof this !== 'function') {
+    throw new TypeError('Error')
+  }
+  context = context || window
+  context.fn = this
+  let result
+  if (arguments[1]) {
+    result = context.fn(...arguments[1])
+  } else {
+    result = context.fn()
+  }
+  delete context.fn
+  return result
+}
+```
+
+### bind
+
+> `bind()` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
+
+- 实现分析：
+
+1. 前几步和之前的实现差不多，就不赘述了
+2. bind 返回了一个函数，对于函数来说有两种方式调用，一种是直接调用，一种是通过 `new` 的方式，我们先来说直接调用的方式
+3. 对于直接调用来说，这里选择了 `apply` 的方式实现，但是对于参数需要注意以下情况：因为 `bind` 可以实现类似这样的代码 `f.bind(obj, 1)(2)`，所以我们需要将两边的参数拼接起来，于是就有了这样的实现 `args.concat(...arguments)`
+4. 最后来说通过 `new` 的方式，在之前的章节中我们学习过如何判断 `this`，对于 `new` 的情况来说，不会被任何方式改变 `this`，所以对于这种情况我们需要忽略传入的 `this`
+
+- 手撕：
+
+```js
+Function.prototype.myBind = function (context) {
+  if (typeof this !== 'function') {
+    throw new TypeError('Error')
+  }
+  const self = this
+  const args = [...arguments].slice(1)
+  return function F() {
+    if (this instanceof F) {
+      return new self(...args, ...arguments)
+    }
+    return self.apply(context, args.concat(...arguments))
+  }
+}
+```
+
+## 防抖
+
+即短时间内大量触发同一事件，只会执行一次函数，实现原理为设置一个定时器，约定在 xx 毫秒后再触发事件处理，`每次触发事件都会重新设置计时器`，直到 xx 毫秒内无第二次操作。
+
+常用于搜索框/滚动条的监听事件处理，如果不做防抖，每输入一个字/滚动屏幕，都会触发事件处理，造成性能浪费。
+
+- 手撕：
+
+```js
+function debounce(func, wait) {
+  let timeout = null
+  return function () {
+    let context = this
+    let args = arguments
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      func.apply(context, args)
+    }, wait)
+  }
+}
+```
+
+## 节流
+
+防抖是延迟执行，而节流是间隔执行，函数节流即每隔一段时间就执行一次，实现原理为设置一个定时器，约定 xx 毫秒后执行事件，如果时间到了，那么执行函数并重置定时器，和防抖的区别在于，防抖每次触发事件都重置定时器，而节流在`定时器到时间后再清空定时器`
+
+节流可以使用在 scroll 函数的事件监听上
+
+- 手撕：
+
+```js
+function throttle(func, wait) {
+  let timeout = null
+  return function () {
+    let context = this
+    let args = arguments
+    if (!timeout) {
+      timeout = setTimeout(() => {
+        timeout = null
+        func.apply(context, args)
+      }, wait)
+    }
+  }
+}
+```
+
+## 原型、原型链
+
+`原型`：当构造函数被创建时，会在内存空间新建一个对象，构造函数内有一个属性 `prototype` 会指向这个对象的存储空间，这个对象称为构造函数的原型对象
+
+除了 `Function.prototype.bind()` 之外每个函数都有 `prototype` 属性就是原型，原型的 `constructor` 属性指向构造函数，构造函数又通过 `prototype` 属性指回原型
+
+`原型链`：每个对象拥有一个原型对象，通过 `__proto__` 指针指向上一个原型 ，并从中继承方法和属性，同时原型对象也可能拥有原型，这样一层一层，最终指向 null，这种关系被称为原型链 (prototype chain)
+
+1. `Object` 是所有对象的爸爸，所有对象都可以通过 `__proto__` 找到它
+2. `Function` 是所有函数的爸爸，所有函数都可以通过 `__proto__` 找到它
+3. `Function.prototype` 和 `Object.prototype` 是两个特殊的对象，他们由引擎来创建
+4. 除了以上两个特殊对象，其他对象都是通过构造器 `new` 出来的
+
+![blockchain](../_media/imgs/prototype.png)
+
+## new
+
+- 实现分析：
+
+  1. 创建一个空对象
+  2. 获取构造函数
+  3. 设置空对象的原型
+  4. 绑定 `this` 并执行构造函数
+  5. 确保返回值为对象
+
+- 手撕：
+
+```js
+function myNew() {
+  const obj = {}
+  //取得该方法的第一个参数(并删除第一个参数)，该参数是构造函数
+  const constructor = [].shift.call(arguments)
+  //将新对象的内部属性__proto__指向构造函数的原型，这样新对象就可以访问原型中的属性和方法
+  obj.__proto__ = constructor.prototype
+  //取得构造函数的返回值
+  const result = constructor.apply(obj, arguments)
+  //如果返回值是一个对象就返回该对象，否则返回构造函数的一个实例对象
+  return result instanceof Object ? result : obj
+}
 ```
 
 ## 继承
@@ -841,6 +770,114 @@ var Child = (function (_Parent) {
 
 核心是`_inherits`函数，可以看到它采用的是————**寄生组合继承方式**，同时证明了这种方式的成功。不过这里加了一个`Object.setPrototypeOf(subClass, superClass)`，用来继承父类的静态方法。
 
+## 高阶函数
+
+> 高阶函数英文叫 `Higher-order function`，它的定义很简单，就是至少满足下列一个条件的函数：
+>
+> - 接受一个或多个函数作为输入
+> - 输出一个函数
+
+也就是说高阶函数是对其他函数进行操作的函数，可以将它们作为参数传递，或者是返回它们。
+
+简单来说，高阶函数是一个`接收函数作为参数`传递或者`将函数作为返回值`输出的函数
+
+- 函数作为参数传递
+
+  JavaScript 语言中内置了一些高阶函数，比如
+
+  - `Array.prototype.map`：创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果，原始数组不会改变
+  - `Array.prototype.filter`：创建一个新数组, 其包含通过提供函数实现的测试的所有元素，原始数组不会改变
+  - `Array.prototype.reduce`：对数组中的每个元素执行一个提供的 `reducer` 函数(升序执行)，将其结果汇总为单个返回值
+
+  它们接受一个函数作为参数，并应用这个函数到列表的每一个元素。
+
+- 函数作为返回值输出
+
+  - Add 无限累加函数
+
+```js
+function add(a) {
+  function sum(b) { // 使用闭包
+    a = a + b; // 累加
+    return sum;
+  }
+  sum.toString = function() { // 重写toString()方法
+    return a;
+  }
+  return sum; // 返回一个函数
+}
+add(1); // 1
+add(1)(2);  // 3
+add(1)(2)(3)； // 6
+add(1)(2)(3)(4)； // 10
+```
+
+
+# 对象
+
+## 浅拷贝
+
+> 创建一个新对象，这个对象有着原始对象属性值的一份`精确拷贝`。
+>
+> 如果属性是`基本类型`，拷贝的就是基本类型的`值`，如果属性是`引用类型`，拷贝的就是`内存地址` ，所以如果其中一个对象改变了这个地址，就会影响到另一个对象。
+>
+> 浅拷贝只解决了`第一层`的问题，拷贝第一层的基本类型值，以及第一层的引用类型地址
+
+- `Object.assign()`
+  只会拷贝所有的属性值到新的对象中，如果属性值是对象的话，拷贝的是地址，所以并不是深拷贝
+
+- 拓展运算符 `...`
+
+- `Array.prototype.slice()`：slice() 方法返回一个新的数组对象，这一对象是一个由 begin 和 end（不包括 end）决定的原数组的浅拷贝。原始数组不会被改变。
+
+## 深拷贝
+
+> 深拷贝会拷贝`所有的属性`，并拷贝属性指向的`动态分配的内存`。
+>
+> 当对象和它所引用的对象一起拷贝时即发生深拷贝。
+>
+> 深拷贝相比于浅拷贝速度较慢并且`花销较大`。拷贝前后两个对象`互不影响`
+
+- `JSON.parse(JSON.stringify(object))`
+
+局限性：
+
+只能拷贝`基本类型`和`引用类型`，不能拷贝`函数`，`对象`，`数组`，`正则`，`日期`，`Map`，`Set`，`WeakMap`，`WeakSet`，会忽略 `undefined`，`symbol`
+
+- `MessageChannel`
+
+```js
+function structuralClone(obj) {
+  return new Promise((resolve) => {
+    const { port1, port2 } = new MessageChannel()
+    port2.onmessage = (ev) => resolve(ev.data)
+    port1.postMessage(obj)
+  })
+}
+```
+
+- 手撕
+
+```js
+// 简单实现
+function deepClone(obj) {
+  function isObject(o) {
+    return (typeof o === 'object' || typeof o === 'function') && o !== null
+  }
+  if (!isObject(obj)) {
+    throw new Error('非对象')
+  }
+  let isArray = Array.isArray(obj)
+  let newObj = isArray ? [...obj] : { ...obj }
+  Reflect.ownKeys(newObj).forEach((key) => {
+    newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key]
+  })
+  return newObj
+}
+```
+
+# 数组
+
 ## 数组展开
 
 ### 递归
@@ -889,37 +926,4 @@ function flatten(arr) {
   // flat() 方法会移除数组中的空项
   return arr.flat(Infinity)
 }
-```
-
-# 函数
-
-## 定义方法
-
-1. 函数声明
-
-函数声明有预解析,而且函数声明的优先级高于变量
-
-```js
-//ES5
-function getSum(){}
-function (){}//匿名函数
-//ES6
-()=>{}//如果{}内容只有一行{}和return关键字可省,
-```
-
-2. 函数表达式(函数字面量)
-
-```js
-//ES5
-var sum=function(){}
-//ES6
-let sum=()=>{}//如果{}内容只有一行{}和return关键字可省,
-```
-
-3. 构造函数
-
-使用Function构造函数定义函数的方式是一个函数表达式,这种方式会导致解析两次代码，影响性能。第一次解析常规的JavaScript代码，第二次解析传入构造函数的字符串
-
-```js
-const sum = new Function('a', 'b' , 'return a + b') 
 ```

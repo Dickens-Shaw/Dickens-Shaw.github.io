@@ -10,9 +10,61 @@
 
 栈是一个线性结构，在计算机中是一个相当常见的数据结构。
 
-栈的特点是只能在某一端添加或删除数据，遵循先进后出的原则
+栈的特点是只能在某一端添加或删除数据，遵循**先进后出**的原则
 
 应用：Vue 中关于模板解析的代码，就有应用到匹配尖括号的内容
+
+```js
+class Stack {
+  constructor() {
+    this.items = []
+  }
+
+  // 入栈
+  push(element) {
+    this.items.push(element)
+  }
+
+  // 出栈
+  pop() {
+    return this.items.pop()
+  }
+
+  // 末位
+  get peek() {
+    return this.items[this.items.length - 1]
+  }
+
+  // 是否为空栈
+  get isEmpty() {
+    return !this.items.length
+  }
+
+  // 长度
+  get size() {
+    return this.items.length
+  }
+
+  // 清空栈
+  clear() {
+    this.items = []
+  }
+}
+
+// 实例化一个栈
+const stack = new Stack()
+console.log(stack.isEmpty) // true
+
+// 添加元素
+stack.push(5)
+stack.push(8)
+
+// 读取属性再添加
+console.log(stack.peek) // 8
+stack.push(11)
+console.log(stack.size) // 3
+console.log(stack.isEmpty) // false
+```
 
 ## 队列
 
@@ -398,13 +450,13 @@ function bubble(array) {
 
 核心：在于间隔序列的设定。既可以提前设定好间隔序列，也可以动态的定义间隔序列。
 
-第一个突破O(n^2)的排序算法；是简单插入排序的改进版；它与插入排序的不同之处在于，它会优先比较距离较远的元素。希尔排序又叫缩小增量排序
+第一个突破 O(n^2)的排序算法；是简单插入排序的改进版；它与插入排序的不同之处在于，它会优先比较距离较远的元素。希尔排序又叫缩小增量排序
 
 ### 计数排序
 
 核心：将输入的数据值转化为键存储在额外开辟的数组空间中。 作为一种线性时间复杂度的排序，计数排序要求输入的数据必须是有确定范围的整数。
 
-思路：使用一个额外的数组C，其中第i个元素是待排序数组A中值等于i的元素的个数。然后根据数组C来将A中的元素排到正确的位置。它只能对整数进行排序。
+思路：使用一个额外的数组 C，其中第 i 个元素是待排序数组 A 中值等于 i 的元素的个数。然后根据数组 C 来将 A 中的元素排到正确的位置。它只能对整数进行排序。
 
 ### 桶排序
 
