@@ -774,7 +774,6 @@ function Child() {
 }
 //原型链继承
 Child.prototype = new Parent()
-Child.prototype.constructor = Child
 ```
 
 - 寄生组合继承
@@ -792,15 +791,46 @@ function Child() {
   // 构造函数继承
   Parent.call(this, 'xxx')
 }
-//原型链继承
+// 原型链继承
 // Child.prototype = new Parent()
-Child.prototype = Parent.prototype //将`指向父类实例`改为`指向父类原型`
-Child.prototype.constructor = Child
+Child.prototype = Object.create(Parent.prototype) // 将`指向父类实例`改为`指向父类原型`
+Child.prototype.constructor = Child // 修正构造函数
 ```
 
-- 单继承？
+- ES6的 extends 被编译后
 
-让 ChildType.prototype.**proto**指向 ParentType.prototype
+```js
+function _possibleConstructorReturn(self, call) {
+    return call && (typeof call === 'object' || typeof call === 'function') ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var Parent = function Parent() {
+    // 验证是否是 Parent 构造出来的 this
+    _classCallCheck(this, Parent);
+};
+var Child = (function (_Parent) {
+    _inherits(Child, _Parent);
+    function Child() {
+        _classCallCheck(this, Child);
+        return _possibleConstructorReturn(this, (Child.__proto__ || Object.getPrototypeOf(Child)).apply(this, arguments));
+    }
+    return Child;
+}(Parent));
+```
+
+核心是`_inherits`函数，可以看到它采用的是————**寄生组合继承方式**，同时证明了这种方式的成功。不过这里加了一个`Object.setPrototypeOf(subClass, superClass)`，用来继承父类的静态方法。
 
 ## 数组展开
 
