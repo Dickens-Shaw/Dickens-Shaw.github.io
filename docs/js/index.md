@@ -1,5 +1,6 @@
-## 数据类型
+# 数据类型
 
+## 类型
 > JavaScript 共有七种基本数据类型，分别是 `Undefined、Null、Boolean、Number、String`，还有在 ES6 中新增的 `Symbol` 和 `BigInt` 类型
 
 - `Symbol` 代表创建后独一无二且不可变的数据类型，它的出现我认为主要是为了解决可能出现的全局变量冲突的问题。
@@ -269,7 +270,7 @@ console.log(a.call(null)) // [object Null]
 
   1. 返回一个函数。刚刚已经举例。
   2. 作为函数参数传递
-  3. 在定时器、事件监听、Ajax请求、跨窗口通信、Web Workers或者任何异步中，只要使用了回调函数，实际上就是在使用闭包。
+  3. 在定时器、事件监听、Ajax 请求、跨窗口通信、Web Workers 或者任何异步中，只要使用了回调函数，实际上就是在使用闭包。
   4. IIFE(立即执行函数表达式)创建闭包, 保存了`全局作用域window`和`当前函数的作用域`，因此可以全局的变量。
 
 ## 作用域、作用域链
@@ -728,7 +729,7 @@ add(1)(2)(3)(4)； // 10
 
 ## 继承
 
-- 构造函数继承
+### 构造函数继承
 
 使用父类的构造函数来增强子类实例，即复制父类的实例属性给子类，构造继承可以向父类传递参数，可以实现多继承，通过 call 多个父类对象。但是构造继承只能继承父类的实例属性和方法，不能继承原型属性和方法，无法实现函数服用，每个子类都有父类实例函数的副本，影响性能。
 
@@ -742,7 +743,7 @@ function Child() {
 }
 ```
 
-- 原型继承
+### 原型继承
 
 将父类的实例作为子类的原型，他的特点是实例是子类的实例也是父类的实例，父类新增的原型方法/属性，子类都能够访问，并且原型链继承简单易于实现，缺点是来自原型对象的所有属性被所有实例共享，无法实现多继承，无法向父类构造函数传参
 
@@ -756,7 +757,7 @@ function Child() {
 Child.prototype = new Parent()
 ```
 
-- 组合继承
+### 组合继承
 
 所谓组合继承，就是在上面原型链继承方式下，在子构造函数内，手动调用父构造函数，并传入子类 this
 
@@ -776,7 +777,7 @@ function Child() {
 Child.prototype = new Parent()
 ```
 
-- 寄生组合继承
+### 寄生组合继承
 
 通过寄生方式，砍掉父类的实例属性，这样，在调用两次父类的构造的时候，就不会初始化两次实例方法/属性，避免的组合继承的缺点
 
@@ -797,44 +798,52 @@ Child.prototype = Object.create(Parent.prototype) // 将`指向父类实例`改�
 Child.prototype.constructor = Child // 修正构造函数
 ```
 
-- ES6的 extends 被编译后
+### ES6 的 extends 被编译后
 
 ```js
 function _possibleConstructorReturn(self, call) {
-    return call && (typeof call === 'object' || typeof call === 'function') ? call : self;
+  return call && (typeof call === 'object' || typeof call === 'function')
+    ? call
+    : self
 }
 
 function _inherits(subClass, superClass) {
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            enumerable: false,
-            writable: true,
-            configurable: true
-        }
-    });
-    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    },
+  })
+  if (superClass)
+    Object.setPrototypeOf
+      ? Object.setPrototypeOf(subClass, superClass)
+      : (subClass.__proto__ = superClass)
 }
 
 var Parent = function Parent() {
-    // 验证是否是 Parent 构造出来的 this
-    _classCallCheck(this, Parent);
-};
+  // 验证是否是 Parent 构造出来的 this
+  _classCallCheck(this, Parent)
+}
 var Child = (function (_Parent) {
-    _inherits(Child, _Parent);
-    function Child() {
-        _classCallCheck(this, Child);
-        return _possibleConstructorReturn(this, (Child.__proto__ || Object.getPrototypeOf(Child)).apply(this, arguments));
-    }
-    return Child;
-}(Parent));
+  _inherits(Child, _Parent)
+  function Child() {
+    _classCallCheck(this, Child)
+    return _possibleConstructorReturn(
+      this,
+      (Child.__proto__ || Object.getPrototypeOf(Child)).apply(this, arguments)
+    )
+  }
+  return Child
+})(Parent)
 ```
 
 核心是`_inherits`函数，可以看到它采用的是————**寄生组合继承方式**，同时证明了这种方式的成功。不过这里加了一个`Object.setPrototypeOf(subClass, superClass)`，用来继承父类的静态方法。
 
 ## 数组展开
 
-- 递归
+### 递归
 
 ```js
 function flatten(arr) {
@@ -850,7 +859,7 @@ function flatten(arr) {
 }
 ```
 
-- reduce
+### reduce
 
 ```js
 function flatten(arr) {
@@ -861,7 +870,7 @@ function flatten(arr) {
 }
 ```
 
-- rest
+### rest
 
 ```js
 function flatten(arr) {
@@ -873,11 +882,44 @@ function flatten(arr) {
 }
 ```
 
-- ES6
+### ES6
 
 ```js
 function flatten(arr) {
   // flat() 方法会移除数组中的空项
   return arr.flat(Infinity)
 }
+```
+
+# 函数
+
+## 定义方法
+
+1. 函数声明
+
+函数声明有预解析,而且函数声明的优先级高于变量
+
+```js
+//ES5
+function getSum(){}
+function (){}//匿名函数
+//ES6
+()=>{}//如果{}内容只有一行{}和return关键字可省,
+```
+
+2. 函数表达式(函数字面量)
+
+```js
+//ES5
+var sum=function(){}
+//ES6
+let sum=()=>{}//如果{}内容只有一行{}和return关键字可省,
+```
+
+3. 构造函数
+
+使用Function构造函数定义函数的方式是一个函数表达式,这种方式会导致解析两次代码，影响性能。第一次解析常规的JavaScript代码，第二次解析传入构造函数的字符串
+
+```js
+const sum = new Function('a', 'b' , 'return a + b') 
 ```
