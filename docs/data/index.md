@@ -68,7 +68,61 @@ console.log(stack.isEmpty) // false
 
 ## 队列
 
-队列是一个线性结构，特点是在某一端添加数据，在另一端删除数据，遵循先进先出的原则
+队列是一个线性结构，特点是在某一端添加数据，在另一端删除数据，遵循**先进先出**的原则
+
+```js
+class Queue {
+  constructor(items) {
+    this.items = items || []
+  }
+
+  // 入队
+  enqueue(element) {
+    this.items.push(element)
+  }
+
+  // 出队
+  dequeue() {
+    return this.items.shift()
+  }
+
+  // 返回队列第一个元素
+  front() { 
+    return this.items[0]
+  }
+
+  // 清空队列
+  clear() { 
+    this.items = []
+  }
+
+  // 返回队列长度
+  get size() { 
+    return this.items.length
+  }
+
+  // 判断队列是否为空
+  get isEmpty() { 
+    return !this.items.length
+  }
+
+  // 打印队列
+  print() { 
+    console.log(this.items.toString())
+  }
+}
+
+const queue = new Queue()
+console.log(queue.isEmpty) // true
+
+queue.enqueue('John')
+queue.enqueue('Jack')
+queue.enqueue('Jason')
+console.log(queue.size) // 3
+console.log(queue.isEmpty) // false
+queue.dequeue()
+queue.dequeue()
+```
 
 ## 链表
 
