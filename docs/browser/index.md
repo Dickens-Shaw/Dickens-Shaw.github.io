@@ -31,14 +31,17 @@
 当元素的尺寸或者位置发生了变化，就需要重新计算渲染树
 
 - 触发：
-
+  - 页面首次渲染
+  - 浏览器窗口大小发生改变
   - DOM 元素的几何属性(width/height/padding/margin/border)发生变化
+  - DOM 元素内容变化（文字数量或图片大小等等）
+  - DOM 元素字体大小变化
   - DOM 元素移动或增加
+  - 激活CSS伪类（例如：:hover）
   - 读写 offset/scroll/client 等属性
-  - 调用 window.getComputedStyle
+  - 调用 getComputedStyle()、getBoundingClientRect()、scrollTo()
 
 - 减少：
-
   - 使用 transform 替代 top
   - 使用 class 替代 style，减少 style 的使用
   - 使用 resize、scroll 时进行防抖和节流处理，这两者会直接导致回流
@@ -53,7 +56,7 @@
 
 ## 重绘 repaint
 
-DOM 样式发生了变化，但没有影响 DOM 的几何属性时，会触发重绘，而不会触发回流
+DOM 样式发生了变化，但没有影响 DOM 的几何属性和它在文档流中的位置时，会触发重绘，而不会触发回流
 
 重绘由于 DOM 位置信息不需要更新，省去了布局过程，因而性能上优于回流
 
