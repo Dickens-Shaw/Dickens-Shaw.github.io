@@ -135,8 +135,6 @@
 
 ## 面试
 
-  - [最新的前端大厂面经（详解答案）](https://juejin.cn/post/7004638318843412493)☑️
-
   - [为什么大厂前端监控都在用GIF做埋点？](https://juejin.cn/post/7065123244881215518)☑️
 
   - [Promise、Generator、Async有什么区别？](https://juejin.cn/post/7062155174436929550)☑️
