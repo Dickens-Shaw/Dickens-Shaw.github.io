@@ -293,6 +293,63 @@ WebSocket 的出现就解决了半双工通信的弊端。它最大的特点是�
 
 ## MutationObserver
 
+MutationObserver 是一个可以监听 DOM 结构变化的接口。当 DOM 对象树发生任何变动时，MutationObserver 会得到通知。
+
+MutationObserver 是一个构造器，接受一个 callback 参数，用来处理节点变化的回调函数，返回两个参数：
+- mutations：节点变化记录列表（sequence<MutationRecord>）
+- observer：构造 MutationObserver 对象。
+
+MutationObserver 对象有三个方法，分别如下：
+- observe：设置观察目标，接受两个参数，target：观察目标，options：通过对象成员来设置观察选项
+- disconnect：阻止观察者观察任何改变
+- takeRecords：清空记录队列并返回里面的内容
+```js
+//选择一个需要观察的节点
+var targetNode = document.getElementById('root')
+
+// 设置observer的配置选项
+var config = { attributes: true, childList: true, subtree: true }
+
+// 当节点发生变化时的需要执行的函数
+var callback = function (mutationsList, observer) {
+  for (var mutation of mutationsList) {
+    if (mutation.type == 'childList') {
+      console.log('A child node has been added or removed.')
+    } else if (mutation.type == 'attributes') {
+      console.log('The ' + mutation.attributeName + ' attribute was modified.')
+    }
+  }
+}
+
+// 创建一个observer示例与回调函数相关联
+var observer = new MutationObserver(callback)
+
+//使用配置文件对目标节点进行观测
+observer.observe(targetNode, config)
+
+// 停止观测
+observer.disconnect()
+```
+
+observe 方法中 options 参数有已下几个选项：
+
+- childList：设置 true，表示观察目标子节点的变化，比如添加或者删除目标子节点，不包括修改子节点以及子节点后代的变化
+- attributes：设置 true，表示观察目标属性的改变
+- characterData：设置 true，表示观察目标数据的改变
+- subtree：设置为 true，目标以及目标的后代改变都会观察
+- attributeOldValue：如果属性为 true 或者省略，则相当于设置为 true，表示需要记录改变前的目标属性值，设置了 attributeOldValue 可以省略 attributes 设置
+- characterDataOldValue：如果 characterData 为 true 或省略，则相当于设置为 true,表示需要记录改变之前的目标数据，设置了 characterDataOldValue 可以省略 characterData 设置
+- attributeFilter：如果不是所有的属性改变都需要被观察，并且 attributes 设置为 true 或者被忽略，那么设置一个需要观察的属性本地名称（不需要命名空间）的列表
+
+MutationObserver 有以下特点：
+- 它等待所有脚本任务完成后才会运行，即采用异步方式
+- 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条地个别处理 DOM 变动。
+- 它即可以观察发生在 DOM 节点的所有变动，也可以观察某一类变动
+
+当 DOM 发生变动会触发 MutationObserver 事件。但是，它与事件有一个本质不同：事件是同步触发，也就是说 DOM 发生变动立刻会触发相应的事件；MutationObserver 则是异步触发，DOM 发生变动以后，并不会马上触发，而是要等到当前所有 DOM 操作都结束后才触发。
+
+举例来说，如果在文档中连续插入 1000 个段落（p 元素），会连续触发 1000 个插入事件，执行每个事件的回调函数，这很可能造成浏览器的卡顿；而 MutationObserver 完全不同，只在 1000 个段落都插入结束后才会触发，而且只触发一次，这样较少了 DOM 的频繁变动，大大有利于性能。
+
 ## IntersectionObserver
 
 ## getComputedStyle
