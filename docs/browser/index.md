@@ -31,13 +31,14 @@
 当元素的尺寸或者位置发生了变化，就需要重新计算渲染树
 
 - 触发：
+
   - 页面首次渲染
   - 浏览器窗口大小发生改变
   - DOM 元素的几何属性(width/height/padding/margin/border)发生变化
   - DOM 元素内容变化（文字数量或图片大小等等）
   - DOM 元素字体大小变化
   - DOM 元素移动或增加
-  - 激活CSS伪类（例如：:hover）
+  - 激活 CSS 伪类（例如：:hover）
   - 读写 offset/scroll/client 等属性
   - 调用 getComputedStyle()、getBoundingClientRect()、scrollTo()
 
@@ -244,6 +245,7 @@ CORS 需要浏览器和后端同时支持。IE 8 和 9 需要通过 XDomainReque
 ### Nginx 和 nodejs 中间件代理原理相同
 
 实现原理：**同源策略是浏览器需要遵循的标准，而如果是服务器向服务器请求就无需遵循同源策略**。 代理服务器，需要做以下几个步骤：
+
 - 接受客户端请求。
 - 将请求转发给服务器。
 - 拿到服务器响应数据。
@@ -296,10 +298,12 @@ WebSocket 的出现就解决了半双工通信的弊端。它最大的特点是�
 MutationObserver 是一个可以监听 DOM 结构变化的接口。当 DOM 对象树发生任何变动时，MutationObserver 会得到通知。
 
 MutationObserver 是一个构造器，接受一个 callback 参数，用来处理节点变化的回调函数，返回两个参数：
+
 - mutations：节点变化记录列表（sequence<MutationRecord>）
 - observer：构造 MutationObserver 对象。
 
 MutationObserver 对象有三个方法，分别如下：
+
 - observe：设置观察目标，接受两个参数，target：观察目标，options：通过对象成员来设置观察选项
 - disconnect：阻止观察者观察任何改变
 - takeRecords：清空记录队列并返回里面的内容
@@ -338,6 +342,7 @@ observe 方法中 options 参数有已下几个选项：
 - `attributeFilter`：如果不是所有的属性改变都需要被观察，并且 attributes 设置为 true 或者被忽略，那么设置一个需要观察的属性本地名称（不需要命名空间）的列表
 
 MutationObserver 有以下特点：
+
 - 它等待所有脚本任务完成后才会运行，即采用异步方式
 - 它把 DOM 变动记录封装成一个数组进行处理，而不是一条条地个别处理 DOM 变动。
 - 它即可以观察发生在 DOM 节点的所有变动，也可以观察某一类变动
@@ -387,6 +392,31 @@ callback 函数的参数（entries）是一个数组，每个成员都是一个 
 相比于 getBoundingClientRect，它的优点是不会引起重绘回流。
 
 ## getComputedStyle
+
+DOM2 Style 在 `document.defaultView` 上增加了 getComputedStyle()方法，该方法返回一个 `CSSStyleDeclaration` 对象（与 style 属性的类型一样），包含元素的计算样式。
+
+```js
+document.defaultView.getComputedStyle(element[,pseudo-element])
+// or
+window.getComputedStyle(element[,pseudo-element])
+```
+
+这个方法接收两个参数：要取得计算样式的元素和伪元素字符串（如":after"）。如果不需要查询伪元素，则第二个参数可以传 null。
+
+- Polyfill:
+
+```js
+function getStyleByAttr(obj, name) {
+  return window.getComputedStyle
+    ? window.getComputedStyle(obj, null)[name] 
+    : obj.currentStyle[name]
+}
+```
+
+- 和 style 的异同
+  - getComputedStyle 和 element.style 的相同点就是二者返回的都是 CSSStyleDeclaration 对象。
+  - element.style 读取的只是元素的内联样式，即写在元素的 style 属性上的样式；而 getComputedStyle 读取的样式是最终样式，包括了内联样式、嵌入样式和外部样式。
+  - element.style 既支持读也支持写，我们通过 element.style 即可改写元素的样式。而 getComputedStyle 仅支持读并不支持写入。我们可以通过使用 getComputedStyle 读取样式，通过 element.style 修改样式
 
 ## getBoundingClientRect
 
