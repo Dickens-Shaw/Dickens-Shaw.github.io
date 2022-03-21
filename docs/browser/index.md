@@ -303,13 +303,12 @@ MutationObserver 对象有三个方法，分别如下：
 - observe：设置观察目标，接受两个参数，target：观察目标，options：通过对象成员来设置观察选项
 - disconnect：阻止观察者观察任何改变
 - takeRecords：清空记录队列并返回里面的内容
+
 ```js
 //选择一个需要观察的节点
 var targetNode = document.getElementById('root')
-
 // 设置observer的配置选项
 var config = { attributes: true, childList: true, subtree: true }
-
 // 当节点发生变化时的需要执行的函数
 var callback = function (mutationsList, observer) {
   for (var mutation of mutationsList) {
@@ -320,26 +319,23 @@ var callback = function (mutationsList, observer) {
     }
   }
 }
-
 // 创建一个observer示例与回调函数相关联
 var observer = new MutationObserver(callback)
-
 //使用配置文件对目标节点进行观测
 observer.observe(targetNode, config)
-
 // 停止观测
 observer.disconnect()
 ```
 
 observe 方法中 options 参数有已下几个选项：
 
-- childList：设置 true，表示观察目标子节点的变化，比如添加或者删除目标子节点，不包括修改子节点以及子节点后代的变化
-- attributes：设置 true，表示观察目标属性的改变
-- characterData：设置 true，表示观察目标数据的改变
-- subtree：设置为 true，目标以及目标的后代改变都会观察
-- attributeOldValue：如果属性为 true 或者省略，则相当于设置为 true，表示需要记录改变前的目标属性值，设置了 attributeOldValue 可以省略 attributes 设置
-- characterDataOldValue：如果 characterData 为 true 或省略，则相当于设置为 true,表示需要记录改变之前的目标数据，设置了 characterDataOldValue 可以省略 characterData 设置
-- attributeFilter：如果不是所有的属性改变都需要被观察，并且 attributes 设置为 true 或者被忽略，那么设置一个需要观察的属性本地名称（不需要命名空间）的列表
+- `childList`：设置 true，表示观察目标子节点的变化，比如添加或者删除目标子节点，不包括修改子节点以及子节点后代的变化
+- `attributes`：设置 true，表示观察目标属性的改变
+- `characterData`：设置 true，表示观察目标数据的改变
+- `subtree`：设置为 true，目标以及目标的后代改变都会观察
+- `attributeOldValue`：如果属性为 true 或者省略，则相当于设置为 true，表示需要记录改变前的目标属性值，设置了 attributeOldValue 可以省略 attributes 设置
+- `characterDataOldValue`：如果 characterData 为 true 或省略，则相当于设置为 true,表示需要记录改变之前的目标数据，设置了 characterDataOldValue 可以省略 characterData 设置
+- `attributeFilter`：如果不是所有的属性改变都需要被观察，并且 attributes 设置为 true 或者被忽略，那么设置一个需要观察的属性本地名称（不需要命名空间）的列表
 
 MutationObserver 有以下特点：
 - 它等待所有脚本任务完成后才会运行，即采用异步方式
@@ -351,6 +347,44 @@ MutationObserver 有以下特点：
 举例来说，如果在文档中连续插入 1000 个段落（p 元素），会连续触发 1000 个插入事件，执行每个事件的回调函数，这很可能造成浏览器的卡顿；而 MutationObserver 完全不同，只在 1000 个段落都插入结束后才会触发，而且只触发一次，这样较少了 DOM 的频繁变动，大大有利于性能。
 
 ## IntersectionObserver
+
+网页开发时，常常需要了解某个元素是否进入了"视口"（viewport），即用户能不能看到它。
+
+传统的实现方法是，监听到 scroll 事件后，调用目标元素的 getBoundingClientRect()方法，得到它对应于视口左上角的坐标，再判断是否在视口之内。这种方法的缺点是，由于 scroll 事件密集发生，计算量很大，容易造成性能问题。
+
+目前有一个新的 IntersectionObserver API，可以自动"观察"元素是否可见，Chrome 51+ 已经支持。由于可见（visible）的本质是，目标元素与视口产生一个交叉区，所以这个 API 叫做"交叉观察器"。
+
+IntersectionObserver 是浏览器原生提供的构造函数，接受两个参数：callback 是可见性变化时的回调函数，option 是配置对象（该参数可选）。
+
+```js
+var io = new IntersectionObserver(callback, option)
+// 开始观察
+io.observe(document.getElementById('example'))
+// 停止观察
+io.unobserve(element)
+// 关闭观察器
+io.disconnect()
+```
+
+目标元素的可见性变化时，就会调用观察器的回调函数 callback。callback 一般会触发两次。一次是目标元素刚刚进入视口（开始可见），另一次是完全离开视口（开始不可见）。
+
+```js
+var io = new IntersectionObserver((entries) => {
+  console.log(entries)
+})
+```
+
+callback 函数的参数（entries）是一个数组，每个成员都是一个 IntersectionObserverEntry 对象。举例来说，如果同时有两个被观察的对象的可见性发生变化，entries 数组就会有两个成员。
+
+- `time`：可见性发生变化的时间，是一个高精度时间戳，单位为毫秒
+- `target`：被观察的目标元素，是一个 DOM 节点对象
+- `isIntersecting`: 目标是否可见
+- `rootBounds`：根元素的矩形区域的信息，getBoundingClientRect()方法的返回值，如果没有根元素（即直接相对于视口滚动），则返回 null
+- `boundingClientRect`：目标元素的矩形区域的信息
+- `intersectionRect`：目标元素与视口（或根元素）的交叉区域的信息
+- `intersectionRatio`：目标元素的可见比例，即 intersectionRect 占 boundingClientRect 的比例，完全可见时为 1，完全不可见时小于等于 0
+
+相比于 getBoundingClientRect，它的优点是不会引起重绘回流。
 
 ## getComputedStyle
 
