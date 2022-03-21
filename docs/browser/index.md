@@ -420,4 +420,12 @@ function getStyleByAttr(obj, name) {
 
 ## getBoundingClientRect
 
+getBoundingClientRect() 方法返回元素的大小及其相对于视口的位置。
+
+```js
+let DOMRect = object.getBoundingClientRect()
+```
+
+它的返回值是一个 DOMRect 对象，这个对象是由该元素的 getClientRects() 方法返回的一组矩形的集合，就是该元素的 CSS 边框大小。返回的结果是包含完整元素的最小矩形，并且拥有 left, top, right, bottom, x, y, width, 和 height 这几个以像素为单位的只读属性用于描述整个边框。除了 width 和 height 以外的属性是相对于视图窗口的左上角来计算的。
+
 ## requestAnimationFrame
