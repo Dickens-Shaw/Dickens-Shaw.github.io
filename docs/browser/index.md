@@ -408,7 +408,7 @@ window.getComputedStyle(element[,pseudo-element])
 ```js
 function getStyleByAttr(obj, name) {
   return window.getComputedStyle
-    ? window.getComputedStyle(obj, null)[name] 
+    ? window.getComputedStyle(obj, null)[name]
     : obj.currentStyle[name]
 }
 ```
@@ -429,3 +429,72 @@ let DOMRect = object.getBoundingClientRect()
 它的返回值是一个 DOMRect 对象，这个对象是由该元素的 getClientRects() 方法返回的一组矩形的集合，就是该元素的 CSS 边框大小。返回的结果是包含完整元素的最小矩形，并且拥有 left, top, right, bottom, x, y, width, 和 height 这几个以像素为单位的只读属性用于描述整个边框。除了 width 和 height 以外的属性是相对于视图窗口的左上角来计算的。
 
 ## requestAnimationFrame
+
+window.requestAnimationFrame() 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。
+
+该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。
+
+```js
+window.requestAnimationFrame(callback)
+```
+
+- Polyfill:
+
+```js
+window._requestAnimationFrame = (function () {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function (callback) {
+      window.setTimeout(callback, 1000 / 60)
+    }
+  )
+})()
+```
+
+- 结束动画：
+
+```js
+var globalID
+function animate() {
+  // done(); 一直运行
+  globalID = requestAnimationFrame(animate) // Do something animate
+}
+globalID = requestAnimationFrame(animate) //开始
+cancelAnimationFrame(globalID) //结束
+```
+
+与 setTimeout 相比，requestAnimationFrame 最大的优势是由系统来决定回调函数的执行时机。具体一点讲，如果屏幕刷新率是 60Hz,那么回调函数就每 16.7ms 被执行一次，如果刷新率是 75Hz，那么这个时间间隔就变成了 1000/75=13.3ms，换句话说就是，requestAnimationFrame 的步伐跟着系统的刷新步伐走。它能保证回调函数在屏幕每一次的刷新间隔中只被执行一次，这样就不会引起丢帧现象，也不会导致动画出现卡顿的问题
+
+- 优点：
+
+  - CPU 节能：使用 setTimeout 实现的动画，当页面被隐藏或最小化时，setTimeout 仍然在后台执行动画任务，由于此时页面处于不可见或不可用状态，刷新动画是没有意义的，完全是浪费 CPU 资源。而 requestAnimationFrame 则完全不同，当页面处理未激活的状态下，该页面的屏幕刷新任务也会被系统暂停，因此跟着系统步伐走的 requestAnimationFrame 也会停止渲染，当页面被激活时，动画就从上次停留的地方继续执行，有效节省了 CPU 开销。
+
+  - 函数节流：在高频率事件(resize,scroll 等)中，为了防止在一个刷新间隔内发生多次函数执行，使用 requestAnimationFrame 可保证每个刷新间隔内，函数只被执行一次，这样既能保证流畅性，也能更好的节省函数执行的开销。一个刷新间隔内函数执行多次时没有意义的，因为显示器每 16.7ms 刷新一次，多次绘制并不会在屏幕上体现出来。
+
+- 应用场景
+
+1. 监听 scroll 函数
+
+```js
+$(window).on('scroll', function () {
+  window.requestAnimationFrame(scrollHandler)
+})
+```
+
+2. 平滑滚动到页面顶部
+
+```js
+const scrollToTop = () => {
+  const c = document.documentElement.scrollTop || document.body.scrollTop
+  if (c > 0) {
+    window.requestAnimationFrame(scrollToTop)
+    window.scrollTo(0, c - c / 8)
+  }
+}
+scrollToTop()
+```
+
+3. 大量数据渲染
+4. 监控卡顿方法： 每秒中计算一次网页的 FPS，获得一列数据，然后分析。通俗地解释就是，通过 requestAnimationFrame API 来定时执行一些 JS 代码，如果浏览器卡顿，无法很好地保证渲染的频率，1s 中 frame 无法达到 60 帧，即可间接地反映浏览器的渲染帧率。
