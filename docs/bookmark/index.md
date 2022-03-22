@@ -51,10 +51,65 @@ console.log(markdownText)
 
 ```js
 // 获取所有Tag
-const allTags = [
-  ...new Set(
-    [...document.querySelectorAll('.tag')].map((item) => item.innerText.trim())
-  ),
+// const allTags = [
+//   ...new Set(
+//     [...document.querySelectorAll('.tag')].map((item) => item.innerText.trim())
+//   ),
+// ]
+// console.log(allTags)
+let allTags = [
+    "前端",
+    "JavaScript",
+    "ECMAScript 6",
+    "面试",
+    "HTML",
+    "CSS",
+    "Vue.js",
+    "React.js",
+    "前端框架",
+    "Webpack",
+    "服务器",
+    "浏览器",
+    "单元测试",
+    "测试",
+    "Electron",
+    "TypeScript",
+    "Node.js",
+    "Rust",
+    "Visual Studio Code",
+    "WebGL",
+    "架构",
+    "React Native",
+    "性能优化",
+    "WebAssembly",
+    "three.js",
+    "阿里巴巴",
+    "算法",
+    "微信小程序",
+    "监控",
+    "源码",
+    "Git",
+    "API",
+    "NPM",
+    "GitHub",
+    "uni-app",
+    "代码规范",
+    "Docker",
+    "年终总结",
+    "程序员",
+    "微信",
+    "WebSocket",
+    "网络协议",
+    "正则表达式",
+    "axios",
+    "Redux",
+    "MobX",
+    "Web Components",
+    "DevOps",
+    "Flutter",
+    "CI/CD",
+    "团队管理",
+    "Element"
 ]
 // 获取所有文章
 const listArray = [...document.querySelector('.entry-list').children]
@@ -96,7 +151,8 @@ listArray.forEach((item) => {
   const href = item.href // 链接
   const content = item.innerText // 内容
   markdownText += `
-  - [${content.replaceAll('\n','')}](${href})☑️
-`})
+  - [${content.replaceAll('\n', '')}](${href})☑️
+`
+})
 console.log(markdownText)
 ```
