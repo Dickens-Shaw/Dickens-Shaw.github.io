@@ -423,3 +423,15 @@ try {} catch(e) {}  => try {} catch {}
 - import()
 - Legacy RegEx
 - 私有的实例方法和访问器
+
+## ES11(2020)
+
+- 新的基本数据类型BigInt
+- 空值合并运算符（??）
+- 可选链操作符（?.）
+
+## ES12(2020)
+
+- String.prototype.replaceAll()
+- 数字分隔符 (1_000_000)
+- Promise.any()
