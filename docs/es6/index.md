@@ -11,7 +11,7 @@
 - Symbol
 - 代理（proxy）Set
 - 函数默认参数
-- 延展操作符rest
+- 延展操作符 rest
 
 ## 变量声明
 
@@ -33,7 +33,7 @@
 ## 箭头函数
 
 1. 箭头函数没有 this，所以需要通过查找作用域链来确定 this 的值，这就意味着如果箭头函数被非箭头函数包含，this 绑定的就是最近一层非箭头函数的 this，
-2. 箭头函数没有自己的`arguments`对象，但是可以访问外围函数的`arguments`对象，可以用rest参数来获取箭头函数中传递的参数
+2. 箭头函数没有自己的`arguments`对象，但是可以访问外围函数的`arguments`对象，可以用 rest 参数来获取箭头函数中传递的参数
 3. 不能通过 new 关键字调用，同样也没有`new.target`值和原型
 4. 更适用于那些本来需要匿名函数的地方，并且它不能用作构造函数。
 
@@ -80,11 +80,11 @@ let arr = difference([1, 2, 3], [2, 3, 4, 5])
 console.log(arr) // [1]
 ```
 
-### WeakSet 
+### WeakSet
 
-  WeakSet 的成员只能是对象，而不能是其他类型的值。
-  
-  WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet对该对象的引用
+WeakSet 的成员只能是对象，而不能是其他类型的值。
+
+WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet 对该对象的引用
 
 ## Map
 
@@ -280,22 +280,18 @@ arr.includes(x)
 - 指数运算符`**`
 
 ```js
-function calculateExponent(base, exponent)
-{
-    if (exponent === 1)
-    {
-        return base;
-    }
-    else
-    {
-        return base * calculateExponent(base, exponent - 1);
-    }
+function calculateExponent(base, exponent) {
+  if (exponent === 1) {
+    return base
+  } else {
+    return base * calculateExponent(base, exponent - 1)
+  }
 }
 
-console.log(calculateExponent(2, 10)); // 输出1024
-console.log(Math.pow(2, 10)); // 输出1024
+console.log(calculateExponent(2, 10)) // 输出1024
+console.log(Math.pow(2, 10)) // 输出1024
 // 指数运算符
-console.log(2**10);// 输出1024
+console.log(2 ** 10) // 输出1024
 ```
 
 ## ES8(2017)
@@ -304,50 +300,50 @@ console.log(2**10);// 输出1024
 - Object.values()
 
 ```js
-const obj = {a: 1, b: 2, c: 3};
+const obj = { a: 1, b: 2, c: 3 }
 
-const values1=Object.keys(obj).map(key=>obj[key]); // ES7
+const values1 = Object.keys(obj).map((key) => obj[key]) // ES7
 
-const values2=Object.values(obj); // ES8
+const values2 = Object.values(obj) // ES8
 ```
 
 - Object.entries()，函数返回一个给定对象自身可枚举属性的键值对的数组
 
 ```js
-Object.keys(obj).forEach(key=>{
-	console.log('key:'+key+' value:'+obj[key]);
+Object.keys(obj).forEach((key) => {
+  console.log('key:' + key + ' value:' + obj[key])
 }) // ES7
 
-Object.entries(obj).forEach(entry=>{
-  console.log('key:'+entry[0]+' value:'+entry[1]);
+Object.entries(obj).forEach((entry) => {
+  console.log('key:' + entry[0] + ' value:' + entry[1])
 }) // ES8
 ```
 
-- String padding: padStart()和padEnd()，填充字符串达到当前长度
+- String padding: padStart()和 padEnd()，填充字符串达到当前长度
 
 > String.padStart(targetLength,[padString])
 
-  1. targetLength:当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
-  2. padString:(可选)填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数的缺省值为 " "。
+1. targetLength:当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
+2. padString:(可选)填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数的缺省值为 " "。
 
 ```js
-console.log('0.0'.padStart(4,'10')) //10.0
-console.log('0.0'.padStart(20))// 0.00    
+console.log('0.0'.padStart(4, '10')) //10.0
+console.log('0.0'.padStart(20)) // 0.00
 ```
 
 > String.padEnd(targetLength,[padString])
 
-  1. targetLength:当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
-  2. padString:(可选) 填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数的缺省值为 " "；
+1. targetLength:当前字符串需要填充到的目标长度。如果这个数值小于当前字符串的长度，则返回当前字符串本身。
+2. padString:(可选) 填充字符串。如果字符串太长，使填充后的字符串长度超过了目标长度，则只保留最左侧的部分，其他部分会被截断，此参数的缺省值为 " "；
 
 ```js
-console.log('0.0'.padEnd(4,'0')) //0.00    
-console.log('0.0'.padEnd(10,'0'))//0.00000000
+console.log('0.0'.padEnd(4, '0')) //0.00
+console.log('0.0'.padEnd(10, '0')) //0.00000000
 ```
 
 - 函数参数列表结尾允许逗号
 
-主要作用是方便使用git进行多人协作开发时修改同一个函数减少不必要的行变更。
+主要作用是方便使用 git 进行多人协作开发时修改同一个函数减少不必要的行变更。
 
 - Object.getOwnPropertyDescriptors()
 
@@ -355,38 +351,40 @@ console.log('0.0'.padEnd(10,'0'))//0.00000000
 
 ```js
 const obj2 = {
-	name: 'Jine',
-	get age() { return '18' }
-};
+  name: 'Jine',
+  get age() {
+    return '18'
+  },
+}
 Object.getOwnPropertyDescriptors(obj2)
-// {
-//   age: {
-//     configurable: true,
-//     enumerable: true,
-//     get: function age(){}, //the getter function
-//     set: undefined
-//   },
-//   name: {
-//     configurable: true,
-//     enumerable: true,
-//		value:"Jine",
-//		writable:true
-//   }
-// }
+{
+  age: {
+    configurable: true,
+    enumerable: true,
+    get: function age(){}, //the getter function
+    set: undefined
+  },
+  name: {
+    configurable: true,
+    enumerable: true,
+     value:"Jine",
+     writable:true
+  }
+}
 ```
 
-- ShareArrayBuffer和Atomics对象，用于从共享内存位置读取和写入
+- ShareArrayBuffer 和 Atomics 对象，用于从共享内存位置读取和写入
 
 ## ES9(2018)
 
 - 异步迭代(asynchronous iterators)
 
-ES2018引入异步迭代器（asynchronous iterators），这就像常规迭代器，除了next()方法返回一个Promise。因此await可以和for...of循环一起使用，以串行的方式运行异步操作
+ES2018 引入异步迭代器（asynchronous iterators），这就像常规迭代器，除了 next()方法返回一个 Promise。因此 await 可以和 for...of 循环一起使用，以串行的方式运行异步操作
 
 ```js
 async function process(array) {
   for await (let i of array) {
-    doSomething(i);
+    doSomething(i)
   }
 }
 ```
@@ -395,24 +393,24 @@ async function process(array) {
 - Rest/Spread 属性
 - 正则表达式命名捕获组（Regular Expression Named Capture Groups）
 - 正则表达式反向断言（lookbehind）
-- 正则表达式dotAll模式
+- 正则表达式 dotAll 模式
 - 正则表达式 Unicode 转义
 - 非转义序列的模板字符串
 
 ## ES10(2019)
 
-- 行分隔符（U + 2028）和段分隔符（U + 2029）符号现在允许在字符串文字中，与JSON匹配
+- 行分隔符（U + 2028）和段分隔符（U + 2029）符号现在允许在字符串文字中，与 JSON 匹配
 - 更加友好的 JSON.stringify
-- 新增了Array的flat()方法和flatMap()方法
+- 新增了 Array 的 flat()方法和 flatMap()方法
 
-flat()和flatMap()本质上就是是归纳（reduce） 与 合并（concat）的操作。
+flat()和 flatMap()本质上就是是归纳（reduce） 与 合并（concat）的操作。
 
-- 新增了String的trimStart()方法和trimEnd()方法，去除字符串首尾空白字符
+- 新增了 String 的 trimStart()方法和 trimEnd()方法，去除字符串首尾空白字符
 - Object.fromEntries()
 - Symbol.prototype.description
 - String.prototype.matchAll
 - Function.prototype.toString()现在返回精确字符，包括空格和注释
-- 简化try {} catch {},修改 catch 绑定
+- 简化 try {} catch {},修改 catch 绑定
 
 ```js
 // 在 ES10 之前，我们必须通过语法为 catch 子句绑定异常变量，无论是否有必要。很多时候 catch 块是多余的。 ES10 提案使我们能够简单的把变量省略掉。
@@ -421,7 +419,7 @@ try {} catch(e) {}  => try {} catch {}
 
 ## ES11(2020)
 
-- 新的基本数据类型BigInt
+- 新的基本数据类型 BigInt
 - 空值合并运算符（??）
 - 可选链操作符（?.）
 - Promise.allSettled()
