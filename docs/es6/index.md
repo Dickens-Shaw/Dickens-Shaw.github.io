@@ -357,20 +357,20 @@ const obj2 = {
   },
 }
 Object.getOwnPropertyDescriptors(obj2)
-{
-  age: {
-    configurable: true,
-    enumerable: true,
-    get: function age(){}, //the getter function
-    set: undefined
-  },
-  name: {
-    configurable: true,
-    enumerable: true,
-     value:"Jine",
-     writable:true
-  }
-}
+// {
+//   age: {
+//     configurable: true,
+//     enumerable: true,
+//     get: function age(){}, //the getter function
+//     set: undefined
+//   },
+//   name: {
+//     configurable: true,
+//     enumerable: true,
+//      value:"Jine",
+//      writable:true
+//   }
+// }
 ```
 
 - ShareArrayBuffer 和 Atomics 对象，用于从共享内存位置读取和写入
