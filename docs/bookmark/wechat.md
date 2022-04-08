@@ -615,10 +615,6 @@
 
   - [Vite2 + Vue3 + TypeScript + Pinia 搭建一套企业级的开发脚手架【值得收藏】Vite2 + Vue3 + TypeScript + Pinia 搭建一套企业级的开发脚手架](http://mp.weixin.qq.com/s?__biz=MzI4ODYzOTk1OQ==&mid=2247487759&idx=1&sn=3b87ad8a2505defe79dd962f12fc5e70&chksm=ec3a0fb7db4d86a1ab0867f336fe794697bb82cefafe574fddfdd1bd9d2086ef49f28167f29e&mpshare=1&scene=24&srcid=0209vFU1dXBl321rLM9QP5nR&sharer_sharetime=1644368081077&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [前端部署的灵魂拷问，你能回答出几个？【部署必看篇】先抛一些灵魂拷问：前端代码从 tsx/jsx 到部署上线被用户访问，中间大致会经历哪些过程？](http://mp.weixin.qq.com/s?__biz=MzA3MjkwNTM1Mw==&mid=2649146419&idx=1&sn=f9d6698415ea6b722534618ab7f76032&chksm=870543d5b072cac34fc01400975370d77ef9a86a4b8db9262c81df60d6f0c991a59b735e10a4&mpshare=1&scene=24&srcid=0209EQ3F4qwMPhO0c3kPY7L3&sharer_sharetime=1644369890112&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [50天用react.js重写50个web项目，我学到了什么？](http://mp.weixin.qq.com/s?__biz=MzAwNDcyNjI3OA==&mid=2650856367&idx=1&sn=6a994f9b69a8e1b0b8d3b81c16c03268&chksm=80d3f0c6b7a479d076e2b9813bf2858060c072bfc28fe76210d18d979e735b661c30f73f8bc6&mpshare=1&scene=24&srcid=0209OeKWYQ4odeR2kKH8qVeD&sharer_sharetime=1644370210090&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
 
   - [Vuepress 中的 markdown-it 原理解析讲解 markdown-it的执行原理，旨在让大家对 markdown-it有更加深入的理解。](http://mp.weixin.qq.com/s?__biz=MzI3NTM5NDgzOA==&mid=2247506655&idx=2&sn=6a622b609a4ce8f0674c017afa2a98aa&chksm=eb07e2a6dc706bb03ab6cca665cb327e3951956a27782b3384d0ce4c8573fbb90c26abd9d88a&mpshare=1&scene=24&srcid=0214WJYaship6Pn9AbxWOwqo&sharer_sharetime=1644800449512&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
