@@ -129,28 +129,12 @@
 
   - [Vue+微前端(QianKun)落地实施和最后部署上线总结 - 掘金微前端(QianKun)落地级实施和最后部署上线 历时不到两个月，来到新公司后，接到新需求：“要把ERP系统拆分出来，里面有包括PMS、OMS、WNS等等”模块。 当时的第一个想法就是微前端，那么接下](https://juejin.cn/post/6973156414210441247)☑️
 
-  - [让我在面试官面前结巴的24个XX和XX的区别!](http://mp.weixin.qq.com/s?__biz=MzA5MTI0ODUzNQ==&mid=2652955810&idx=1&sn=c51c282e2e38f76768457d1d38458576&chksm=8bab065abcdc8f4c1c49e85da1e584d5b7d454c13eb17d00bfd8b49d1c3f223bfd56d06bfda1&mpshare=1&scene=24&srcid=0623DmiPdcO7XiuOHy0fisCN&sharer_sharetime=1624419400742&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [前端工程化，让你的项目启动提速70%你们有没有听说过「前端工程化」这个词？](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651578207&idx=1&sn=281c4957182f6754684c1f762d263442&chksm=8025089eb75281881c4134e6bd9c297910feff9025a71b5c5900bbd778538e7bb0385009e1e9&mpshare=1&scene=24&srcid=0630MWjDMCfgkTb34n2eMaAQ&sharer_sharetime=1625025428191&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [【第2252期】前端质量保证体系建设视频：前端质量保证体系建设](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651245304&idx=1&sn=3b26b91670a6296c53b8bf0e074aae62&chksm=bd49137c8a3e9a6aeb1d5a88557dd1a0868ad03d01ebea51bcb94fa0700e63b10fd0b8f57a74&mpshare=1&scene=24&srcid=0701p6mniEmhip07SjU86BHP&sharer_sharetime=1625098395819&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [【第2323期】基于微前端的住宿商家应用治理来自美团的微前端实战](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651247401&idx=1&sn=82098fa340061dd45d2148466e4415ed&chksm=bd490aad8a3e83bb46100f947c55a237dcee5fe95f981dd4d456a413b307502450e0db198662&mpshare=1&scene=24&srcid=0701yzomTcaNFG0SEavRAej7&sharer_sharetime=1625098423277&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
+
 
   - [【第2133期】如何搭建一套 “无痕埋点” 体系？来看看智能涂鸦的无痕埋点实战](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651241415&idx=1&sn=881664968f60a6c7356006da6cb90ea0&chksm=bd4962438a3eeb55ba6fe3504dcb4e559753cd1de2abe68800343d9771b72b115332d5a5bff3&mpshare=1&scene=24&srcid=0701nDB5bIV67wUgdBCAxbQO&sharer_sharetime=1625098609524&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [VS Code 能自己编程了，GitHub 推出“ AI 程序员”插件，根据注释自动补全代码让写代码告别 Stack Overflow](http://mp.weixin.qq.com/s?__biz=MzI1MTIzMzI2MA==&mid=2650574812&idx=1&sn=5a7faf1c01176750d1a9acb18fff331b&chksm=f1fe395fc689b049bac3bc458cd2bf869536f04a876d81a2096201a10ce3ef1b98202dc0c778&mpshare=1&scene=24&srcid=0703cAOHSdJAUmHuVoP9ZUVI&sharer_sharetime=1625291479584&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [90 行代码的 webpack，你确定不学吗？](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651578213&idx=1&sn=747fd895c8998e7f18d4d130b519b2ce&chksm=802508a4b75281b20e53b01a02eed8aa156bd9bec36b3e26415df8f3bdb89bd7bd8ce8633fe7&mpshare=1&scene=24&srcid=0703E1qDqZ8hhXmszu66TxBq&sharer_sharetime=1625291501053&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [再见了，Teamviewer！GitHub获3300+星](http://mp.weixin.qq.com/s?__biz=MzI0NjM2NjU3OA==&mid=2247486763&idx=1&sn=4c883c43eac102e9df2f96c5f4e08c93&chksm=e9412536de36ac206358bb6a3bfea7345bfd2a19afbac08329938da3445910feca0aba2baab2&mpshare=1&scene=24&srcid=0705iV0ZDi8jgy741jd1pV9o&sharer_sharetime=1625491902010&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [【第2330期】美团质效工具产品的微前端实践微前端架构设计和实践](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651247615&idx=1&sn=0027f14e7b00fffdbbd55cd8a91c2577&chksm=bd490a7b8a3e836d51991745da153538c0d48afb0cfb0a411cc764123b941c8166ba68c2af43&mpshare=1&scene=24&srcid=0708uoEWNXxdU4w6Wx1RMgDP&sharer_sharetime=1625703968574&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [【第2331期】微前端在美团外卖的实践微前端架构设计和实践](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651247661&idx=1&sn=5b194065b11760867b95f62a6fe3cb4f&chksm=bd490da98a3e84bf125b7e778fbcdf401eba178535ab95910621c4c3f2a03266994a9618a867&mpshare=1&scene=24&srcid=0709MxiaQwiXZm44cVVUkHvL&sharer_sharetime=1625789566741&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-
-
 
   - [28道关于 Webpack 面试题及答案的整理28道Webpack面试题及答案](http://mp.weixin.qq.com/s?__biz=MjM5MjU2NDk0Nw==&mid=2247493739&idx=1&sn=80979cecec1665359fd5e4fcec272acb&chksm=a6a6fbd791d172c1905e6e0c35655415a8b185da3e62b5c13154742c6f86fa1527ef900db287&mpshare=1&scene=24&srcid=0731IPSTbGR6SOD5UUkbxTNe&sharer_sharetime=1627736923380&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
