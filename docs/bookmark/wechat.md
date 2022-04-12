@@ -91,48 +91,15 @@
 
   - [做好这 16 个方向，逐步搭建出团队的 vue3 前端架构](http://mp.weixin.qq.com/s?__biz=MzA4Nzg0MDM5Nw==&mid=2247506825&idx=1&sn=155db0b18c2b88a98cb6ca5653bedb5a&chksm=9031d86ba746517d93d9c150739d536124c54eb0310c4b6f4511a22a8022023fa262ce70d91f&mpshare=1&scene=24&srcid=1113OBUCwmF8foJRFfKqZZAi&sharer_sharetime=1636778426262&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [每个前端都值得拥有自己的组件库](http://mp.weixin.qq.com/s?__biz=MzAwNzcyODk0Mg==&mid=2247495119&idx=1&sn=505303affe16c6e1b6b8b73c153559cc&chksm=9b7b178eac0c9e98edef54bdecd0994d347a65716a1eb76a734419859149f633d07b92975a16&mpshare=1&scene=24&srcid=1122KSy35HIMeGEy0JMzG1Gx&sharer_sharetime=1637583467028&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
-  - [从 Tree Shaking 来走进 Babel 插件开发者的世界作为前端开发者，无论是作为业务还是学习我相信大家都有一个属于自己的组件库。这里，我们就从Tree Shaking的角度出发来谈谈如何为我们自己的组件库提供按需加载方式。](http://mp.weixin.qq.com/s?__biz=MzAwNzcyODk0Mg==&mid=2247495162&idx=1&sn=9f1ff789d358d7c44e64078433b35678&chksm=9b7b17bbac0c9ead9744f45b94cbac4369e269e7431cd50e0a0be08a242eff82166c3d76176a&mpshare=1&scene=24&srcid=11232MzS9Lxr4Nh8QhMTA1iv&sharer_sharetime=1637667705386&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [摸鱼神器！开发效率提升 1000% 的 Vue 低代码表单组件摸鱼神器！开发效率提升 1000% 的 Vue 低代码表单组件](http://mp.weixin.qq.com/s?__biz=MzAwNDcyNjI3OA==&mid=2650854862&idx=1&sn=31917aec2cad6190200448fe1637b534&chksm=80d3fea7b7a477b12fcc53c4b201236638a776767cdfc05ff5e3f51df6627a7fe9c8a8123d8e&mpshare=1&scene=24&srcid=1125CMtrZT9YJj9G9cbRT8XC&sharer_sharetime=1637806480315&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [【第2466期】Node.js 应用全链路追踪技术——全链路信息获取Node.js应用全链路追踪技术](https://mp.weixin.qq.com/s/YGiz2T2TQ2XuRZv0cYO9mQ)☑️
-
-  - [字节内部前端开发手册（第二期）开放下载！](https://mp.weixin.qq.com/s/l0LtKFs-SbDJEC2E-sjwsg)☑️
-
-  - [【第2471期】React 18 新特性之 startTransitionReact 18新特性](https://mp.weixin.qq.com/s/JAFdq0BBu4rVAoPAdKWe8A)☑️
-
-  - [webpack loader 与plugin 开发实战本文以一个点击 vue 页面元素跳转到对应 vscode 代码的 loader 和 plugin](https://mp.weixin.qq.com/s/pEoS3OCkqxNNgGwZVmMg-w)☑️
-
-  - [时隔一年半，我，一个卑微的前端菜鸡，又来写面经了](https://mp.weixin.qq.com/s/y3PI6Isrl9mm5ah_ELGz1Q)☑️
-
-  - [面试题之如何实现一个深拷贝详细介绍对象、数组、循环引用、引用丢失、Symbol、递归爆栈等情况下的深拷贝实践。](https://mp.weixin.qq.com/s/KXlNjg3FEmxHP3QYodCNaQ)☑️
-
-  - [很多网站，根本不用自己做！一波现成的建站工具大分享](https://mp.weixin.qq.com/s/6IZGLIDz0HgrR51IUzgLQg)☑️
 
   - [（36个知识点）关于《浏览器基本原理与实践》的读后总结（36个知识点）关于《浏览器基本原理与实践》的读后总结](https://mp.weixin.qq.com/s/bqORDjLpY6Wl5CsGipsXQA)☑️
-
-  - [前端开发者应该知道的 Centos/Docker/Nginx/Node/Jenkins 操作(长文，建议收藏)图文并茂，建议收藏](https://mp.weixin.qq.com/s/Kyr5TBpMpXTBG9wIhmsPHg)☑️
-
-  - [手写系列-实现一个铂金段位的 React](https://mp.weixin.qq.com/s/CLVPnRFCdYb63ooMItFKtg)☑️
-
-  - [前端面经-看这篇就够了（笔者靠这个拿到阿里和字节的offer）](http://mp.weixin.qq.com/s?__biz=MzI2MDM1Mzg1MA==&mid=2247495021&idx=1&sn=186ac3b00483aed484cf45c06135da2b&chksm=ea685738dd1fde2e71d24f6964223437281536ab34f40dc30a9097327c45858cfb65c1c32494&mpshare=1&scene=24&srcid=05060OYM6TbKraU4Qq8gBLbQ&sharer_sharetime=1620274117959&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [一切前端概念，都是纸老虎这篇文章试着聊明白这一堆看起来挺复杂的东西。在聊之前，大家要始终记得一句话：一切前端概念，都是纸老虎。](http://mp.weixin.qq.com/s?__biz=MzAxODE2MjM1MA==&mid=2651576264&idx=1&sn=d473c48b8edac8b33f4f8b74f0fa3d9a&chksm=80250009b752891fb49bc8cb5e477a07778ef18df4fe2827cbb916f4d1664739095f78310a92&mpshare=1&scene=24&srcid=0523xxPuKHh6VpGc7s7QjoWe&sharer_sharetime=1621742487284&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
   - [淘系自研前端研发工具 AppWorks 正式发布重视用户体验，做开发者喜欢的、好用的工具。](http://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&mid=2247488299&idx=1&sn=e60545fa277b50676495f72ec2346bae&chksm=cf5b0cb7f82c85a1484e1a09650d5a969c71ba14cb68c021b4b57de66793c2b553e37e6ec308&mpshare=1&scene=24&srcid=0608Oq9iK0PAMa1lJ8QYRXcE&sharer_sharetime=1623126021169&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
   - [【第2310期】用 Vue.js 构建一个高性能 Flutter 应用第四届VueConf](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651247117&idx=2&sn=c93af8e14a821602b71c28b9e52da2e0&chksm=bd490b898a3e829f2a0b0fefb90aa2c6880500a835bb857f22f13020a1918edc23d7e11933a7&mpshare=1&scene=24&srcid=0618YlGb6u4XjNYeU3hTGdaR&sharer_sharetime=1623973602810&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
   - [Vite + React 组件开发实践基于 Vite 的 React 、 Rax 组件开发套件。](http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&mid=2247503873&idx=1&sn=c0749480fe5d3e031a6dd12e8f9520f9&chksm=e92aed0ede5d6418b680df70d5f0c85a8e26e36da613838f44653ad904c84493e4ee139ff7df&mpshare=1&scene=24&srcid=0618m7FGOGhO1lltXef4bGw6&sharer_sharetime=1623974894643&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
-
-  - [Vue+微前端(QianKun)落地实施和最后部署上线总结 - 掘金微前端(QianKun)落地级实施和最后部署上线 历时不到两个月，来到新公司后，接到新需求：“要把ERP系统拆分出来，里面有包括PMS、OMS、WNS等等”模块。 当时的第一个想法就是微前端，那么接下](https://juejin.cn/post/6973156414210441247)☑️
-
-
-
-
-
 
   - [【第2133期】如何搭建一套 “无痕埋点” 体系？来看看智能涂鸦的无痕埋点实战](http://mp.weixin.qq.com/s?__biz=MjM5MTA1MjAxMQ==&mid=2651241415&idx=1&sn=881664968f60a6c7356006da6cb90ea0&chksm=bd4962438a3eeb55ba6fe3504dcb4e559753cd1de2abe68800343d9771b72b115332d5a5bff3&mpshare=1&scene=24&srcid=0701nDB5bIV67wUgdBCAxbQO&sharer_sharetime=1625098609524&sharer_shareid=572f474b359e675789ab1290a925e2d2#rd)☑️
 
