@@ -927,3 +927,57 @@ function flatten(arr) {
   return arr.flat(Infinity)
 }
 ```
+
+
+# 遍历
+
+## for in 和 for of的区别
+
+简单来说就是它们两者都可以用于遍历，不过for in遍历的是数组的索引（index），而for of遍历的是数组元素值（value）
+
+```js
+// for in
+var obj = {a:1, b:2, c:3}
+    
+for (let key in obj) {
+  console.log(key)
+}
+// a b c
+
+//for of
+const array1 = ['a', 'b', 'c']
+ 
+for (const val of array1) {
+  console.log(val)
+}
+// a b c
+```
+
+### for in
+
+`for in`更适合遍历对象，当然也可以遍历数组，但是会存在一些问题，
+
+比如：
+  - index索引为字符串型数字，不能直接进行几何运算
+  - 遍历顺序有可能不是按照实际数组的内部顺序
+
+使用`for in`会遍历数组所有的可枚举属性，包括原型，如果不想遍历原型方法和属性的话，可以在循环内部判断一下，使用`hasOwnProperty()`方法可以判断某属性是不是该对象的实例属性
+
+```js
+var arr = [1,2,3]
+Array.prototype.a = 123
+    
+for (let index in arr) {
+  let res = arr[index]
+  console.log(res)
+}
+//1 2 3 123
+
+for(let index in arr) {
+    if(arr.hasOwnProperty(index)){
+        let res = arr[index]
+  		console.log(res)
+    }
+}
+// 1 2 3
+```
