@@ -143,8 +143,6 @@
 
 ## JavaScript
 
-  - [for in 和 for of 的区别](https://juejin.cn/post/6916058482231754765)☑️
-
   - [前端开发者应该知道的 Centos/Docker/Nginx/Node/Jenkins 操作(🍡 长文)](https://juejin.cn/post/6951684431597797389)☑️
 
   - [2021年，让我们手写一个mini版本的vue2.x和vue3.x框架](https://juejin.cn/post/6977363265965785102)☑️
