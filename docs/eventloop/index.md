@@ -53,3 +53,59 @@ JavaScript的单线程，与它的用途有关。作为浏览器脚本语言，J
   - process.nextTick(node)
   - Observer.observe
   - 对 Dom 变化监听的 MutationObserver
+
+## 浏览器和 Node.js 中区别
+
+1. 在浏览器里，每当一个被监听的事件发生时，事件监听器绑定的相关任务就会被添加进回调队列。通过事件产生的任务是异步任务，常见的事件任务包括：
+- 用户交互事件产生的事件任务，比如输入操作；
+- 计时器产生的事件任务，比如setTimeout；
+- 异步请求产生的事件任务，比如 HTTP 请求。
+
+主线程运行的时候，会产生堆（heap）和栈（stack），其中堆为内存、栈为函数调用栈。我们能看到，Event Loop 负责执行代码、收集和处理事件以及执行队列中的子任务，具体包括以下过程：
+- JavaScript 有一个主线程和调用栈，所有的任务最终都会被放到调用栈等待主线程执行。
+- 同步任务会被放在调用栈中，按照顺序等待主线程依次执行。
+- 主线程之外存在一个回调队列，回调队列中的异步任务最终会在主线程中以调用栈的方式运行。
+- 同步任务都在主线程上执行，栈中代码在执行的时候会调用浏览器的 API，此时会产生一些异步任务。
+- 异步任务会在有了结果（比如被监听的事件发生时）后，将异步任务以及关联的回调函数放入回调队列中。
+- 调用栈中任务执行完毕后，此时主线程处于空闲状态，会从回调队列中获取任务进行处理。
+- 上述过程会不断重复，这就是 JavaScript 的运行机制，称为事件循环机制（Event Loop）。
+
+2. NodeJs中的事件循环：
+
+- timers阶段：这个阶段执行timer（setTimeout、setInterval）的回调
+- I/O callbacks：执行一些系统调用错误，比如网络通信的错误回调
+- idle,prepare：仅node内部使用
+- poll：获取新的I/O事件, 适当的条件下node将阻塞在这里
+- check：执行 setImmediate() 的回调
+- close callbacks：执行 socket 的 close 事件回调
+
+3. 区别：
+浏览器环境下，microtask 的任务队列是每个 macrotask 执行完之后执行。
+
+而在Node.js中，microtask 会在事件循环的各个阶段之间执行，也就是一个阶段执行完毕，就会去执行microtask队列的任务。
+如果是node11版本一旦执行一个阶段里的一个宏任务(setTimeout,setInterval和setImmediate)就立刻执行微任务队列，这就跟浏览器端运行一致。
+
+```js
+setTimeout(()=>{
+    console.log('timer1')
+    Promise.resolve().then(function() {
+        console.log('promise1')
+    })
+}, 0)
+setTimeout(()=>{
+    console.log('timer2')
+    Promise.resolve().then(function() {
+        console.log('promise2')
+    })
+}, 0)
+
+// 浏览器环境：
+timer1=>promise1=>timer2=>promise2
+
+// node V11之后
+timer1=>promise1=>timer2=>promise2
+
+// node 10及其之前
+timer1=>promise1=>timer2=>promise2 (如果是第二个定时器还未在完成队列中)
+timer1=>timer2=>promise1=>promise2 (如果是第二个定时器已经在完成队列中)
+```
