@@ -357,9 +357,30 @@ function curryingES6 = fn =>
 
 属性描述符(Property Descriptor)是对 JavaScript 属性的描述，包括：value、writable、enumerable、configurable，除 value 其他默认为 true：
 
-1. writable[对象是否可以再赋值]
-2. enumerable[对象是否可以迭代]
-3. configurable[是否可以通过 Object.defineProperty 对对象再次配置]
+1. Configurable(可配置性)
+
+可配置性决定是否可以使用delete删除属性，以及是否可以修改属性描述符的特性，默认值为true
+
+2. Enumerable(可枚举性)
+
+可枚举性决定属性是否出现在对象的属性枚举中，比如是否可以通过for-in循环返回该属性，默认值为true
+
+3. Writable(可写性)
+
+可写性决定是否可以修改属性的值，默认值为true
+
+4. Value(属性值)
+
+属性值包含这个属性的数据值，读取属性值的时候，从这个位置读；写入属性值的时候，把新值保存在这个位置。默认值为undefined
+
+5. getter
+
+在读取属性时调用的函数。默认值为undefined
+
+6. setter
+
+在写入属性时调用的函数。默认值为undefined
+
 
 ## 编程范式
 

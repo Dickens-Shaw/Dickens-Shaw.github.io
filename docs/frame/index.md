@@ -45,14 +45,16 @@ View 和 Model：
 
 - hash 模式
 
-  当 # 后面的哈希值发生变化时，不会向服务器请求数据，可以通过 hashchange 事件来监听到 URL 的变化，从而进行跳转页面
+  - 当 # 后面的哈希值发生变化时，不会向服务器请求数据，可以通过 hashchange 事件来监听到 URL 的变化，从而进行跳转页面
+  - URL 中 hash 值只是客户端的一种状态，也就是说当向服务器端发出请求时，hash 部分不会被发送；
+  - hash 值的改变，都会在浏览器的访问历史中增加一个记录。因此我们能通过浏览器的回退、前进按钮控制hash 的切换；
+  - 可以通过 a 标签，并设置 href 属性，当用户点击这个标签后，URL 的 hash 值会发生改变；或者使用  JavaScript 来对 location.hash 进行赋值，改变 URL 的 hash 值；
+  - 我们可以使用 hashchange 事件来监听 hash 值的变化，从而对页面进行跳转（渲染）
 
 - history 模式
 
   - 利用 HTML5 中 history 提供的 pushState、replaceState 这两个 API。它们提供了操作浏览器历史栈的方法。pushState、replaceState 能够在不加载页面的情况下改变浏览器的 URL
-
-  - 通过 pushState 和 replaceState 虽然能改变 URL，但是不会主动触发浏览器 reload。
-
+  - 通过 pushState 和 replaceState 虽然能改变 URL，但是不会主动触发浏览器 reload 和 popstate 事件。
   - pushState、replaceState 的区别是 history.pushState()是新增历史记录条目； history.replaceState()是修改（替换）当前历史记录条目 window.onpopstate 事件监听的是浏览器前进、后退事件
 
 - 对比
