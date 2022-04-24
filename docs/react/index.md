@@ -62,25 +62,31 @@ V16 生命周期函数用法建议
 
 ```js
 classExampleComponentextendsReact.Component{
-  //用于初始化state
+  //用于初始化state，挂载类组件的时候，先执行构造函数
   constructor(){}
   //用于替换`componentWillReceiveProps`，该函数会在初始化和`update`时被调用
   //因为该函数是静态函数，所以取不到`this`
   //如果需要对比`prevProps`需要单独在`state`中维护
-  staticgetDerivedStateFromProps(nextProps,prevState){}
+  //它应返回一个对象来更新 state，如果返回 null 则不更新任何内容。
+  static getDerivedStateFromProps(nextProps,prevState){}
   //判断是否需要更新组件，多用于组件性能优化
+  //可以在这里进行性能优化，减少浅层比较
   shouldComponentUpdate(nextProps,nextState){}
   //组件挂载后调用
   //可以在该函数中进行请求或者订阅
   componentDidMount(){}
   //用于获得最新的DOM数据
+  //在最近一次渲染中，从之前的DOM拿到一些有用的信息，比如滚动位置等
   getSnapshotBeforeUpdate(){}
   //组件即将销毁
   //可以在此处移除订阅，定时器等等
   componentWillUnmount(){}
   //组件销毁后调用
+  //清空数据，取消网络请求等等
   componentDidUnMount(){}
   //组件更新后调用
+  //当组件更新后，可以在此处对 DOM 进行操作。
+  //如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求。（例如，当 props 未发生变化时，则不会执行网络请求）
   componentDidUpdate(){}
   //渲染组件函数
   render(){}
