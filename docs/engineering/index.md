@@ -33,6 +33,34 @@
 
   也就是简单重复的工作交给机器来做，自动化也就是有很多自动化工具代替我们来完成，例如持续集成、自动化构建、自动化部署、自动化测试等等
 
+
+
+# Git
+
+## Git Hook 在项目中的作用
+
+- 多人开发代码语法、规范强制统一
+- commit message 格式化、是否符合某种规范
+- 如果有需要，测试用例的检测
+- 服务器代码有新的更新的时候通知所有开发成员
+- 代码提交后的项目自动打包（git receive之后）
+
+## Git Hook 常用的钩子
+
+1. ClientSide hooks：
+  - pre-commit，当执行commit动作时先执行此hook，可以用此hook做一些检查，比如代码风格检查，或者先跑测试。
+  - prepare-commit-msg， 当commit时需要输入message前会触发此hook，可以用此hook来定制自己的default message信息。
+  - commit-msg，当用户输入commit的message后被触发，可以用此hook校验message的信息，比如是否符合规定，有没有cr等。
+  - post-commit, 当commit完成后被触发，可以用此hook发送 notification 等。
+  - pre-rebase, rebase之前会被触发，可以用此hook来拒绝所有的已经push的commits进行rebase操作。
+  - post-merge, 当merge成功后，会触发此hook。
+  - pre-push, 当push时，remote refs被更新，但是在所有的objects传输前被触发。
+  - pre-auto-gc, 当git gc –auto执行前被触发。在垃圾回收之前做一些验证或备份是挺不错的。
+2. ServerSide hooks:
+  - pre-receive, 当收到push动作之前会被执行。
+  - update, 也是收到push动作之前被执行，但是有可能被执行多次，每个branch一次。
+  - post-receive, 当push动作已经完成的时候会被触发，可以用此hook来 push notification等，比如发邮件，通知持续构建服务器等。
+
 # Webpack
 
 一个用于现代 JavaScript 应用程序的 静态模块打包工具。当 webpack 处理应用程序时，它会在内部从一个或多个入口点构建一个 依赖图(`dependency graph`)，然后将你项目中所需的每一个模块组合成一个或多个 `bundles`，它们均为静态资源，用于展示你的内容。
