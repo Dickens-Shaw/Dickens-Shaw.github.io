@@ -17,8 +17,6 @@
 
   - [React.memo() 和 useMemo() 的用法和区别](https://juejin.cn/post/6991837003537088542)☑️
 
-  - [可能是最好的跨域解决方案了... ...](https://juejin.cn/post/6844903992057659400)☑️
-
   - [【前端工程化】- 结合代码实践，全面学习前端工程化](https://juejin.cn/post/7033355647521554446)☑️
 
   - [Chrome 96 版本无法携带cookie的终极解决方案及源码分享](https://juejin.cn/post/7031419009115521060)☑️
