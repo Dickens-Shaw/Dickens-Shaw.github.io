@@ -462,3 +462,66 @@ export function handleIE9Error(error: any) {
   } as ErrorEvent;
 }
 ```
+
+### 性能采集方案
+
+#### 浏览器页面加载过程
+
+1. 卸载上一个文档
+2. 重定向
+3. 浏览器准备好使用 http 抓取文档
+4. 检查本地缓存
+5. 查询 DNS 域名
+6. TCP 建立链接
+7. HTTP 请求、响应
+8. 渲染 DOM 树并解析
+9. 网页开始加载资源
+10. 准备就绪触发 load 事件执行回调函数
+
+#### 性能指标获取方式
+
+借助于浏览器原生的 Navigation Timing API 能够获取到上述页面加载过程中的各项性能指标数据，用于性能分析，它的时间单位是纳秒级。
+
+![blockchain](../_media/imgs/timing.webp)
+
+当然也借助于 PerformanceObserver API 等用于测量 FCP、LCP、FID、TTI、TBT、CLS 等关键性指标。
+
+#### 计算公式
+
+![blockchain](../_media/imgs/performance.webp)
+
+#### 网络请求采集方案
+
+网络请求，通过 Object.defineProperty 的方式对 XHR 做的代理
+
+- 重写 XMLHttpRequest
+
+```js
+export function hook(proxy) {
+  window[realXhr] = window[realXhr] || XMLHttpRequest
+  XMLHttpRequest = function () {
+    const xhr = new window[realXhr]()
+    for (let attr in xhr) {
+      let type = ''
+      try {
+        type = typeof xhr[attr]
+      } catch (e) {}
+      if (type === 'function') {
+        this[attr] = hookFunction(attr)
+      } else {
+        Object.defineProperty(this, attr, {
+          get: getterFactory(attr),
+          set: setterFactory(attr),
+          enumerable: true,
+        })
+      }
+    }
+    const that = this
+    xhr.getProxy = function () {
+      return that
+    }
+    this.xhr = xhr
+  }
+  return window[realXhr]
+}
+```
