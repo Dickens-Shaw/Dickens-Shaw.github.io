@@ -525,3 +525,115 @@ export function hook(proxy) {
   return window[realXhr]
 }
 ```
+
+- 拦截所有请求
+
+正常的情况下一个页面会请求多个接口，假如有 20 个请求； 我们期望在阶段性的所有请求都结束已后，汇总成一条记录合并上报，这样能有效减少请求的并发量。
+
+```js
+/** Ajax 请求插件 */
+// 所有的数据请求，以及总量
+let allRequestRecordArray: any = []
+let allRequestRecordCount: any = []
+// 成功的数据，200，304 的数据
+let allRequestData: any = []
+// 异常的数据，超时，405 等接口不存在的数据
+let errorData: any = []
+/** * 监听 Ajax 请求信息 *
+ * * @param {Instance} instance SDK 实例
+ * */
+export default function setupAjaxPlugin(instance: Instance) {
+  let id = 0
+  proxy({
+    onRequest: (config, handler) => {
+      // 过滤掉听云、福尔摩斯、APM
+      if (filterDomain(config)) {
+        // 添加请求记录的队列
+        allRequestRecordArray.push({
+          id,
+          timeStamp: new Date().getTime(), // 记录请求时长
+          config, // 包含：请求地址、body 等内容
+          handler, // XHR 实体
+        })
+        // 记录请求总数
+        allRequestRecordCount.push(1)
+        id++
+      }
+      handler.next(config)
+    },
+    // 失败时会触发一次
+    onError: (err, handler) => {
+      if (allRequestRecordArray.length === 0) {
+        handler.next(err)
+        return
+      }
+      for (let i = 0; i < allRequestRecordArray.length; i++) {
+        // 当前的数据
+        const currentData = allRequestRecordArray[i]
+        if (
+          currentData.handler.xhr.status === 0 && // 未发送
+          currentData.handler.xhr.readyState === 4
+        ) {
+          errorData.push(
+            JSON.stringify(handleReportDataStruct(instance, currentData))
+          )
+          allRequestRecordArray.splice(i, 1)
+        }
+      }
+      sendAllRequestData(instance)
+      handler.next(err)
+    },
+    onResponse: (response, handler) => {
+      // 没有请求就返回 Null
+      if (allRequestRecordArray.length === 0) {
+        handler.next(response)
+        return
+      }
+      for (let i = 0; i < allRequestRecordArray.length; i++) {
+        // 当前的数据
+        const currentData = allRequestRecordArray[i] // 只要请求加载完成，不管是成功还是失败，都记录是一次请求
+        if (currentData.handler.xhr.readyState === 4) {
+          // 正常的请求
+          if (
+            (currentData.handler.xhr.status >= 200 &&
+              currentData.handler.xhr.status < 300) ||
+            currentData.handler.xhr.status === 304
+          ) {
+            allRequestData.push(
+              JSON.stringify(handleReportDataStruct(instance, currentData))
+            )
+          } else {
+            if (currentData.handler.xhr.status > 0) {
+              // 具备状态码              // 错误的请求
+              errorData.push(
+                JSON.stringify(handleReportDataStruct(instance, currentData))
+              )
+            }
+          } // 删除当前数组的值
+          allRequestRecordArray.splice(i, 1)
+        }
+      } // 发送数据
+      sendAllRequestData(instance)
+      handler.next(response)
+    },
+  })
+}
+function sendAllRequestData(instance) {
+  if (
+    allRequestData.length + errorData.length ===
+    allRequestRecordCount.length
+  ) {
+    // 处理正常请求
+    if (allRequestData.length > 0 || errorData.length > 0) {
+      handleAllRequestData(instance)
+    } // 处理异常请求
+    if (errorData.length > 0) {
+      handleErrorData(instance)
+    } // 所有的数据请求，以及总量
+    allRequestRecordArray = []
+    allRequestRecordCount = [] // 成功的数据，200，304 的数据
+    allRequestData = [] // 异常的数据，超时，405 等接口不存在的数据
+    errorData = []
+  }
+}
+```
