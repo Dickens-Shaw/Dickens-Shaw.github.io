@@ -33,8 +33,6 @@
 
   也就是简单重复的工作交给机器来做，自动化也就是有很多自动化工具代替我们来完成，例如持续集成、自动化构建、自动化部署、自动化测试等等
 
-
-
 # Git
 
 ## Git Hook 在项目中的作用
@@ -43,23 +41,26 @@
 - commit message 格式化、是否符合某种规范
 - 如果有需要，测试用例的检测
 - 服务器代码有新的更新的时候通知所有开发成员
-- 代码提交后的项目自动打包（git receive之后）
+- 代码提交后的项目自动打包（git receive 之后）
 
 ## Git Hook 常用的钩子
 
 1. ClientSide hooks：
-  - pre-commit，当执行commit动作时先执行此hook，可以用此hook做一些检查，比如代码风格检查，或者先跑测试。
-  - prepare-commit-msg， 当commit时需要输入message前会触发此hook，可以用此hook来定制自己的default message信息。
-  - commit-msg，当用户输入commit的message后被触发，可以用此hook校验message的信息，比如是否符合规定，有没有cr等。
-  - post-commit, 当commit完成后被触发，可以用此hook发送 notification 等。
-  - pre-rebase, rebase之前会被触发，可以用此hook来拒绝所有的已经push的commits进行rebase操作。
-  - post-merge, 当merge成功后，会触发此hook。
-  - pre-push, 当push时，remote refs被更新，但是在所有的objects传输前被触发。
-  - pre-auto-gc, 当git gc –auto执行前被触发。在垃圾回收之前做一些验证或备份是挺不错的。
+
+- pre-commit，当执行 commit 动作时先执行此 hook，可以用此 hook 做一些检查，比如代码风格检查，或者先跑测试。
+- prepare-commit-msg， 当 commit 时需要输入 message 前会触发此 hook，可以用此 hook 来定制自己的 default message 信息。
+- commit-msg，当用户输入 commit 的 message 后被触发，可以用此 hook 校验 message 的信息，比如是否符合规定，有没有 cr 等。
+- post-commit, 当 commit 完成后被触发，可以用此 hook 发送 notification 等。
+- pre-rebase, rebase 之前会被触发，可以用此 hook 来拒绝所有的已经 push 的 commits 进行 rebase 操作。
+- post-merge, 当 merge 成功后，会触发此 hook。
+- pre-push, 当 push 时，remote refs 被更新，但是在所有的 objects 传输前被触发。
+- pre-auto-gc, 当 git gc –auto 执行前被触发。在垃圾回收之前做一些验证或备份是挺不错的。
+
 2. ServerSide hooks:
-  - pre-receive, 当收到push动作之前会被执行。
-  - update, 也是收到push动作之前被执行，但是有可能被执行多次，每个branch一次。
-  - post-receive, 当push动作已经完成的时候会被触发，可以用此hook来 push notification等，比如发邮件，通知持续构建服务器等。
+
+- pre-receive, 当收到 push 动作之前会被执行。
+- update, 也是收到 push 动作之前被执行，但是有可能被执行多次，每个 branch 一次。
+- post-receive, 当 push 动作已经完成的时候会被触发，可以用此 hook 来 push notification 等，比如发邮件，通知持续构建服务器等。
 
 # Webpack
 
@@ -86,7 +87,7 @@
 - 编译模块： 从入口文件出发，调用所有配置的 Loader 对模块进行翻译，再找出该模块依赖的模块，递归本步骤直到所有入口依赖的文件都经过了本步骤的处理。
 - 完成模块编译： 在经过第 4 步使用 Loader 翻译完所有模块后，得到了每个模块被翻译后的最终内容以及它们之间的依赖关系。
 - 输出资源： 根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 Chunk, 再把每个 Chunk 转换为一个单独的文件加载到输出列表，这步是可以修改输出内容的最后机会。
-- 输出完成： 在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入文件系统。
+- 输出完成： 在确定好输出内容后，根据 output 配置确定输出的路径和文件名，把文件内容写入文件系统。
 
 简单说：
 
@@ -278,11 +279,13 @@ module.exports = HelloPlugin
 ```
 
 ### Compiler and Compilation
+
 - `compiler` 对象可以理解为一个和 webpack 环境整体绑定的一个对象，它包含了所有的环境配置，包括 options，loader 和 plugin，当 webpack 启动时，这个对象会被实例化，并且他是**全局唯一**的，上面我们说到的 apply 方法传入的参数就是它。
 
 - `compilation` 在每次构建资源的过程中都会被创建出来，一个 compilation 对象表现了当前的模块资源、编译生成资源、变化的文件、以及被跟踪依赖的状态信息。它同样也提供了很多的 hook 。
 
 Compiler 和 Compilation 提供了非常多的钩子供我们使用，这些方法的组合可以让我们在构建过程的不同时间获取不同的内容。
+
 ```js
 class HelloCompilationPlugin {
   apply(compiler) {
@@ -290,13 +293,13 @@ class HelloCompilationPlugin {
     compiler.hooks.compilation.tap('HelloCompilationPlugin', (compilation) => {
       // 现在可以通过 compilation 对象绑定各种钩子
       compilation.hooks.optimize.tap('HelloCompilationPlugin', () => {
-        console.log('资源已经优化完毕。');
-      });
-    });
+        console.log('资源已经优化完毕。')
+      })
+    })
   }
 }
 
-module.exports = HelloCompilationPlugin;
+module.exports = HelloCompilationPlugin
 ```
 
 ### 同步与异步
@@ -315,15 +318,15 @@ class HelloAsyncPlugin {
       (compilation, callback) => {
         // 执行某些异步操作...
         setTimeout(function () {
-          console.log('异步任务完成...');
-          callback();
-        }, 1000);
+          console.log('异步任务完成...')
+          callback()
+        }, 1000)
       }
-    );
+    )
   }
 }
 
-module.exports = HelloAsyncPlugin;
+module.exports = HelloAsyncPlugin
 ```
 
 - tapPromise
@@ -337,15 +340,15 @@ class HelloAsyncPlugin {
       // 返回一个 promise ，异步任务完成后 resolve
       return new Promise((resolve, reject) => {
         setTimeout(function () {
-          console.log('异步任务完成...');
-          resolve();
-        }, 1000);
-      });
-    });
+          console.log('异步任务完成...')
+          resolve()
+        }, 1000)
+      })
+    })
   }
 }
 
-module.exports = HelloAsyncPlugin;
+module.exports = HelloAsyncPlugin
 ```
 
 ### 常用的 plugin
@@ -408,18 +411,73 @@ import()和 require.ensure
 - 按照路由拆分代码，实现按需加载
 - 给打包出来的文件名添加哈希，实现浏览器缓存文件
 
+# Rollup
+
+Rollup 是一个 JavaScript 模块打包器，可以将小块代码编译成大块复杂的代码，例如 library 或应用程序。并且可以对代码模块使用新的标准化格式，比如 CommonJS 和 es module。
+
+## 构建流程
+
+Rollup 相对 Webpack 而言，打包出来的包会更加轻量化，更适用于类库打包，因为内置了 Tree Shaking 机制，在分析代码阶段就知晓哪些文件引入并未调用，打包时就会自动擦除未使用的代码。
+
+工作机制：
+
+1. 确定入口文件
+2. 使用 `Acorn` 读取解析文件，获取抽象语法树 AST
+3. 分析代码
+4. 生成代码，输出
+
+> Acorn 是一个 JavaScript 语法解析器，它将 JavaScript 字符串解析成语法抽象树 AST
+
+## 核心概念
+
+- input：入口文件路径
+- output：输出文件、输出格式（amd/es6/iife/umd/cjs）、sourcemap 启用等
+- plugin: 各种插件使用的配置
+- external: 提取外部依赖
+- global: 配置全局变量
+
+## 配置
+
+```js
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+// 解析json
+import json from '@rollup/plugin-json'
+// 压缩代码
+import { terser } from 'rollup-plugin-terser'
+export default {
+  input: 'src/main.js',
+  output: [
+    {
+      file: 'dist/esmbundle.js',
+      format: 'esm',
+      plugins: [terser()],
+    },
+    {
+      file: 'dist/cjsbundle.js',
+      format: 'cjs',
+    },
+  ],
+  // commonjs 需要放到 transform 插件之前，
+  // 但是又个例外， 是需要放到 babel 之后的
+  plugins: [json(), resolve(), commonjs()],
+  external: ['vue'],
+}
+```
 
 # 基础建设
 
 ## 脚手架
+
 解耦：脚手架与模板分离
 脚手架负责构建流程，通过命令行与用户交互，获取项目信息
 模板负责统一项目结构、工作流程、依赖项管理
 脚手架需要检测模板的版本是否有更新，支持模板的删除与新建
 
 ## 组件库
+
 选择通用、合适、便捷的构建工具，方便打包代码，并且易于调试；
-注重代码质量和开发效率，有类型推断及静态检查能力（提前写好TS）；
-api简单易用，易于上手，文档实时更新；
+注重代码质量和开发效率，有类型推断及静态检查能力（提前写好 TS）；
+api 简单易用，易于上手，文档实时更新；
 支持按需加载，支持组件的继承，支持组件的插件化；
 易于开发者拓展、版本升级保持向前兼容。
