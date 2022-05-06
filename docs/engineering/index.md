@@ -240,6 +240,8 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 - raw-loader 将文件中的内容作为字符串导入，并插入到 html 中
 - file-loader 使得我们可以在 JS 文件中引入 png\jpg 等图片资源
 - url-loader 跟 file-loader 类似；唯一不同的是在于用户可以设置一个文件大小的阈值，当大于阈值时跟 file-loader 一样返回 publicPath，而小于该阈值时则返回文件 base64 形式编码。
+- thread-loader 可以让 webpack 在多个进程中并行执行 loader，提高打包速度。
+- cache-loader 在性能开销较大的 loader 之前添加此 loader，将结果缓存到磁盘里
 
 ## Plugin
 
@@ -366,8 +368,10 @@ module.exports = HelloAsyncPlugin
 - purge-css-plugin 可以去除未使用的 css, 一般与 glob、glob-all 配合使用。
 - optimize-css-assets-webpack-plugin 用于 CSS 压缩
 - split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。
-- webpack-bundle-analyzer 可视化 webpack 输出文件的体积
-- terser-webpack-plugin 用于处理 js 的压缩和混淆
+- webpack-bundle-analyzer 可视化 webpack 输出文件的体积，分析生成Bundle的每个模块体积大小
+- terser-webpack-plugin 用于处理 js 的压缩和混淆，开启多进程并行、缓存模式
+- speed-measure-webpack-plugin 分析每个loader和plugin执行耗时具体情况
+- hard-source-webpack-plugin 为模块提供中间缓存，快速提升二次构建的速度。
 
 ## 动态加载
 
@@ -394,6 +398,15 @@ import()和 require.ensure
 ## Tree Shaking
 
 需要静态分析，只有 ES6 的模块才支持，Webpack 4 生产环境自动开启
+
+```js
+// package.json中添加
+{
+    "sideEffects": ["*.css", "babel-polyfill"]
+}
+```
+
+通过配置sideEffects，Tree Shaking便开启了，webpack打包时会自动剔除没有引用的js文件。对于业务文件冗余，但又不敢轻易删除的项目特别适合开启Tree Shaking，可以大幅度减少打包体积。
 
 ## 优化打包速度
 
@@ -464,6 +477,24 @@ export default {
   external: ['vue'],
 }
 ```
+
+# 测试
+
+## 单元测试
+
+> 对最小可测试单元（一般为单个函数、类或组件）进行检查和验证
+
+Mocha、断言库 Chai、Sinon、Jest 等。我们可以先选择 jest 来学习，因为它集成了 Mocha，chai，jsdom，sinon 等功能
+
+## 组件测试
+
+> 针对某个组件功能进行测试
+
+因为很多组件涉及了 DOM 操作，可以借助组件测试框架来做，比如使用 Cypress
+
+## e2e 测试
+
+> 端到端测试，主要是模拟用户对页面进行一系列操作并验证其是否符合预期，使用 Cypress
 
 # 基础建设
 
