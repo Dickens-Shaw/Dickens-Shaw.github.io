@@ -6,9 +6,7 @@
   - [手写一个虚拟DOM库，彻底让你理解diff算法](https://juejin.cn/post/6984939221681176607)☑️
 
   - [极速通关常用正则](https://juejin.cn/post/7034329725422010375)☑️
-
-  - [你知道的前端优化手段](https://juejin.cn/post/6966857691381645325)☑️
-
+  
   - [umi3教程](https://juejin.cn/post/7021358536504393741)☑️
 
   - [Webpack 原理系列九：Tree-Shaking 实现原理](https://juejin.cn/post/7002410645316436004)☑️
