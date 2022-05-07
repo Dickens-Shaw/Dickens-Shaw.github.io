@@ -7,8 +7,6 @@
 
   - [极速通关常用正则](https://juejin.cn/post/7034329725422010375)☑️
 
-  - [Chrome 96 版本无法携带cookie的终极解决方案及源码分享](https://juejin.cn/post/7031419009115521060)☑️
-
   - [你知道的前端优化手段](https://juejin.cn/post/6966857691381645325)☑️
 
   - [umi3教程](https://juejin.cn/post/7021358536504393741)☑️
