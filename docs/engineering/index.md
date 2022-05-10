@@ -455,6 +455,16 @@ if(process.env.NODE_ENV === 'development'){
 
 ### 实现原理
 
+Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些没有被用过，二是使用 Terser 删掉这些没被用到的导出语句。标记过程大致可划分为三个步骤：
+
+- Make 阶段，收集模块导出变量并记录到模块依赖关系图 ModuleGraph 变量中
+- Seal 阶段，遍历 ModuleGraph 标记模块导出变量有没有被使用
+- 生成产物时，若变量没有被其它模块使用则删除对应的导出语句
+
+> 标记功能需要配置 `optimization.usedExports = true` 开启
+
+也就是说，标记的效果就是删除没有被其它模块使用的导出语句
+
 #### 收集模块导出
 #### 标记模块导出
 #### 生成代码
