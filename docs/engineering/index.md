@@ -465,7 +465,19 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 
 也就是说，标记的效果就是删除没有被其它模块使用的导出语句
 
+但实际上标记功能只会影响到模块的导出语句，真正执行“Shaking”操作的是 Terser 插件提供的 DCE 功能。
+
 #### 收集模块导出
+
+1. 将模块的所有 ESM 导出语句转换为 Dependency 对象，并记录到 module 对象的 dependencies 集合，转换规则：
+  - 具名导出转换为 HarmonyExportSpecifierDependency 对象
+  - default 导出转换为 HarmonyExportExpressionDependency 对象
+2. 所有模块都编译完毕后，触发 compilation.hooks.finishModules 钩子，开始执行 FlagDependencyExportsPlugin 插件回调
+3. FlagDependencyExportsPlugin 插件从 entry 开始读取 ModuleGraph 中存储的模块信息，遍历所有 module 对象
+4. 遍历 module 对象的 dependencies 数组，找到所有 HarmonyExportXXXDependency 类型的依赖对象，将其转换为 ExportInfo 对象并记录到 ModuleGraph 体系中
+
+经过 FlagDependencyExportsPlugin 插件处理后，所有 ESM 风格的 export 语句都会记录在 ModuleGraph 体系内，后续操作就可以从 ModuleGraph 中直接读取出模块的导出值。
+
 #### 标记模块导出
 #### 生成代码
 #### 删除代码
