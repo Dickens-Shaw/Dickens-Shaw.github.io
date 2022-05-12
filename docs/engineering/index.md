@@ -469,6 +469,8 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 
 #### 收集模块导出
 
+首先，Webpack 需要弄清楚每个模块分别有什么导出值，这一过程发生在 make 阶段，大体流程：
+
 1. 将模块的所有 ESM 导出语句转换为 Dependency 对象，并记录到 module 对象的 dependencies 集合，转换规则：
   - 具名导出转换为 HarmonyExportSpecifierDependency 对象
   - default 导出转换为 HarmonyExportExpressionDependency 对象
@@ -479,6 +481,18 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 经过 FlagDependencyExportsPlugin 插件处理后，所有 ESM 风格的 export 语句都会记录在 ModuleGraph 体系内，后续操作就可以从 ModuleGraph 中直接读取出模块的导出值。
 
 #### 标记模块导出
+
+模块导出信息收集完毕后，Webpack 需要标记出各个模块的导出列表中，哪些导出值有被其它模块用到，哪些没有，这一过程发生在 Seal 阶段，主流程：
+
+1. 触发 compilation.hooks.optimizeDependencies 钩子，开始执行 FlagDependencyUsagePlugin 插件逻辑
+2. 在 FlagDependencyUsagePlugin 插件中，从 entry 开始逐步遍历 ModuleGraph 存储的所有 module 对象
+3. 遍历 module 对象对应的 exportInfo 数组
+4. 为每一个 exportInfo 对象执行 compilation.getDependencyReferencedExports 方法，确定其对应的 dependency 对象有否被其它模块使用
+5. 被任意模块使用到的导出值，调用 exportInfo.setUsedConditionally 方法将其标记为已被使用。
+6. exportInfo.setUsedConditionally 内部修改 exportInfo._usedInRuntime 属性，记录该导出被如何使用
+
+上面是极度简化过的版本，中间还存在非常多的分支逻辑与复杂的集合操作，我们抓住重点：标记模块导出这一操作集中在 FlagDependencyUsagePlugin 插件中，执行结果最终会记录在模块导出语句对应的 exportInfo._usedInRuntime 字典中
+
 #### 生成代码
 #### 删除代码
 
