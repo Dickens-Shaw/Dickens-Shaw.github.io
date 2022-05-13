@@ -494,7 +494,27 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 上面是极度简化过的版本，中间还存在非常多的分支逻辑与复杂的集合操作，我们抓住重点：标记模块导出这一操作集中在 FlagDependencyUsagePlugin 插件中，执行结果最终会记录在模块导出语句对应的 exportInfo._usedInRuntime 字典中
 
 #### 生成代码
+
+由导出语句对应的 HarmonyExportXXXDependency 类实现，大体的流程：
+
+1. 打包阶段，调用 HarmonyExportXXXDependency.Template.apply 方法生成代码
+2. 在 apply 方法内，读取 ModuleGraph 中存储的 exportsInfo 信息，判断哪些导出值被使用，哪些未被使用
+3. 对已经被使用及未被使用的导出值，分别创建对应的 HarmonyExportInitFragment 对象，保存到 initFragments 数组
+4. 遍历 initFragments 数组，生成最终结果
+
+基本上，这一步的逻辑就是用前面收集好的 exportsInfo 对象未模块的导出值分别生成导出语句。
 #### 删除代码
+
+经过前面几步操作之后，模块导出列表中未被使用的值都不会定义在 __webpack_exports__ 对象中，形成一段不可能被执行的 Dead Code 效果.
+
+在此之后，将由 Terser、UglifyJS 等 DCE 工具“摇”掉这部分无效代码，构成完整的 Tree Shaking 操作。
+
+#### 总结
+
+- 在 FlagDependencyExportsPlugin 插件中根据模块的 dependencies 列表收集模块导出值，并记录到 ModuleGraph 体系的 exportsInfo 中
+- 在 FlagDependencyUsagePlugin 插件中收集模块的导出值的使用情况，并记录到 exportInfo._usedInRuntime 集合中
+- 在 HarmonyExportXXXDependency.Template.apply 方法中根据导出值的使用情况生成不同的导出语句
+- 使用 DCE 工具删除 Dead Code，实现完整的树摇效果
 
 ## 优化打包速度
 

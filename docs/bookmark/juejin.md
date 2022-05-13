@@ -9,8 +9,6 @@
   
   - [umi3教程](https://juejin.cn/post/7021358536504393741)☑️
 
-  - [Webpack 原理系列九：Tree-Shaking 实现原理](https://juejin.cn/post/7002410645316436004)☑️
-
   - [【进阶4-3期】面试题之如何实现一个深拷贝](https://juejin.cn/post/6844903764499906568)☑️
 
   - [让我在面试官面前结巴的24个XX和XX的区别！](https://juejin.cn/post/6956360277185003556)☑️
