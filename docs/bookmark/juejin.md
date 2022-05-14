@@ -6,8 +6,6 @@
   - [手写一个虚拟DOM库，彻底让你理解diff算法](https://juejin.cn/post/6984939221681176607)☑️
 
   - [极速通关常用正则](https://juejin.cn/post/7034329725422010375)☑️
-  
-  - [umi3教程](https://juejin.cn/post/7021358536504393741)☑️
 
   - [【进阶4-3期】面试题之如何实现一个深拷贝](https://juejin.cn/post/6844903764499906568)☑️
 
@@ -16,8 +14,6 @@
   - [90 行代码的webpack，你确定不学吗？](https://juejin.cn/post/6963820624623960101)☑️
 
   - [微前端在美团外卖的实践](https://juejin.cn/post/6844904073972432903)☑️
-
-  - [Dumbo - 智能化 Dva 模块生成](https://juejin.cn/post/6955303774151786503)☑️
 
   - [服务端渲染SSR及实现原理](https://juejin.cn/post/7046898330000949285)☑️
 
