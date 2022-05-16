@@ -1,8 +1,9 @@
-## JS是如何运行的
+## JS 是如何运行的
 
-JS代码->解析成 AST (期间伴随词法分析、语法分析)->生成字节码（V8）->生成机器码（编译器）
+JS 代码->解析成 AST (期间伴随词法分析、语法分析)->生成字节码（V8）->生成机器码（编译器）
 
 ## 数据类型
+
 > JavaScript 共有七种基本数据类型，分别是 `Undefined、Null、Boolean、Number、String`，还有在 ES6 中新增的 `Symbol` 和 `BigInt` 类型
 
 - `Symbol` 代表创建后独一无二且不可变的数据类型，它的出现我认为主要是为了解决可能出现的全局变量冲突的问题。
@@ -73,8 +74,9 @@ if (3n) {
 
 ## 数组和函数在内存中是如何存储的
 
-1. 数组，JS里的数组主要就是 以连续内存形式存储的`FixedArray`、以哈希表形式存储的`HashTable`。
+1. 数组，JS 里的数组主要就是 以连续内存形式存储的`FixedArray`、以哈希表形式存储的`HashTable`。
 2. 函数，函数属于引用数据类型，存储在堆中，在栈内存中只是存了一个地址来表示对堆内存中的引用。当解释器寻找引用值时，会首先检索其在栈中的地址，取得地址后从堆中获得实体。
+
 ## 类型判断
 
 ### typeof
@@ -396,7 +398,7 @@ console.log(p.getName()) // '张三'
 
 ## 请求方法
 
-- ajax
+### ajax
 
 ```js
 const ajax = (url,method,async,data){
@@ -417,19 +419,7 @@ const ajax = (url,method,async,data){
 }
 ```
 
-- axios
-
-1. 从浏览器中创建 `XMLHttpRequest`
-2. 从 `node.js` 发出 `http` 请求
-3. 支持 `Promise API`
-4. 拦截请求和响应
-5. 转换请求和响应数据
-6. 取消请求
-7. 自动转换 JSON 数据
-8. 客户端支持防止 `CSRF/XSRF`
-9. 提供了并发的封装 `axios.all()`，只需将一个请求数组传递给这个方法，然后使用`axios.spread()`将响应数组的属性分配给多个变量
-
-- fetch
+### fetch
 
   - 优势：
     - 语法简洁，更加语义化
@@ -442,6 +432,41 @@ const ajax = (url,method,async,data){
     - fetch 默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
     - fetch 不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
     - fetch 没有办法原生监测请求的进度，而`XHR`可以
+
+### axios
+
+1. 从浏览器中创建 `XMLHttpRequest`
+2. 从 `node.js` 发出 `http` 请求
+3. 支持 `Promise API`
+4. 拦截请求和响应
+5. 转换请求和响应数据
+6. 取消请求
+7. 自动转换 JSON 数据
+8. 客户端支持防止 `CSRF/XSRF`
+9. 提供了并发的封装 `axios.all()`，只需将一个请求数组传递给这个方法，然后使用`axios.spread()`将响应数组的属性分配给多个变量
+
+前两个特性解释了为什么 Axios 可以同时用于浏览器和 Node.js 的原因，简单来说就是通过判断是服务器还是浏览器环境，来决定使用 XMLHttpRequest 还是 Node.js 的 HTTP 来创建请求，这个兼容的逻辑被叫做适配器，对应的源码在 lib/defaults.js 中，
+
+```js
+// defaults.js
+function getDefaultAdapter() {
+  var adapter
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = require('./adapters/xhr')
+  } else if (
+    typeof process !== 'undefined' &&
+    Object.prototype.toString.call(process) === '[object process]'
+  ) {
+    // For node use HTTP adapter
+    adapter = require('./adapters/http')
+  }
+  return adapter
+}
+```
+
+以上是适配器的判断逻辑，通过侦测当前环境的一些全局变量，决定使用哪个 adapter。
+其中对于 Node 环境的判断逻辑在我们做 ssr 服务端渲染的时候，也可以复用。
 
 # 函数
 
@@ -463,19 +488,18 @@ function (){}//匿名函数
 
 ```js
 //ES5
-var sum=function(){}
+var sum = function () {}
 //ES6
-let sum=()=>{}//如果{}内容只有一行{}和return关键字可省,
+let sum = () => {} //如果{}内容只有一行{}和return关键字可省,
 ```
 
 3. 构造函数
 
-使用Function构造函数定义函数的方式是一个函数表达式,这种方式会导致解析两次代码，影响性能。第一次解析常规的JavaScript代码，第二次解析传入构造函数的字符串
+使用 Function 构造函数定义函数的方式是一个函数表达式,这种方式会导致解析两次代码，影响性能。第一次解析常规的 JavaScript 代码，第二次解析传入构造函数的字符串
 
 ```js
-const sum = new Function('a', 'b' , 'return a + b') 
+const sum = new Function('a', 'b', 'return a + b')
 ```
-
 
 ## this
 
@@ -625,13 +649,13 @@ function throttle(func, wait) {
 
 ## 原型、原型链
 
-《你不知道的javascript》对原型的描述：
+《你不知道的 javascript》对原型的描述：
 
-> javascript中的对象有一个特殊的 [[Prototype]] 内置属性，其实就是对其他对象的引用。几乎所有的对象在创建时 [[Prototype]] 都会被赋予一个非空的值。
+> javascript 中的对象有一个特殊的 [[Prototype]] 内置属性，其实就是对其他对象的引用。几乎所有的对象在创建时 [[Prototype]] 都会被赋予一个非空的值。
 
-《javascript高级程序设计》这样描述原型：
+《javascript 高级程序设计》这样描述原型：
 
-> 每个函数都会创建一个prototype属性，这个属性是一个对象，包含应该由特定引用类型的实例共享的属性和方法。实际上，这个对象就是通过调用构造函数创建的对象的原型。使用原型对象的好处是，在它上面定义的属性和方法都可以被对象实例共享。原来在构造函数中直接赋给对象实例的值，可以直接赋值给它们的原型。
+> 每个函数都会创建一个 prototype 属性，这个属性是一个对象，包含应该由特定引用类型的实例共享的属性和方法。实际上，这个对象就是通过调用构造函数创建的对象的原型。使用原型对象的好处是，在它上面定义的属性和方法都可以被对象实例共享。原来在构造函数中直接赋给对象实例的值，可以直接赋值给它们的原型。
 
 `原型`：当构造函数被创建时，会在内存空间新建一个对象，构造函数内有一个属性 `prototype` 会指向这个对象的存储空间，这个对象称为构造函数的原型对象
 
@@ -647,7 +671,7 @@ function throttle(func, wait) {
 ![blockchain](../_media/imgs/prototype.png)
 
 - 构造函数、原型和实例的关系是这样的：
-  每个`构造函数`都有一个`原型对象`（实例的原型），`原型`有一个`constructor`属性指回`构造函数`，而`实例`有一个内部指针指向原型。 在chrome、firefox、safari浏览器环境中这个指针就是`__proto__`，其他环境下没有访问`[[Prototype]]`的标准方式
+  每个`构造函数`都有一个`原型对象`（实例的原型），`原型`有一个`constructor`属性指回`构造函数`，而`实例`有一个内部指针指向原型。 在 chrome、firefox、safari 浏览器环境中这个指针就是`__proto__`，其他环境下没有访问`[[Prototype]]`的标准方式
 
 ## new
 
@@ -681,18 +705,19 @@ function myNew() {
 
 > 继承是面向对象编程的三大特征之一（封装、继承、多态）。多个类中存在相同的属性和行为时，将这些内容抽取到单独一个类中，那么多个类无需再定义这些属性和行为，只需要继承那个类即可。多个类可以称为子类，单独这个类称为父类或者超类，基类等。子类可以直接访问父类中的非私有的属性和行为。
 
-在其他面向类语言中，继承意味着复制操作，子类是实实在在地将父类的属性和方法复制了过来，但javascript中的继承不是这样的。根据原型的特性，js中继承的本质是一种委托机制，对象可以将需要的属性和方法委托给原型，需要用的时候就去原型上拿，这样多个对象就可以共享一个原型上的属性和方法，这个过程中是没有复制操作的。
+在其他面向类语言中，继承意味着复制操作，子类是实实在在地将父类的属性和方法复制了过来，但 javascript 中的继承不是这样的。根据原型的特性，js 中继承的本质是一种委托机制，对象可以将需要的属性和方法委托给原型，需要用的时候就去原型上拿，这样多个对象就可以共享一个原型上的属性和方法，这个过程中是没有复制操作的。
 
-javascript中的继承主要还是依靠于原型链，原型处于原型链中时即可以是某个对象的原型也可以是另一个原型的实例，这样就能形成原型之间的继承关系。
+javascript 中的继承主要还是依靠于原型链，原型处于原型链中时即可以是某个对象的原型也可以是另一个原型的实例，这样就能形成原型之间的继承关系。
 
 ### 原型链继承
 
-将父类的实例作为子类的原型(让构造函数的prototype指向另一个构造函数的实例)，他的特点是实例是子类的实例也是父类的实例，父类新增的原型方法/属性，子类都能够访问，并且原型链继承简单易于实现.
+将父类的实例作为子类的原型(让构造函数的 prototype 指向另一个构造函数的实例)，他的特点是实例是子类的实例也是父类的实例，父类新增的原型方法/属性，子类都能够访问，并且原型链继承简单易于实现.
 
 缺点:
-  1. 当原型上的属性是引用数据类型时，所有实例都会共享这个属性，即某个实例对这个属性重写会影响其他实例
-  2. 无法实现多继承
-  3. 无法向父类构造函数传参
+
+1. 当原型上的属性是引用数据类型时，所有实例都会共享这个属性，即某个实例对这个属性重写会影响其他实例
+2. 无法实现多继承
+3. 无法向父类构造函数传参
 
 ```js
 function Parent() {
@@ -706,14 +731,14 @@ Child.prototype = new Parent()
 
 ### 原型式继承
 
-> 2006年，道格拉斯.克罗克福德写了一篇文章《Javascript中的原型式继承》。这片文章介绍了一种不涉及严格意义上构造函数的继承方法。他的出发点是即使不自定义类型也可以通过原型实现对象之间的信息共享。
+> 2006 年，道格拉斯.克罗克福德写了一篇文章《Javascript 中的原型式继承》。这片文章介绍了一种不涉及严格意义上构造函数的继承方法。他的出发点是即使不自定义类型也可以通过原型实现对象之间的信息共享。
 
-```js 
+```js
 const parent = {
-  name: 'parent'
+  name: 'parent',
 }
 const object = function (o) {
-  function F() { }
+  function F() {}
   F.prototype = o
   return new F()
 }
@@ -721,9 +746,9 @@ const child1 = object(parent)
 console.log(child1.name) // parent
 ```
 
-这个函数将原型链继承的核心代码封装成了一个函数，但这个函数有了不同的适用场景：如果你有一个已知的对象，想在它的基础上再创建一个新对象，那么你只需要把已知对象传给object函数即可
+这个函数将原型链继承的核心代码封装成了一个函数，但这个函数有了不同的适用场景：如果你有一个已知的对象，想在它的基础上再创建一个新对象，那么你只需要把已知对象传给 object 函数即可
 
-ES5新增了一个方法`Object.create()`将原型式继承规范化了。相比于上述的object()方法，`Object.create()`可以接受两个参数，第一个参数是作为新对象原型的对象，第二个参数也是个对象，里面放入需要给新对象增加的属性（可选）。第二个参数与Object.defineProperties()方法的第二个参数是一样的，每个新增的属性都通过自己的属性描述符来描述，以这种方式添加的属性会遮蔽原型上的同名属性。当`Object.create()`只传入第一个参数时，功效与上述的object()方法是相同的
+ES5 新增了一个方法`Object.create()`将原型式继承规范化了。相比于上述的 object()方法，`Object.create()`可以接受两个参数，第一个参数是作为新对象原型的对象，第二个参数也是个对象，里面放入需要给新对象增加的属性（可选）。第二个参数与 Object.defineProperties()方法的第二个参数是一样的，每个新增的属性都通过自己的属性描述符来描述，以这种方式添加的属性会遮蔽原型上的同名属性。当`Object.create()`只传入第一个参数时，功效与上述的 object()方法是相同的
 
 ```js
 const child2 = Object.create(parent, {
@@ -731,8 +756,8 @@ const child2 = Object.create(parent, {
     value: 'man',
     writable: false,
     enumerable: true,
-    configurable: true
-  }
+    configurable: true,
+  },
 })
 console.log(child2.name) // parent
 ```
@@ -746,9 +771,10 @@ console.log(child2.name) // parent
 使用父类的构造函数来增强子类实例，即复制父类的实例属性给子类，构造继承可以向父类传递参数，可以实现多继承，通过 call 多个父类对象。
 
 缺点：
-  1. 必须在构造函数中定义方法，通过盗用构造函数继承的方法本质上都变成了实例自己的方法，不是公共的方法，因此失去了复用性
-  2. 子类不能访问父类原型上定义的方法，因此所有类型只能继承父类的实例属性和方法
-  3. 每个子类都有父类实例函数的副本，影响性能。
+
+1. 必须在构造函数中定义方法，通过盗用构造函数继承的方法本质上都变成了实例自己的方法，不是公共的方法，因此失去了复用性
+2. 子类不能访问父类原型上定义的方法，因此所有类型只能继承父类的实例属性和方法
+3. 每个子类都有父类实例函数的副本，影响性能。
 
 ```js
 function Parent() {
@@ -896,7 +922,6 @@ add(1)(2)(3)； // 6
 add(1)(2)(3)(4)； // 10
 ```
 
-
 # 对象
 
 ## 浅拷贝
@@ -1012,17 +1037,16 @@ function flatten(arr) {
 }
 ```
 
-
 # 遍历
 
-## for in 和 for of的区别
+## for in 和 for of 的区别
 
-简单来说就是它们两者都可以用于遍历，不过for in遍历的是数组的索引（index），而for of遍历的是数组元素值（value）
+简单来说就是它们两者都可以用于遍历，不过 for in 遍历的是数组的索引（index），而 for of 遍历的是数组元素值（value）
 
 ```js
 // for in
-var obj = {a:1, b:2, c:3}
-    
+var obj = { a: 1, b: 2, c: 3 }
+
 for (let key in obj) {
   console.log(key)
 }
@@ -1030,7 +1054,7 @@ for (let key in obj) {
 
 //for of
 const array1 = ['a', 'b', 'c']
- 
+
 for (const val of array1) {
   console.log(val)
 }
@@ -1041,27 +1065,27 @@ for (const val of array1) {
 
 - `for in`更适合遍历对象，当然也可以遍历数组，但是会存在一些问题
   比如：
-    - index索引为字符串型数字，不能直接进行几何运算
-    - 遍历顺序有可能不是按照实际数组的内部顺序
+  - index 索引为字符串型数字，不能直接进行几何运算
+  - 遍历顺序有可能不是按照实际数组的内部顺序
 - `for in`遍历的是数组的索引（即键名）
-- `for in`总是得到对象的key或数组、字符串的下标
+- `for in`总是得到对象的 key 或数组、字符串的下标
 - 使用`for in`会遍历数组所有的可枚举属性，包括原型，如果不想遍历原型方法和属性的话，可以在循环内部判断一下，使用`hasOwnProperty()`方法可以判断某属性是不是该对象的实例属性
 
 ```js
-var arr = [1,2,3]
+var arr = [1, 2, 3]
 Array.prototype.a = 123
-    
+
 for (let index in arr) {
   let res = arr[index]
   console.log(res)
 }
 //1 2 3 123
 
-for(let index in arr) {
-    if(arr.hasOwnProperty(index)){
-        let res = arr[index]
-  		console.log(res)
-    }
+for (let index in arr) {
+  if (arr.hasOwnProperty(index)) {
+    let res = arr[index]
+    console.log(res)
+  }
 }
 // 1 2 3
 ```
@@ -1069,17 +1093,17 @@ for(let index in arr) {
 ### for of
 
 - `for of`遍历的是数组元素值，而且`for of`遍历的只是数组内的元素，不包括原型属性和索引
-- `for of`总是得到对象的value或数组、字符串的值
+- `for of`总是得到对象的 value 或数组、字符串的值
 - `for of`适用遍历数/数组对象/字符串/`map`/`set`等拥有迭代器对象（`iterator`）的集合，但是不能遍历对象，因为没有迭代器对象，但如果想遍历对象的属性，你可以用`for in`循环（这也是它的本职工作）或用内建的`Object.keys()`方法
 
 ```js
-var myObject={
-　　a:1,
-　　b:2,
-　　c:3
+var myObject = {
+  a: 1,
+  b: 2,
+  c: 3,
 }
 for (var key of Object.keys(myObject)) {
-  console.log(key + ": " + myObject[key]);
+  console.log(key + ': ' + myObject[key])
 }
 //a:1 b:2 c:3
 ```
