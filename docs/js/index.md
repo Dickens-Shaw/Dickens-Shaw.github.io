@@ -468,6 +468,91 @@ function getDefaultAdapter() {
 以上是适配器的判断逻辑，通过侦测当前环境的一些全局变量，决定使用哪个 adapter。
 其中对于 Node 环境的判断逻辑在我们做 ssr 服务端渲染的时候，也可以复用。
 
+#### Adapter xhr
+
+定位到源码文件 `lib/adapters/xhr.js`，先来看下整体结构
+
+```js
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+
+    var request = new XMLHttpRequest();
+
+    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
+    request.onreadystatechange = function handleLoad() {}
+    request.onabort = function handleAbort() {}
+    request.onerror = function handleError() {}
+    request.ontimeout = function handleTimeout() {}
+
+    request.send(requestData);
+  });
+};
+```
+
+导出了一个函数，接受一个配置参数，返回一个 Promise。这就是 XMLHttpRequest 的使用姿势呀，先创建了一个 xhr 然后 open 启动请求，监听 xhr 状态，然后 send 发送请求。
+
+展开看一下 Axios 对于 onreadystatechange 的处理
+
+```js
+request.onreadystatechange = function handleLoad() {
+  if (!request || request.readyState !== 4) {
+    return;
+  }
+
+  // The request errored out and we didn't get a response, this will be
+  // handled by onerror instead
+  // With one exception: request that using file: protocol, most browsers
+  // will return status as 0 even though it's a successful request
+  if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+    return;
+  }
+
+  // Prepare the response
+  var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+  var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+  var response = {
+    data: responseData,
+    status: request.status,
+    statusText: request.statusText,
+    headers: responseHeaders,
+    config: config,
+    request: request
+  };
+
+  settle(resolve, reject, response);
+
+  // Clean up request
+  request = null;
+};
+```
+
+首先对状态进行过滤，只有当请求完成时（readyState === 4）才往下处理。
+需要注意的是，如果 XMLHttpRequest 请求出错，大部分的情况下我们可以通过监听 onerror 进行处理，但是也有一个例外：当请求使用文件协议（file://）时，尽管请求成功了但是大部分浏览器也会返回 0 的状态码。
+
+Axios 针对这个例外情况也做了处理。
+
+请求完成后，就要处理响应了。这里将响应包装成一个标准格式的对象，作为第三个参数传递给了 settle 方法，settle 在 lib/core/settle.js 中定义
+
+```js
+function settle(resolve, reject, response) {
+  var validateStatus = response.config.validateStatus;
+  if (!response.status || !validateStatus || validateStatus(response.status)) {
+    resolve(response);
+  } else {
+    reject(createError(
+      'Request failed with status code ' + response.status,
+      response.config,
+      null,
+      response.request,
+      response
+    ));
+  }
+};
+```
+
+对 Promise 的回调进行了简单的封装，确保调用按一定的格式返回
+
 # 函数
 
 ## 定义方法
