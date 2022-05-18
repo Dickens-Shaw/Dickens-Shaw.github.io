@@ -553,6 +553,26 @@ function settle(resolve, reject, response) {
 
 对 Promise 的回调进行了简单的封装，确保调用按一定的格式返回
 
+#### 防范CSRF
+
+**范伪造请求的关键就是检查请求来源**，refferer 字段虽然可以标识当前站点，但是不够可靠，现在业界比较通用的解决方案还是在每个请求上附带一个 anti-CSRF token，这个的原理是攻击者无法拿到 Cookie，所以我们可以通过对 Cookie 进行加密（比如对 sid 进行加密），然后配合服务端做一些简单的验证，就可以判断当前请求是不是伪造的。
+
+```js
+// Add xsrf header
+// This is only done if running in a standard browser environment.
+// Specifically not if we're in a web worker, or react-native.
+if (utils.isStandardBrowserEnv()) {
+  // Add xsrf header
+  var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
+    cookies.read(config.xsrfCookieName) :
+    undefined;
+
+  if (xsrfValue) {
+    requestHeaders[config.xsrfHeaderName] = xsrfValue;
+  }
+}
+```
+
 # 函数
 
 ## 定义方法
