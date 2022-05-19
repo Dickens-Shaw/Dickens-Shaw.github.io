@@ -573,6 +573,76 @@ if (utils.isStandardBrowserEnv()) {
 }
 ```
 
+#### 拦截器 Interceptor
+
+```js
+// 拦截器可以拦截请求或响应
+// 拦截器的回调将在请求或响应的 then 或 catch 回调前被调用
+var instance = axios.create(options);
+
+var requestInterceptor = axios.interceptors.request.use(
+  (config) => {
+    // do something before request is sent
+    return config;
+  },
+  (err) => {
+    // do somthing with request error
+    return Promise.reject(err);
+  }
+);
+
+// 移除已设置的拦截器
+axios.interceptors.request.eject(requestInterceptor)
+```
+
+那么拦截器是怎么实现的呢？定位到源码 lib/core/Axios.js 第 14 行
+
+```js
+function Axios(instanceConfig) {
+  this.defaults = instanceConfig;
+  this.interceptors = {
+    request: new InterceptorManager(),
+    response: new InterceptorManager()
+  };
+}
+```
+
+拦截器 interceptors 中的 request 和 response 两者都是一个叫做 InterceptorManager 的实例,定位到源码 lib/core/InterceptorManager.js
+
+```js
+function InterceptorManager() {
+  this.handlers = [];
+}
+
+InterceptorManager.prototype.use = function use(fulfilled, rejected, options) {
+  this.handlers.push({
+    fulfilled: fulfilled,
+    rejected: rejected,
+    synchronous: options ? options.synchronous : false,
+    runWhen: options ? options.runWhen : null
+  });
+  return this.handlers.length - 1;
+};
+
+InterceptorManager.prototype.eject = function eject(id) {
+  if (this.handlers[id]) {
+    this.handlers[id] = null;
+  }
+};
+
+InterceptorManager.prototype.forEach = function forEach(fn) {
+  utils.forEach(this.handlers, function forEachHandler(h) {
+    if (h !== null) {
+      fn(h);
+    }
+  });
+};
+```
+
+**InterceptorManager 是一个简单的事件管理器**，实现了对拦截器的管理，通过 handlers 存储拦截器，然后提供了添加，移除，遍历执行拦截器的实例方法，存储的每一个拦截器对象都包含了作为 Promise 中 resolve 和 reject 的回调以及两个配置项。
+
+值得一提的是，移除方法是**通过直接将拦截器对象设置为 null 实现的**，而不是 splice 剪切数组，遍历方法中也增加了相应的 null 值处理。这样做一方面使得每一项ID保持为项的数组索引不变，另一方面也避免了重新剪切拼接数组的性能损失。
+
 # 函数
 
 ## 定义方法
