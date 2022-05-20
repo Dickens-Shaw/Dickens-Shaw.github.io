@@ -421,17 +421,17 @@ const ajax = (url,method,async,data){
 
 ### fetch
 
-  - 优势：
-    - 语法简洁，更加语义化
-    - 基于标准 `Promise` 实现，支持 `async/await`
-    - 同构方便，使用 `isomorphic-fetch`
-    - 更加底层，提供的 API 丰富（`request, response`）
-    - 脱离了`XHR`，是 ES 规范里新的实现方式
-  - 缺陷：
-    - fetch 只对网络请求报错，对 400，500 都当做成功的请求，服务器返回 400，500 错误码时并不会 `reject`，只有网络错误这些导致请求不能完成时，fetch 才会被 `reject`。
-    - fetch 默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
-    - fetch 不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
-    - fetch 没有办法原生监测请求的进度，而`XHR`可以
+- 优势：
+  - 语法简洁，更加语义化
+  - 基于标准 `Promise` 实现，支持 `async/await`
+  - 同构方便，使用 `isomorphic-fetch`
+  - 更加底层，提供的 API 丰富（`request, response`）
+  - 脱离了`XHR`，是 ES 规范里新的实现方式
+- 缺陷：
+  - fetch 只对网络请求报错，对 400，500 都当做成功的请求，服务器返回 400，500 错误码时并不会 `reject`，只有网络错误这些导致请求不能完成时，fetch 才会被 `reject`。
+  - fetch 默认不会带`cookie`，需要添加配置项： `fetch(url, {credentials: 'include'})`
+  - fetch 不支持`abort`，不支持超时控制，使用`setTimeout`及`Promise.reject`的实现的超时控制并不能阻止请求过程继续在后台运行，造成了流量的浪费
+  - fetch 没有办法原生监测请求的进度，而`XHR`可以
 
 ### axios
 
@@ -475,19 +475,23 @@ function getDefaultAdapter() {
 ```js
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
+    var requestData = config.data
 
-    var request = new XMLHttpRequest();
+    var request = new XMLHttpRequest()
 
-    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
+    request.open(
+      config.method.toUpperCase(),
+      buildURL(fullPath, config.params, config.paramsSerializer),
+      true
+    )
     request.onreadystatechange = function handleLoad() {}
     request.onabort = function handleAbort() {}
     request.onerror = function handleError() {}
     request.ontimeout = function handleTimeout() {}
 
-    request.send(requestData);
-  });
-};
+    request.send(requestData)
+  })
+}
 ```
 
 导出了一个函数，接受一个配置参数，返回一个 Promise。这就是 XMLHttpRequest 的使用姿势呀，先创建了一个 xhr 然后 open 启动请求，监听 xhr 状态，然后 send 发送请求。
@@ -497,34 +501,43 @@ module.exports = function xhrAdapter(config) {
 ```js
 request.onreadystatechange = function handleLoad() {
   if (!request || request.readyState !== 4) {
-    return;
+    return
   }
 
   // The request errored out and we didn't get a response, this will be
   // handled by onerror instead
   // With one exception: request that using file: protocol, most browsers
   // will return status as 0 even though it's a successful request
-  if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-    return;
+  if (
+    request.status === 0 &&
+    !(request.responseURL && request.responseURL.indexOf('file:') === 0)
+  ) {
+    return
   }
 
   // Prepare the response
-  var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-  var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+  var responseHeaders =
+    'getAllResponseHeaders' in request
+      ? parseHeaders(request.getAllResponseHeaders())
+      : null
+  var responseData =
+    !config.responseType || config.responseType === 'text'
+      ? request.responseText
+      : request.response
   var response = {
     data: responseData,
     status: request.status,
     statusText: request.statusText,
     headers: responseHeaders,
     config: config,
-    request: request
-  };
+    request: request,
+  }
 
-  settle(resolve, reject, response);
+  settle(resolve, reject, response)
 
   // Clean up request
-  request = null;
-};
+  request = null
+}
 ```
 
 首先对状态进行过滤，只有当请求完成时（readyState === 4）才往下处理。
@@ -536,24 +549,26 @@ Axios 针对这个例外情况也做了处理。
 
 ```js
 function settle(resolve, reject, response) {
-  var validateStatus = response.config.validateStatus;
+  var validateStatus = response.config.validateStatus
   if (!response.status || !validateStatus || validateStatus(response.status)) {
-    resolve(response);
+    resolve(response)
   } else {
-    reject(createError(
-      'Request failed with status code ' + response.status,
-      response.config,
-      null,
-      response.request,
-      response
-    ));
+    reject(
+      createError(
+        'Request failed with status code ' + response.status,
+        response.config,
+        null,
+        response.request,
+        response
+      )
+    )
   }
-};
+}
 ```
 
 对 Promise 的回调进行了简单的封装，确保调用按一定的格式返回
 
-#### 防范CSRF
+#### 防范 CSRF
 
 **范伪造请求的关键就是检查请求来源**，refferer 字段虽然可以标识当前站点，但是不够可靠，现在业界比较通用的解决方案还是在每个请求上附带一个 anti-CSRF token，这个的原理是攻击者无法拿到 Cookie，所以我们可以通过对 Cookie 进行加密（比如对 sid 进行加密），然后配合服务端做一些简单的验证，就可以判断当前请求是不是伪造的。
 
@@ -563,12 +578,14 @@ function settle(resolve, reject, response) {
 // Specifically not if we're in a web worker, or react-native.
 if (utils.isStandardBrowserEnv()) {
   // Add xsrf header
-  var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
-    cookies.read(config.xsrfCookieName) :
-    undefined;
+  var xsrfValue =
+    (config.withCredentials || isURLSameOrigin(fullPath)) &&
+    config.xsrfCookieName
+      ? cookies.read(config.xsrfCookieName)
+      : undefined
 
   if (xsrfValue) {
-    requestHeaders[config.xsrfHeaderName] = xsrfValue;
+    requestHeaders[config.xsrfHeaderName] = xsrfValue
   }
 }
 ```
@@ -578,18 +595,18 @@ if (utils.isStandardBrowserEnv()) {
 ```js
 // 拦截器可以拦截请求或响应
 // 拦截器的回调将在请求或响应的 then 或 catch 回调前被调用
-var instance = axios.create(options);
+var instance = axios.create(options)
 
 var requestInterceptor = axios.interceptors.request.use(
   (config) => {
     // do something before request is sent
-    return config;
+    return config
   },
   (err) => {
     // do somthing with request error
-    return Promise.reject(err);
+    return Promise.reject(err)
   }
-);
+)
 
 // 移除已设置的拦截器
 axios.interceptors.request.eject(requestInterceptor)
@@ -599,11 +616,11 @@ axios.interceptors.request.eject(requestInterceptor)
 
 ```js
 function Axios(instanceConfig) {
-  this.defaults = instanceConfig;
+  this.defaults = instanceConfig
   this.interceptors = {
     request: new InterceptorManager(),
-    response: new InterceptorManager()
-  };
+    response: new InterceptorManager(),
+  }
 }
 ```
 
@@ -611,7 +628,7 @@ function Axios(instanceConfig) {
 
 ```js
 function InterceptorManager() {
-  this.handlers = [];
+  this.handlers = []
 }
 
 InterceptorManager.prototype.use = function use(fulfilled, rejected, options) {
@@ -619,29 +636,161 @@ InterceptorManager.prototype.use = function use(fulfilled, rejected, options) {
     fulfilled: fulfilled,
     rejected: rejected,
     synchronous: options ? options.synchronous : false,
-    runWhen: options ? options.runWhen : null
-  });
-  return this.handlers.length - 1;
-};
+    runWhen: options ? options.runWhen : null,
+  })
+  return this.handlers.length - 1
+}
 
 InterceptorManager.prototype.eject = function eject(id) {
   if (this.handlers[id]) {
-    this.handlers[id] = null;
+    this.handlers[id] = null
   }
-};
+}
 
 InterceptorManager.prototype.forEach = function forEach(fn) {
   utils.forEach(this.handlers, function forEachHandler(h) {
     if (h !== null) {
-      fn(h);
+      fn(h)
     }
-  });
-};
+  })
+}
 ```
 
 **InterceptorManager 是一个简单的事件管理器**，实现了对拦截器的管理，通过 handlers 存储拦截器，然后提供了添加，移除，遍历执行拦截器的实例方法，存储的每一个拦截器对象都包含了作为 Promise 中 resolve 和 reject 的回调以及两个配置项。
 
-值得一提的是，移除方法是**通过直接将拦截器对象设置为 null 实现的**，而不是 splice 剪切数组，遍历方法中也增加了相应的 null 值处理。这样做一方面使得每一项ID保持为项的数组索引不变，另一方面也避免了重新剪切拼接数组的性能损失。
+值得一提的是，移除方法是**通过直接将拦截器对象设置为 null 实现的**，而不是 splice 剪切数组，遍历方法中也增加了相应的 null 值处理。这样做一方面使得每一项 ID 保持为项的数组索引不变，另一方面也避免了重新剪切拼接数组的性能损失。
+
+拦截器的回调会在请求或响应的 then 或 catch 回调前被调用
+
+当执行 request 时，实际的请求（dispatchRequest）和拦截器是通过一个叫 chain 的队列来管理的。整个请求的逻辑如下，
+
+1. 首先初始化请求和响应的拦截器队列，将 resolve，reject 回调依次放入队头
+2. 然后初始化一个 Promise 用来执行回调，chain 用来存储和管理实际请求和拦截器
+3. 将请求拦截器放入 chain 队头，响应拦截器放入 chain 队尾
+4. 队列不为空时，通过 Promise.then 的链式调用，依次将请求拦截器，实际请求，响应拦截器出队
+5. 最后返回链式调用后的 Promise
+
+这里的实际请求是对适配器的封装，请求和响应数据的转换都在这里完成。
+
+#### 数据转换 Transform data
+
+定位到源码 lib/core/dispatchRequest.js
+
+```js
+function dispatchRequest(config) {
+  throwIfCancellationRequested(config)
+
+  // Transform request data
+  config.data = transformData(
+    config.data,
+    config.headers,
+    config.transformRequest
+  )
+
+  var adapter = config.adapter || defaults.adapter
+
+  return adapter(config).then(
+    function onAdapterResolution(response) {
+      throwIfCancellationRequested(config) // 如果请求被取消，则抛出异常
+
+      // Transform response data
+      response.data = transformData(
+        response.data,
+        response.headers,
+        config.transformResponse
+      )
+
+      return response
+    },
+    function onAdapterRejection(reason) {
+      if (!isCancel(reason)) {
+        throwIfCancellationRequested(config) // 取消请求
+
+        // Transform response data
+        if (reason && reason.response) {
+          reason.response.data = transformData(
+            reason.response.data,
+            reason.response.headers,
+            config.transformResponse
+          )
+        }
+      }
+
+      return Promise.reject(reason)
+    }
+  )
+}
+```
+
+转换通过 transformData 函数实现，它会遍历调用设置的转换函数，转换函数将 headers 作为第二个参数，所以我们可以根据 headers 中的信息来执行一些不同的转换操作
+
+```js
+// 源码 core/transformData.js
+function transformData(data, headers, fns) {
+  utils.forEach(fns, function transform(fn) {
+    data = fn(data, headers)
+  })
+
+  return data
+}
+```
+
+Axios 也提供了两个默认的转换函数，用于对请求和响应数据进行转换。
+
+默认情况下，Axios 会对请求传入的 data 做一些处理，比如请求数据如果是对象，会序列化为 JSON 字符串，响应数据如果是 JSON 字符串，会尝试转换为 JavaScript 对象，这些都是非常实用的功能
+
+对应的转换器源码可以在 lib/default.js 的第 31 行找到
+
+```js
+var defaults = {
+  // Line 31
+  transformRequest: [
+    function transformRequest(data, headers) {
+      normalizeHeaderName(headers, 'Accept')
+      normalizeHeaderName(headers, 'Content-Type')
+      if (
+        utils.isFormData(data) ||
+        utils.isArrayBuffer(data) ||
+        utils.isBuffer(data) ||
+        utils.isStream(data) ||
+        utils.isFile(data) ||
+        utils.isBlob(data)
+      ) {
+        return data
+      }
+      if (utils.isArrayBufferView(data)) {
+        return data.buffer
+      }
+      if (utils.isURLSearchParams(data)) {
+        setContentTypeIfUnset(
+          headers,
+          'application/x-www-form-urlencoded;charset=utf-8'
+        )
+        return data.toString()
+      }
+      if (utils.isObject(data)) {
+        setContentTypeIfUnset(headers, 'application/json;charset=utf-8')
+        return JSON.stringify(data)
+      }
+      return data
+    },
+  ],
+
+  transformResponse: [
+    function transformResponse(data) {
+      var result = data
+      if (utils.isString(result) && result.length) {
+        try {
+          result = JSON.parse(result)
+        } catch (e) {
+          /* Ignore */
+        }
+      }
+      return result
+    },
+  ],
+}
+```
 
 # 函数
 
