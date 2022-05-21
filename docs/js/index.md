@@ -792,6 +792,97 @@ var defaults = {
 }
 ```
 
+#### CancelToken
+其实不管是浏览器端的 xhr 或 Node.js 里 http 模块的 request 对象，都提供了 abort 方法用于取消请求，所以我们只需要在合适的时机调用 abort 就可以实现取消请求了。
+
+那么，什么是合适的时机呢？控制权交给用户就合适了。所以这个合适的时机应该由用户决定，也就是说我们需要将取消请求的方法暴露出去，Axios 通过 CancelToken 实现取消请求，我们来一起看下它的姿势。
+
+首先 Axios 提供了两种方式创建 cancel token
+
+```js
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+
+// 方式一，使用 CancelToken 实例提供的静态属性 source
+axios.post("/user/12345", { name: "***" }, { cancelToken: source.token });
+source.cancel();
+
+// 方式二，使用 CancelToken 构造函数自己实例化
+let cancel;
+
+axios.post(
+  "/user/12345",
+  { name: "***" },
+  {
+    cancelToken: new CancelToken(function executor(c) {
+      cancel = c;
+    }),
+  }
+);
+
+cancel();
+```
+
+到底什么是 CancelToken？定位到源码 lib/cancel/CancelToken.js 第 11 行
+
+```js
+function CancelToken(executor) {
+  if (typeof executor !== "function") {
+    throw new TypeError("executor must be a function.");
+  }
+
+  var resolvePromise;
+  this.promise = new Promise(function promiseExecutor(resolve) {
+    resolvePromise = resolve;
+  });
+
+  var token = this;
+  executor(function cancel(message) {
+    if (token.reason) {
+      // Cancellation has already been requested
+      return;
+    }
+
+    token.reason = new Cancel(message);
+    resolvePromise(token.reason);
+  });
+}
+```
+
+CancelToken 就是一个由 promise 控制的极简的状态机，实例化时会在实例上挂载一个 promise，这个 promise 的 resolve 回调暴露给了外部方法 executor，这样一来，我们从外部调用这个 executor方法后就会得到一个状态变为 fulfilled 的 promise，那有了这个 promise 后我们如何取消请求呢？
+
+是不是只要在请求时拿到这个 promise 实例，然后在 then 回调里取消请求就可以了？
+
+定位到适配器的源码 lib/adapters/xhr.js 第 158 行
+```js
+if (config.cancelToken) {
+  // Handle cancellation
+  config.cancelToken.promise.then(function onCanceled(cancel) {
+    if (!request) {
+      return;
+    }
+
+    request.abort();
+    reject(cancel);
+    // Clean up request
+    request = null;
+  });
+}
+```
+以及源码 lib/adaptors/http.js 第 291 行
+```js
+if (config.cancelToken) {
+  // Handle cancellation
+  config.cancelToken.promise.then(function onCanceled(cancel) {
+    if (req.aborted) return;
+
+    req.abort();
+    reject(cancel);
+  });
+}
+```
+在适配器里 CancelToken 实例的 promise 的 then 回调里调用了 xhr 或 http.request 的 abort 方法。试想一下，如果我们没有从外部调用取消 CancelToken 的方法，是不是意味着 resolve 回调不会执行，适配器里的 promise 的 then 回调也不会执行，就不会调用 abort 取消请求了。
+
 # 函数
 
 ## 定义方法
