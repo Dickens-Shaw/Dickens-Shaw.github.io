@@ -27,8 +27,6 @@
 
   - [前端业务开发的通用经验 - 质量保障](https://juejin.cn/post/6856375724979257352)☑️
 
-  - [50天用react.js重写50个web项目，我学到了什么?](https://juejin.cn/post/7015487122652020766)☑️
-
   - [当webpack有了vite的速度你会喜欢吗？](https://juejin.cn/post/6975380991762235422)☑️
 
   - [手摸手教你实现一个babel插件～](https://juejin.cn/post/7012424646247055390)☑️
