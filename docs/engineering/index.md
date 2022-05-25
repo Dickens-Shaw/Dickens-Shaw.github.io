@@ -620,3 +620,30 @@ Mocha、断言库 Chai、Sinon、Jest 等。我们可以先选择 jest 来学习
 api 简单易用，易于上手，文档实时更新；
 支持按需加载，支持组件的继承，支持组件的插件化；
 易于开发者拓展、版本升级保持向前兼容。
+
+# NPM
+
+
+## npm run ***
+1. 运行 npm run xxx的时候，npm 会先在当前目录的 node_modules/.bin 查找要执行的程序，如果找到则运行；
+2. 没有找到则从全局的 node_modules/.bin 中查找，npm i -g xxx就是安装到到全局目录；
+3. 如果全局目录还是没找到，那么就从 path 环境变量中查找有没有其他同名的可执行程序。
+
+```js
+# unix 系默认的可执行文件，必须输入完整文件名
+vue-cli-service
+
+# windows cmd 中默认的可执行文件，当我们不添加后缀名时，自动根据 pathext 查找文件
+vue-cli-service.cmd
+
+# Windows PowerShell 中可执行文件，可以跨平台
+vue-cli-service.ps1
+```
+
+以vue-cli-service serve为例
+
+从 package-lock.json 中可知，当我们npm i 整个新建的vue项目的时候，npm 将 bin/vue-cli-service.js 作为 bin 声明了。
+
+所以在 npm install 时，npm 读到该配置后，就将该文件软链接到 ./node_modules/.bin 目录下，而 npm 还会自动把node_modules/.bin加入$PATH，这样就可以直接作为命令运行依赖程序和开发依赖程序，不用全局安装了。
+
+假如我们在安装包时，使用 npm install -g xxx 来安装，那么会将其中的 bin 文件加入到全局，比如 create-react-app 和 vue-cli ，在全局安装后，就可以直接使用如 vue-cli projectName 这样的命令来创建项目了。
