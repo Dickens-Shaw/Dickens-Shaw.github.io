@@ -9,6 +9,7 @@ export default defineUserConfig({
   title: 'Shaw',
   description: '这是我的第一个 VuePress 站点',
   dest: './dist',
+  base: '/documents/',
   plugins: [
     [
       searchPlugin({
