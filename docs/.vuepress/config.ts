@@ -15,7 +15,7 @@ export default defineUserConfig({
         // 配置项
         locales: {
           '/': {
-            placeholder: '搜索1',
+            placeholder: '搜索',
           }
         },
       }),

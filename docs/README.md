@@ -1,6 +1,6 @@
 ---
 home: true
-title: 文档
+title: 文档CI
 heroText: 前端知识点
 tagline: 越整理发现要学的东西越多
 actions:
