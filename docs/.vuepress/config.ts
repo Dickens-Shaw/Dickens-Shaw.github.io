@@ -1,5 +1,4 @@
 import { defineUserConfig } from 'vuepress'
-import  { searchPlugin } from '@vuepress/plugin-search';
 import { defaultTheme } from '@vuepress/theme-default';
 import { navbar} from './config/navbar';
 import { sidebar } from './config/sidebar';
