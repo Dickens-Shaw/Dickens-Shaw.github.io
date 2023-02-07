@@ -10,9 +10,10 @@ jobs:
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
-        ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: docs/.vuepress/dist
+        token: ${{ secrets.METRICS_TOKEN }}
+        branch: gh-pages
+        folder: docs/.vuepress/dist
+        repository-name: Dickens-Shaw/documents
 
     # - name: vuepress-deploy
     #   uses: Dickens-Shaw/vuepress-deploy@master
