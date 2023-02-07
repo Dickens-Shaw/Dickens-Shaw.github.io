@@ -653,7 +653,7 @@
     "@vuepress/core" "2.0.0-beta.60"
     prismjs "^1.29.0"
 
-"@vuepress/plugin-search@^2.0.0-beta.50":
+"@vuepress/plugin-search@@latest":
   version "2.0.0-beta.50-pre.1"
   resolved "https://registry.npmmirror.com/@vuepress/plugin-search/-/plugin-search-2.0.0-beta.50-pre.1.tgz#c623e6565517c9a990c032d537ae2af9f561f787"
   integrity sha512-gXcOU0uk4k5uB6tdxKT6fUUFjzpopFmBMjraLhQEBLn6CLKfnJXV8fjVbF5G7RyeCOPIxDH7TaRkE8RluiLLYQ==
@@ -1676,7 +1676,7 @@ vuepress-vite@2.0.0-beta.50-pre.1:
     "@vuepress/core" "2.0.0-beta.60"
     "@vuepress/theme-default" "2.0.0-beta.60"
 
-vuepress@^2.0.0-beta.50:
+vuepress@@latest:
   version "2.0.0-beta.50-pre.1"
   resolved "https://registry.npmmirror.com/vuepress/-/vuepress-2.0.0-beta.50-pre.1.tgz#26eec90444bb37590f29d10dd5923e75c476189f"
   integrity sha512-4Finc3GDscIqgRFAZFwa4SUm8tIFSVQIxnPIpQPW3kaM37rKylvUDkLrs2lMvoDPTAAE+Kf+v34tAFX+ZMGKUg==

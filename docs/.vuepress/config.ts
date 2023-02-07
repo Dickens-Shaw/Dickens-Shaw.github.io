@@ -9,18 +9,7 @@ export default defineUserConfig({
   title: 'Shaw',
   description: '这是我的第一个 VuePress 站点',
   base: '/documents/',
-  plugins: [
-    [
-      searchPlugin({
-        // 配置项
-        locales: {
-          '/': {
-            placeholder: '搜索',
-          }
-        },
-      }),
-    ],
-  ],
+  plugins: [],
   theme: defaultTheme({
     logo: '/images/logo.jpeg',
     locales: {
