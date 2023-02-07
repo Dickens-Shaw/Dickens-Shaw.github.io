@@ -1,5 +1,6 @@
 node_modules
 .temp
 .cache
-/docs/.vuepress/dist
+# 忽略/docs/.vuepress/dist/下的所有文件
+/docs/.vuepress/dist/*
 /docs/.vuepress/.cache

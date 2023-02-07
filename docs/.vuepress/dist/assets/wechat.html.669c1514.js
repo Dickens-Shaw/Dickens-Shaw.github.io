@@ -1,1 +1,0 @@
-const t=JSON.parse('{"key":"v-40c14ada","path":"/bookmark/wechat.html","title":"\u5FAE\u4FE1","lang":"zh-CN","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1672748515000,"contributors":[{"name":"\u8096\u7B1B\u6839","email":"xiaodigen@yzgong.com","commits":51}]},"filePathRelative":"bookmark/wechat.md"}');export{t as data};

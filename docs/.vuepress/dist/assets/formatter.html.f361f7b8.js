@@ -1,1 +1,0 @@
-const t=JSON.parse('{"key":"v-bf2165a2","path":"/bookmark/formatter.html","title":"\u6536\u85CF\u5939","lang":"zh-CN","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1672748515000,"contributors":[{"name":"\u8096\u7B1B\u6839","email":"xiaodigen@yzgong.com","commits":1}]},"filePathRelative":"bookmark/formatter.md"}');export{t as data};
