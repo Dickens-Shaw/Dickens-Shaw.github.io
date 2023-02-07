@@ -10,7 +10,7 @@ jobs:
     - name: vuepress-deploy
       uses: lowlighter/metrics@master
       env:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         TARGET_REPO: Dickens-Shaw/documents
         TARGET_BRANCH: gh-pages
         BUILD_SCRIPT: yarn && yarn build
