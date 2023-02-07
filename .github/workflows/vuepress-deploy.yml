@@ -13,5 +13,5 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         TARGET_REPO: Dickens-Shaw/documents
         TARGET_BRANCH: gh-pages
-        BUILD_SCRIPT: yarn && yarn build
+        BUILD_SCRIPT: yarn config set registry https://registry.npmmirror.com/ && yarn && yarn build
         BUILD_DIR: docs/.vuepress/dist 
