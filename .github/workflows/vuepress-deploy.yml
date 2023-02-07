@@ -12,7 +12,7 @@ jobs:
         node-version: 12
 
     - name: vuepress-deploy
-      uses: Dickens-Shaw/documents@master
+      uses: Dickens-Shaw/vuepress-deploy@master
       env:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         TARGET_REPO: Dickens-Shaw/documents
