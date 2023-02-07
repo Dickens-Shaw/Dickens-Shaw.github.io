@@ -6,7 +6,7 @@ import { sidebar } from './config/sidebar';
 export default defineUserConfig({
   lang: 'zh-CN',
   title: 'Shaw',
-  description: '这是我的第一个 VuePress 站点',
+  description: '这是一个 VuePress 站点',
   base: '/documents/',
   plugins: [],
   theme: defaultTheme({
