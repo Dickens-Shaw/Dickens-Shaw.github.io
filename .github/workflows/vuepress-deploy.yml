@@ -8,12 +8,10 @@ jobs:
       uses: actions/checkout@v3
 
     - name: vuepress-deploy
-      uses: sword4869/vuepress-deploy@main
+       uses: testthedocs/github-pages-deploy-action@master
       env:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
-        TARGET_BRANCH: gh-pages
-        BUILD_SCRIPT: yarn && yarn build
-        BUILD_DIR: docs/.vuepress/dist/
+        BUILD_DIR: ./docs/.vuepress/dist
 
     # - name: vuepress-deploy
     #   uses: Dickens-Shaw/vuepress-deploy@master
