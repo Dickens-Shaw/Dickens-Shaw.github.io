@@ -8,7 +8,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: vuepress-deploy
-      uses: Dickens-Shaw/metrics@master
+      uses: Dickens-Shaw/documents@master
       env:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         TARGET_REPO: Dickens-Shaw/documents
