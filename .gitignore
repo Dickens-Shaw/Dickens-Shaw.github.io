@@ -1,7 +1,6 @@
 node_modules
 .temp
 .cache
-# 忽略/docs/.vuepress/dist/下的所有文件
 /docs/.vuepress/dist/*
 /docs/.vuepress/.cache
 yarn.lock
