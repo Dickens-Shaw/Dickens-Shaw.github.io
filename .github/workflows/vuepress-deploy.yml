@@ -19,7 +19,7 @@ jobs:
         npm run build
 
     - name: Deploy to GitHub Pages
-      uses: Dickens-Shaw/documents@v1
+      uses: Dickens-Shaw/documents@master
       with:
         target_branch: gh-pages
         build_dir: docs/.vuepress/dist
