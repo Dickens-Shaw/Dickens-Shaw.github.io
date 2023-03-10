@@ -1,8 +1,8 @@
 ---
 home: true
-title: 文档CI
-heroText: 前端知识点
-tagline: 越整理发现要学的东西越多
+title: 文档
+heroText: 前端
+tagline: 开卷
 actions:
   - text: Start
     link: /basic/css
