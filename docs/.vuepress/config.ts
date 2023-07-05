@@ -7,7 +7,7 @@ export default defineUserConfig({
   lang: 'zh-CN',
   title: 'Shaw',
   description: '这是一个 VuePress 站点',
-  base: '/documents/',
+  base: '/',
   plugins: [],
   theme: defaultTheme({
     logo: '/images/logo.jpeg',
