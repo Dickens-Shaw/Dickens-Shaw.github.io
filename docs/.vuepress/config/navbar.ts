@@ -97,6 +97,10 @@ export const navbar: NavbarConfig = [
     text: '收藏夹',
     children: [
       {
+        text: '格式化',
+        link: '/bookmark/formatter',
+      },
+      {
         text: '掘金',
         link: '/bookmark/juejin'
       },

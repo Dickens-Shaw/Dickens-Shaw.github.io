@@ -50,6 +50,7 @@ export const sidebar: SidebarConfig = {
       text: '收藏夹',
       collapsible: false,
       children: [
+        '/bookmark/formatter',
         '/bookmark/juejin',
         '/bookmark/wechat',
       ]

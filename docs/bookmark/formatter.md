@@ -1,4 +1,4 @@
-# 收藏夹
+# 格式化
 
 - Chrome 浏览器导出收藏夹转 Markdown
 
@@ -26,7 +26,7 @@ function createVirtualDOM(root) {
     // 链接
     if (child.tagName === 'A') {
       markdownText += `
-  - [${child.innerText}](${child.href})☑️
+  - [${child.innerText}](${child.href})
 `;
     }
     if (child.attributes) {
@@ -79,7 +79,7 @@ allTags.forEach((item) => {
     if (tags.length === 0) tags = ['前端']; // 没有标签情况默认为前端
     if (tags.includes(item)) {
       markDownText += `
-  - [${title}](${href})☑️
+  - [${title}](${href})
 `;
     }
   });
@@ -97,7 +97,7 @@ listArray.forEach((item) => {
   const href = item.href; // 链接
   const content = item.innerText; // 内容
   markdownText += `
-  - [${content.replaceAll('\n', '')}](${href})☑️
+  - [${content.replaceAll('\n', '')}](${href})
 `;
 });
 console.log(markdownText);
