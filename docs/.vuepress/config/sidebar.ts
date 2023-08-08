@@ -5,6 +5,7 @@ export const sidebar: SidebarConfig = {
     text: '前端基础',
     collapsible: false,
     children: [
+      '/basic/html',
       '/basic/css',
       '/basic/js',
       '/basic/es6',
