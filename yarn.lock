@@ -1711,7 +1711,7 @@ vue@^3.2.45:
     "@vue/server-renderer" "3.3.4"
     "@vue/shared" "3.3.4"
 
-vuepress-vite@2.0.0-beta.50-pre.1:
+vuepress-vite@2.0.0-beta.60:
   version "2.0.0-beta.60"
   resolved "https://registry.npmmirror.com/vuepress-vite/-/vuepress-vite-2.0.0-beta.60.tgz#844359283f18bbd638a059e3477388b8d2b73a1e"
   integrity sha512-ljHvo419nbfYl/cQecVbYL4bwJjUOX0+z76v/4yX6ODeGIpdHIs7ARZ4t52mr0EEfwP6aZbZa+qFZTTQutxAuQ==
@@ -1721,12 +1721,12 @@ vuepress-vite@2.0.0-beta.50-pre.1:
     "@vuepress/core" "2.0.0-beta.60"
     "@vuepress/theme-default" "2.0.0-beta.60"
 
-vuepress@^2.0.0-beta.60:
-  version "2.0.0-beta.50-pre.1"
-  resolved "https://registry.npmmirror.com/vuepress/-/vuepress-2.0.0-beta.50-pre.1.tgz#26eec90444bb37590f29d10dd5923e75c476189f"
-  integrity sha512-4Finc3GDscIqgRFAZFwa4SUm8tIFSVQIxnPIpQPW3kaM37rKylvUDkLrs2lMvoDPTAAE+Kf+v34tAFX+ZMGKUg==
+vuepress@2.0.0-beta.60:
+  version "2.0.0-beta.60"
+  resolved "https://registry.npmmirror.com/vuepress/-/vuepress-2.0.0-beta.60.tgz#19205a971ecd6c14d6412564e16e613fcebd58e7"
+  integrity sha512-evkv5PtX5pdlEyY5EcEV+rN/HTmi8iG7ZcvAnMFfYKWdvKiUjE+/DPwZfmE8emx33FEE2htbAKgtruABTocEjA==
   dependencies:
-    vuepress-vite "2.0.0-beta.50-pre.1"
+    vuepress-vite "2.0.0-beta.60"
 
 wcwidth@^1.0.1:
   version "1.0.1"
