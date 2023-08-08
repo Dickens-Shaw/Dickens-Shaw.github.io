@@ -1085,7 +1085,7 @@ function throttle(func, wait) {
 3. `Function.prototype` 和 `Object.prototype` 是两个特殊的对象，他们由引擎来创建
 4. 除了以上两个特殊对象，其他对象都是通过构造器 `new` 出来的
 
-![blockchain](/images/prototype.png)
+![/images/](/images/prototype.png)
 
 - 构造函数、原型和实例的关系是这样的：
   每个`构造函数`都有一个`原型对象`（实例的原型），`原型`有一个`constructor`属性指回`构造函数`，而`实例`有一个内部指针指向原型。 在 chrome、firefox、safari 浏览器环境中这个指针就是`__proto__`，其他环境下没有访问`[[Prototype]]`的标准方式

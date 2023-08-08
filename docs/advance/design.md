@@ -263,7 +263,7 @@ subject.addObserver(observer2)
 subject.notify('hello')
 ```
 
-![blockchain](/images/observer.png '观察者&发布订阅')
+![/images/](/images/observer.png '观察者&发布订阅')
 
 ### 发布订阅模式
 
