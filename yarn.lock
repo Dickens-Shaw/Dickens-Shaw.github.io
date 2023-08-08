@@ -646,7 +646,7 @@
     markdown-it "^13.0.1"
     markdown-it-container "^3.0.0"
 
-"@vuepress/plugin-docsearch@2.0.0-beta.60":
+"@vuepress/plugin-docsearch@@latest":
   version "2.0.0-beta.60"
   resolved "https://registry.npmmirror.com/@vuepress/plugin-docsearch/-/plugin-docsearch-2.0.0-beta.60.tgz#455e7a6e643917849db06b86f080fa91e4067699"
   integrity sha512-4aquipHuEd87KdFh2ufh5OTeU5qaREer4DqJShpXemY5JiJqvGpda5KmLUTkAis/WPo44GWeFsgtgOqiHevqcA==
@@ -1721,7 +1721,7 @@ vuepress-vite@2.0.0-beta.60:
     "@vuepress/core" "2.0.0-beta.60"
     "@vuepress/theme-default" "2.0.0-beta.60"
 
-vuepress@2.0.0-beta.60:
+vuepress@@latest:
   version "2.0.0-beta.60"
   resolved "https://registry.npmmirror.com/vuepress/-/vuepress-2.0.0-beta.60.tgz#19205a971ecd6c14d6412564e16e613fcebd58e7"
   integrity sha512-evkv5PtX5pdlEyY5EcEV+rN/HTmi8iG7ZcvAnMFfYKWdvKiUjE+/DPwZfmE8emx33FEE2htbAKgtruABTocEjA==
