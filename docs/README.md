@@ -2,7 +2,7 @@
 home: true
 title: 文档
 heroText: 前端
-tagline: 开卷
+tagline: 1
 actions:
   - text: Start
     link: /basic/css
