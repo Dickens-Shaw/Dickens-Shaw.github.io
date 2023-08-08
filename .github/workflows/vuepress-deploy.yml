@@ -7,12 +7,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: vuepress-deploy
-      uses: Dickens-Shaw/vuepress-deploy@master
+    - name: SetupNode
+      uses: actions/setup-node@v3
       with:
         node-version: 16
-        cache: yarn
-        registry-url: https://registry.npmmirror.com/
+        cache: "yarn"
+        registry-url: "https://registry.npmmirror.com"
+
+    - name: vuepress-deploy
+      uses: Dickens-Shaw/vuepress-deploy@master
       env:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         TARGET_REPO: Dickens-Shaw/Dickens-Shaw.github.io
