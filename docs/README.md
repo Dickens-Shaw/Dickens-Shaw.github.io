@@ -2,7 +2,7 @@
 home: true
 title: 文档
 heroText: 前端
-tagline: 6
+tagline: 66
 actions:
   - text: Start
     link: /basic/css
