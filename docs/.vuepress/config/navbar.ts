@@ -5,10 +5,6 @@ export const navbar: NavbarConfig = [
     text: '基础',
     children: [
       {
-        text: 'HTML基础',
-        link: '/basic/html',
-      },
-      {
         text: 'CSS基础',
         link: '/basic/css',
       },

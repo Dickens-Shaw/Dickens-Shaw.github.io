@@ -93,7 +93,7 @@ Dep.prototype = {
 }
 ```
 
-1. ![/images/](/images/vue.png)
+1. ![blockchain](/images/vue.png)
 
 ## 单项数据流
 

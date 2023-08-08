@@ -413,13 +413,13 @@ export function handleIE9Error(error: any) {
 
 借助于浏览器原生的 Navigation Timing API 能够获取到上述页面加载过程中的各项性能指标数据，用于性能分析，它的时间单位是纳秒级。
 
-![/images/](/images/timing.webp)
+![blockchain](/images/timing.webp)
 
 当然也借助于 PerformanceObserver API 等用于测量 FCP、LCP、FID、TTI、TBT、CLS 等关键性指标。
 
 #### 计算公式
 
-![/images/](/images/performance.webp)
+![blockchain](/images/performance.webp)
 
 #### 网络请求采集方案
 
