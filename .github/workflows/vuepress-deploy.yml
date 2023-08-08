@@ -9,6 +9,10 @@ jobs:
 
     - name: vuepress-deploy
       uses: Dickens-Shaw/vuepress-deploy@master
+      with:
+        node-version: 16
+        cache: yarn
+        registry-url: https://registry.npmmirror.com/
       env:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         TARGET_REPO: Dickens-Shaw/Dickens-Shaw.github.io
