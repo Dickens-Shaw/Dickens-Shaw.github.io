@@ -1,11 +1,21 @@
 name: Build and Deploy
 on: [push]
+permissions:
+  contents: write
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Install git
+      run: |
+        apt-get update
+        apt-get install git -y
+
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Add safe directory
+      run: git config --global --add safe.directory $PWD
 
     # - name: SetupNode
     #   uses: actions/setup-node@v3
