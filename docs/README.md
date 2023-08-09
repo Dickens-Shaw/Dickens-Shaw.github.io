@@ -2,7 +2,7 @@
 home: true
 title: 文档
 heroText: 前端
-tagline: 学习笔记
+tagline: 💪
 actions:
   - text: Start
     link: /basic/css
