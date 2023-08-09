@@ -1,27 +1,11 @@
 name: Build and Deploy
 on: [push]
-permissions:
-  contents: write
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Install git
-      run: |
-        apt-get update
-        apt-get install git -y
-
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Add safe directory
-      run: git config --global --add safe.directory $PWD
-
-    # - name: SetupNode
-    #   uses: actions/setup-node@v3
-    #   with:
-    #     node-version: '16.19.0'
-    #     registry-url: "https://registry.npmmirror.com"
 
     - name: vuepress-deploy
       uses: Dickens-Shaw/vuepress-deploy@master
@@ -30,4 +14,4 @@ jobs:
         TARGET_REPO: Dickens-Shaw/documents
         TARGET_BRANCH: gh-pages
         BUILD_SCRIPT: yarn && yarn build
-        BUILD_DIR: docs/.vuepress/dist
+        BUILD_DIR: docs/.vuepress/dist 
