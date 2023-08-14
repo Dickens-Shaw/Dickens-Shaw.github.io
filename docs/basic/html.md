@@ -83,7 +83,7 @@ DOCTYPE是HTML5中一种标准通用标记语言的文档类型声明，它的�
 
 1. charset，用来描述HTML文档的编码类型：
 ```html
-<meta charset="UTF-8" >
+<meta charset="UTF-8" />
 ```
 2. keywords，页面关键词：
 ```html
@@ -215,3 +215,190 @@ HTML5 提供了两种在客户端存储数据的新方法：
   * **地理定位**：Geolocation（地理定位）用于定位用户的位置。
 
 ## img的srcset属性的作⽤
+响应式页面中经常用到根据屏幕密度设置不同的图片。这时就用到了 img 标签的srcset属性。srcset属性用于设置不同屏幕密度下，img 会自动加载不同的图片。用法如下：
+
+```html
+<img src="image-128.png" srcset="image-256.png 2x" />
+```
+
+使用上面的代码，就能实现在屏幕密度为1x的情况下加载image-128.png, 屏幕密度为2x时加载image-256.png。
+
+按照上面的实现，不同的屏幕密度都要设置图片地址，目前的屏幕密度有1x,2x,3x,4x四种，如果每一个图片都设置4张图片，加载就会很慢。所以就有了新的srcset标准。代码如下：
+
+```html
+<img src="image-128.png"
+     srcset="image-128.png 128w, image-256.png 256w, image-512.png 512w"
+     sizes="(max-width: 360px) 340px, 128px" />
+```
+
+其中srcset指定图片的地址和对应的图片质量。sizes用来设置图片的尺寸零界点。对于 srcset 中的 w 单位，可以理解成图片质量。如果可视区域小于这个质量的值，就可以使用。浏览器会自动选择一个最小的可用图片。
+
+sizes语法如下：
+
+```html
+<img sizes="[media query] [length], [media query] [length] ... ">
+```
+
+sizes就是指默认显示128px, 如果视区宽度大于360px, 则显示340px。
+
+## web worker
+
+在 HTML 页面中，如果在执行脚本时，页面的状态是不可响应的，直到脚本执行完成后，页面才变成可响应。web worker 是运行在后台的 js，独立于其他脚本，不会影响页面的性能。 并且通过 postMessage 将结果回传到主线程。这样在进行复杂操作的时候，就不会阻塞主线程了。 
+
+如何创建 web worker： 
+1. 检测浏览器对于 web worker 的支持性 
+2. 创建 web worker 文件（js，回传函数等） 
+3. 创建 web worker 对象
+
+* 主线程
+
+  浏览器原生提供`Worker()`构造函数，用来供主线程生成 Worker 线程。
+  ```js
+  var myWorker = new Worker(jsUrl, options);
+  ```
+
+  `Worker()`构造函数，可以接受两个参数。第一个参数是脚本的网址（必须遵守同源政策），该参数是必需的，且只能加载 JS 脚本，否则会报错。第二个参数是配置对象，该对象可选。它的一个作用就是指定 Worker 的名称，用来区分多个 Worker 线程。
+
+  ```js
+  // 主线程
+  var myWorker = new Worker('worker.js', { name : 'myWorker' });
+
+  // Worker 线程
+  self.name // myWorker
+  ```
+
+  `Worker()`构造函数返回一个 Worker 线程对象，用来供主线程操作 Worker。Worker 线程对象的属性和方法如下。
+  * Worker.onerror：指定 error 事件的监听函数。
+  * Worker.onmessage：指定 message 事件的监听函数，发送过来的数据在Event.data属性中。
+  * Worker.onmessageerror：指定 messageerror 事件的监听函数。发送的数据无法序列化成字符串时，会触发这个事件。
+  * Worker.postMessage()：向 Worker 线程发送消息。
+  * Worker.terminate()：立即终止 Worker 线程。
+
+* Worker 线程
+
+  Web Worker 有自己的全局对象，不是主线程的window，而是一个专门为 Worker 定制的全局对象。因此定义在window上面的对象和方法不是全部都可以使用。
+
+  Worker 线程有一些自己的全局属性和方法。
+  * self.name： Worker 的名字。该属性只读，由构造函数指定。
+  * self.onmessage：指定message事件的监听函数。
+  * self.onmessageerror：指定 messageerror 事件的监听函数。发送的数据无法序列化成字符串时，会触发这个事件。
+  * self.close()：关闭 Worker 线程。
+  * self.postMessage()：向产生这个 Worker 线程发送消息。
+  * self.importScripts()：加载 JS 脚本。
+
+**同页面的 Web Worker**
+
+通常情况下，Worker 载入的是一个单独的 JavaScript 脚本文件，但是也可以载入与主线程在同一个网页的代码。
+
+```html
+<!DOCTYPE html>
+  <body>
+    <script id="worker" type="app/worker">
+      addEventListener('message', function () {
+        postMessage('some message');
+      }, false);
+    </script>
+  </body>
+</html>
+```
+上面是一段嵌入网页的脚本，注意必须指定`<script>`标签的type属性是一个浏览器不认识的值，上例是app/worker。
+
+然后，读取这一段嵌入页面的脚本，用 Worker 来处理。
+
+```js
+var blob = new Blob([document.querySelector('#worker').textContent]);
+var url = window.URL.createObjectURL(blob);
+var worker = new Worker(url);
+
+worker.onmessage = function (e) {
+  // e.data === 'some message'
+};
+```
+
+上面代码中，先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。这样就做到了，主线程和 Worker 的代码都在同一个网页上面。
+
+## HTML5的离线储存
+
+离线存储指的是：在用户没有与因特网连接时，可以正常访问站点或应用，在用户与因特网连接时，更新用户机器上的缓存文件。
+
+**原理**：HTML5的离线存储是基于一个新建的 .appcache 文件的缓存机制(不是存储技术)，通过这个文件上的解析清单离线存储资源，这些资源就会像cookie一样被存储了下来。之后当网络在处于离线状态下时，浏览器会通过被离线存储的数据进行页面展示
+
+**使用方法**：
+1. 创建一个和 html 同名的 manifest 文件，然后在页面头部加入 manifest 属性：
+```html
+<html lang="en" manifest="index.manifest">
+```
+
+2. 在 cache.manifest 文件中编写需要离线存储的资源：
+```html
+CACHE MANIFEST
+    #v0.11
+    CACHE:
+    js/app.js
+    css/style.css
+    NETWORK:
+    resourse/logo.png
+    FALLBACK:
+    / /offline.html
+```
+* **CACHE**: 表示需要离线存储的资源列表，由于包含 manifest 文件的页面将被自动离线存储，所以不需要把页面自身也列出来。
+* **NETWORK**: 表示在它下面列出来的资源只有在在线的情况下才能访问，他们不会被离线存储，所以在离线情况下无法使用这些资源。不过，如果在 CACHE 和 NETWORK 中有一个相同的资源，那么这个资源还是会被离线存储，也就是说 CACHE 的优先级更高。
+* **FALLBACK**: 表示如果访问第一个资源失败，那么就使用第二个资源来替换他，比如上面这个文件表示的就是如果访问根目录下任何一个资源失败了，那么就去访问 offline.html 。
+3. 在离线状态时，操作 window.applicationCache 进行离线缓存的操作。
+
+**如何更新缓存**：
+1. 更新 manifest 文件
+2. 通过 javascript 操作
+3. 清除浏览器缓存
+
+**注意事项**：
+1. 浏览器对缓存数据的容量限制可能不太一样（某些浏览器设置的限制是每个站点 5MB）。
+2. 如果 manifest 文件，或者内部列举的某一个文件不能正常下载，整个更新过程都将失败，浏览器继续全部使用老的缓存。
+3. 引用 manifest 的 html 必须与 manifest 文件同源，在同一个域下。
+4. FALLBACK 中的资源必须和 manifest 文件同源。
+5. 当一个资源被缓存后，该浏览器直接请求这个绝对路径也会访问缓存中的资源。
+6. 站点中的其他页面即使没有设置 manifest 属性，请求的资源如果在缓存中也从缓存中访问。
+7. 当 manifest 文件发生改变时，资源请求本身也会触发更新。
+
+## Canvas和SVG的区别
+1. **SVG：**
+
+SVG可缩放矢量图形（Scalable Vector Graphics）是基于可扩展标记语言XML描述的2D图形的语言，SVG基于XML就意味着SVG DOM中的每个元素都是可用的，可以为某个元素附加Javascript事件处理器。在 SVG 中，每个被绘制的图形均被视为对象。如果 SVG 对象的属性发生变化，那么浏览器能够自动重现图形。
+
+其特点如下：
+* 不依赖分辨率
+* 支持事件处理器
+* 最适合带有大型渲染区域的应用程序（比如谷歌地图）
+* 复杂度高会减慢渲染速度（任何过度使用 DOM 的应用都不快）
+* 不适合游戏应用
+
+2. **Canvas：**
+
+Canvas是画布，通过Javascript来绘制2D图形，是逐像素进行渲染的。其位置发生改变，就会重新进行绘制。
+
+其特点如下：
+* 依赖分辨率
+* 不支持事件处理器
+* 弱的文本渲染能力
+* 能够以 .png 或 .jpg 格式保存结果图像
+* 最适合图像密集型的游戏，其中的许多对象会被频繁重绘
+
+注：_矢量图，也称为面向对象的图像或绘图图像，在数学上定义为一系列由线连接的点。矢量文件中的图形元素称为对象。每个对象都是一个自成一体的实体，它具有颜色、形状、轮廓、大小和屏幕位置等属性。_
+
+## 文档声明（Doctype）和`<!Doctype html>`
+
+文档声明的作用：文档声明是为了告诉浏览器，当前HTML文档使用什么版本的HTML来写的，这样浏览器才能按照声明的版本来正确的解析。
+
+`<!Doctype html>`的作用：`<!doctype html>` 的作用就是让浏览器进入标准模式，使用最新的 HTML5 标准来解析渲染页面；如果不写，浏览器就会进入混杂模式，我们需要避免此类情况发生。
+
+**严格模式与混杂模式的区分：**
+
+* **严格模式** ：又称为标准模式，指浏览器按照W3C标准解析代码；
+* **混杂模式** ：又称怪异模式、兼容模式，是指浏览器用自己的方式解析代码。混杂模式通常模拟老式浏览器的行为，以防止老站点无法工作；
+
+**区分**：网页中的DTD，直接影响到使用的是严格模式还是浏览模式，可以说DTD的使用与这两种方式的区别息息相关。
+
+* 如果文档包含严格的DOCTYPE ，那么它一般以严格模式呈现（严格 DTD ——严格模式）；
+* 包含过渡 DTD 和 URI 的 DOCTYPE ，也以严格模式呈现，但有过渡 DTD 而没有 URI （统一资源标识符，就是声明最后的地址）会导致页面以混杂模式呈现（有 URI 的过渡 DTD ——严格模式；没有 URI 的过渡 DTD ——混杂模式）；
+* DOCTYPE 不存在或形式不正确会导致文档以混杂模式呈现（DTD不存在或者格式不正确——混杂模式）；
+* HTML5 没有 DTD ，因此也就没有严格模式与混杂模式的区别，HTML5 有相对宽松的 法，实现时，已经尽可能大的实现了向后兼容(HTML5 没有严格和混杂之分)。

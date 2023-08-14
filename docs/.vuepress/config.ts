@@ -22,6 +22,7 @@ export default defineUserConfig({
         navbar,
         sidebar,
         editLink: false,
+        contributors: false,
       },
     },
   }),
