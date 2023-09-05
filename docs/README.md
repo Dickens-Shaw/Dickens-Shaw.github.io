@@ -5,7 +5,7 @@ heroText: 前端
 tagline: 💪
 actions:
   - text: Start
-    link: /basic/css
+    link: /basic/html
     type: primary
 features:
   - title: 基础

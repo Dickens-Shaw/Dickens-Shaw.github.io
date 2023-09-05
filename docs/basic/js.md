@@ -6,7 +6,7 @@ JS 代码->解析成 AST (期间伴随词法分析、语法分析)->生成字节
 
 ## 数据类型
 
-> JavaScript 共有七种基本数据类型，分别是 `Undefined、Null、Boolean、Number、String`，还有在 ES6 中新增的 `Symbol` 和 `BigInt` 类型
+> JavaScript 共有八种基本数据类型，分别是 `Undefined、Null、Boolean、Number、String、Object`，还有在 ES6 中新增的 `Symbol` 和 `BigInt` 类型
 
 - `Symbol` 代表创建后独一无二且不可变的数据类型，它的出现我认为主要是为了解决可能出现的全局变量冲突的问题。
 - `BigInt` 是一种数字类型的数据，它可以表示任意精度格式的整数，使用 `BigInt` 可以安全地存储和操作大整数，即使这个数已经超出了 `Number` 能够表示的安全整数范围。
@@ -16,34 +16,39 @@ JS 代码->解析成 AST (期间伴随词法分析、语法分析)->生成字节
 - 栈：原始数据类型（`Undefined、Null、Boolean、Number、String`）
 - 堆：引用数据类型（`Object`对象、数组和函数）
 
-两种类型的区别是：存储位置不同。
+两种类型的区别是：**存储位置不同**。
 
 - 原始数据类型直接存储在栈（`stack`）中的简单数据段，占据空间小、大小固定，属于被频繁使用数据，所以放入栈中存储。
 - 引用数据类型存储在堆（`heap`）中的对象，占据空间大、大小不固定。如果存储在栈中，将会影响程序运行的性能；引用数据类型在栈中存储了指针，该指针指向堆中该实体的起始地址。当解释器寻找引用值时，会首先检索其在栈中的地址，取得地址后从堆中获得实体。
 
-堆和栈的概念存在于数据结构中和操作系统内存中：
+堆和栈的概念存在于数据结构中和操作系统内存中，在数据结构中：
 
-- 在数据结构中，栈中数据的存取方式为先进后出。
+- 栈中数据的存取方式为先进后出。
 - 堆是一个优先队列，是按优先级来进行排序的，优先级可以按照大小来规定。`完全二叉树`是堆的一种实现方式。
+
+在操作系统中，内存被分为栈区和堆区：
+
+- 栈区：由编译器自动分配释放，存放函数的参数值、局部变量的值等。其操作方式类似于数据结构中的栈。
+- 堆区：一般由程序员分配释放，若程序员不释放，程序结束时可能由垃圾回收机制回收。注意它与数据结构中的堆是两回事，分配方式倒是类似于链表。
 
 ### BigInt
 
 在 JS 中，所有的数字都以双精度 64 位浮点格式表示，只能安全地表示`-9007199254740991(-(2^53-1))`和`9007199254740991（(2^53-1)）`
 
 ```js
-console.log(999999999999999) // 10000000000000000
-9007199254740992 === 9007199254740993 // true
+console.log(999999999999999); // 10000000000000000
+9007199254740992 === 9007199254740993; // true
 ```
 
 - 创建
 
 ```js
 // 数字末尾加n
-console.log(9007199254740995n) // → 9007199254740995n
-console.log(9007199254740995) // → 9007199254740996
+console.log(9007199254740995n); // → 9007199254740995n
+console.log(9007199254740995); // → 9007199254740996
 
 // 构造函数
-BigInt('9007199254740995') // → 9007199254740995n
+BigInt('9007199254740995'); // → 9007199254740995n
 ```
 
 - 警惕
@@ -51,13 +56,13 @@ BigInt('9007199254740995') // → 9007199254740995n
   2. 因为隐式类型转换可能丢失信息，所以不允许在 bigint 和 Number 之间进行混合操作。当混合使用大整数和浮点数时，结果值可能无法由 BigInt 或 Number 精确表示。
 
 ```js
-10 + 10n // → TypeError
+10 + 10n; // → TypeError
 ```
 
 3. 不能将 BigInt 传递给 Web api 和内置的 JS 函数，这些函数需要一个 Number 类型的数字。尝试这样做会报 TypeError 错误。
 
 ```js
-Math.max(2n, 4n, 6n) // → TypeError
+Math.max(2n, 4n, 6n); // → TypeError
 ```
 
 4. 当 Boolean 类型与 BigInt 类型相遇时，BigInt 的处理方式与 Number 类似，换句话说，只要不是 0n，BigInt 就被视为 truthy 的值。
@@ -74,7 +79,43 @@ if (3n) {
 5. 元素都为 BigInt 的数组可以进行 sort。
 6. BigInt 可以正常地进行位运算，如|、&、<<、>>和^
 
-## 数组和函数在内存中是如何存储的
+### 类数组
+
+一个拥有 length 属性和若干索引属性的对象就可以被称为类数组对象，类数组对象和数组类似，但是不能调用数组的方法。常见的类数组对象有 arguments 和 DOM 方法的返回结果，还有一个函数也可以被看作是类数组对象，因为它含有 length 属性值，代表可接收的参数个数。
+
+常见的类数组转换为数组的方法有这样几种：
+
+1. 通过 call 调用数组的 slice 方法
+
+```js
+Array.prototype.slice.call(arrayLike);
+```
+
+2. 通过 call 调用数组的 splice 方法
+
+```js
+Array.prototype.splice.call(arrayLike, 0);
+```
+
+3. 通过 apply 调用数组的 concat 方法
+
+```js
+Array.prototype.concat.apply([], arrayLike);
+```
+
+4. 通过 Array.from 方法
+
+```js
+Array.from(arrayLike);
+```
+
+5. 通过展开运算符
+
+```js
+[...arrayLike];
+```
+
+### 数组和函数在内存中是如何存储的
 
 1. 数组，JS 里的数组主要就是 以连续内存形式存储的`FixedArray`、以哈希表形式存储的`HashTable`。
 2. 函数，函数属于引用数据类型，存储在堆中，在栈内存中只是存了一个地址来表示对堆内存中的引用。当解释器寻找引用值时，会首先检索其在栈中的地址，取得地址后从堆中获得实体。
@@ -86,20 +127,20 @@ if (3n) {
 对于基本类型，除了 null 都可以显示正确的类型
 
 ```js
-typeof 1 // 'number'
-typeof '1' // 'string'
-typeof undefined // 'undefined'
-typeof true // 'boolean'
-typeof Symbol() // 'symbol'
-typeof b // b 没有声明，但是还会显示 undefined
+typeof 1; // 'number'
+typeof '1'; // 'string'
+typeof undefined; // 'undefined'
+typeof true; // 'boolean'
+typeof Symbol(); // 'symbol'
+typeof b; // b 没有声明，但是还会显示 undefined
 ```
 
 对于对象，除了函数都会显示 object
 
 ```js
-typeof [] // 'object'
-typeof {} // 'object'
-typeof console.log // 'function'
+typeof []; // 'object'
+typeof {}; // 'object'
+typeof console.log; // 'function'
 ```
 
 对于 null 来说，虽然它是基本类型，但是会显示 object，这是一个存在很久了的 Bug
@@ -108,7 +149,7 @@ typeof console.log // 'function'
 // 在 JS 的最初版本中使用的是 32 位系统，为了性能考虑使用低位存储变量的类型信息，000 开头代表是对象
 // 然而 null 表示为全零，所以将它错误的判断为 object
 
-typeof null // 'object'
+typeof null; // 'object'
 ```
 
 ### instanceof
@@ -116,12 +157,13 @@ typeof null // 'object'
 > 可以正确的判断对象的类型，因为内部机制是通过判断对象的原型链中是不是能找到类型的 prototype
 
 ```js
-console.log(2 instanceof Number) // false
-console.log(true instanceof Boolean) // false
-console.log('str' instanceof String) // false
-console.log([] instanceof Array) // true
-console.log(function () {} instanceof Function) // true
-console.log({} instanceof Object) // true
+console.log(2 instanceof Number); // false
+console.log(true instanceof Boolean); // false
+console.log('str' instanceof String); // false
+
+console.log([] instanceof Array); // true
+console.log(function () {} instanceof Function); // true
+console.log({} instanceof Object); // true
 // console.log(undefined instanceof Undefined);
 // console.log(null instanceof Null);
 ```
@@ -140,13 +182,13 @@ console.log({} instanceof Object) // true
 
 ```js
 function instanceOf(left, right) {
-  let proto = right.prototype // 获取类型的原型
-  left = left.__proto__ // 获取对象的原型
+  let prototype = right.prototype; // 获取类型的原型
+  proto = left.__proto__; // 获取对象的原型 也可以使用 Object.getPrototypeOf(left)
   // 判断对象的类型是否等于类型的原型
   while (true) {
-    if (left === null || left === undefined) return false
-    if (left === proto) return true
-    left = left.__proto__
+    if (proto === null || proto === undefined) return false;
+    if (proto === prototype) return true;
+    proto = proto.__proto__;
   }
 }
 ```
@@ -154,25 +196,25 @@ function instanceOf(left, right) {
 ### constructor
 
 ```js
-console.log((2).constructor === Number) // true
-console.log(true.constructor === Boolean) // true
-console.log('str'.constructor === String) // true
-console.log([].constructor === Array) // true
-console.log(function () {}.constructor === Function) // true
-console.log({}.constructor === Object) // true
+console.log((2).constructor === Number); // true
+console.log(true.constructor === Boolean); // true
+console.log('str'.constructor === String); // true
+console.log([].constructor === Array); // true
+console.log(function () {}.constructor === Function); // true
+console.log({}.constructor === Object); // true
 ```
 
-但是如果创建一个对象，更改它的原型，那么它的 constructor 就会变得不可靠了
+`constructor`有两个作用，一是判断数据的类型，二是对象实例通过 `constructor` 对象访问它的构造函数。需要注意，如果创建一个对象更改它的原型，那么它的 `constructor` 就会变得不可靠了，就不能用来判断数据类型
 
 ```js
 function Fn() {}
 
-Fn.prototype = new Array()
+Fn.prototype = new Array();
 
-var f = new Fn()
+var f = new Fn();
 
-console.log(f.constructor === Fn) // false
-console.log(f.constructor === Array) // true
+console.log(f.constructor === Fn); // false
+console.log(f.constructor === Array); // true
 ```
 
 ### Object.prototype.toString.call
@@ -180,16 +222,52 @@ console.log(f.constructor === Array) // true
 > 使用 Object 对象的原型方法 toString ，使用 call 进行狸猫换太子，借用 Object 的 toString 方法
 
 ```js
-var a = Object.prototype.toString
+var a = Object.prototype.toString;
 
-console.log(a.call(2)) // [object Number]
-console.log(a.call(true)) // [object Boolean]
-console.log(a.call('str')) // [object String]
-console.log(a.call([])) // [object Array]
-console.log(a.call(function () {})) // [object Function]
-console.log(a.call({})) // [object Object]
-console.log(a.call(undefined)) // [object Undefined]
-console.log(a.call(null)) // [object Null]
+console.log(a.call(2)); // [object Number]
+console.log(a.call(true)); // [object Boolean]
+console.log(a.call('str')); // [object String]
+console.log(a.call([])); // [object Array]
+console.log(a.call(function () {})); // [object Function]
+console.log(a.call({})); // [object Object]
+console.log(a.call(undefined)); // [object Undefined]
+console.log(a.call(null)); // [object Null]
+```
+
+同样是检测对象 obj 调用 toString 方法，obj.toString()的结果和 Object.prototype.toString.call(obj)的结果不一样，这是为什么？
+
+这是因为 toString 是 Object 的原型方法，而**Array、function 等类型作为 Object 的实例，都重写了 toString 方法**。不同的对象类型调用 toString 方法时，根据原型链的知识，调用的是对应的重写之后的 toString 方法（function 类型返回内容为函数体的字符串，Array 类型返回元素组成的字符串…），而不会去调用 Object 上原型 toString 方法（返回对象的具体类型），所以采用 obj.toString()不能得到其对象类型，只能将 obj 转换为字符串类型；因此，在想要得到对象的具体类型时，应该调用 Object 原型上的 toString 方法。
+
+### 判断数组
+
+- 通过`Object.prototype.toString.call()`判断
+
+```js
+Object.prototype.toString.call(obj).slice(8, -1) === 'Array';
+```
+
+- 通过原型链判断
+
+```js
+obj.__proto__ === Array.prototype;
+```
+
+- 通过 ES6 的`Array.isArray()`判断
+
+```js
+Array.isArray(obj);
+```
+
+- 通过`instanceof`判断
+
+```js
+obj instanceof Array;
+```
+
+- 通过`Array.prototype.isPrototypeOf()`判断
+
+```js
+Array.prototype.isPrototypeOf(obj);
 ```
 
 ## 内置对象
@@ -291,7 +369,7 @@ console.log(a.call(null)) // [object Null]
 
 `作用域链`：当访问一个变量时，解释器会首先在当前作用域查找标示符，如果没有找到，就去父作用域找，直到找到该变量的标示符或者不在父作用域中，这就是作用域链
 
-作用域链的作用是保证对执行环境有权访问的所有变量和函数的有序访问，通过作用域链，我们可以访问到外层环境的变量和函数。
+作用域链的作用是**保证对执行环境有权访问的所有变量和函数的有序访问，通过作用域链，可以访问到外层环境的变量和函数**。
 
 作用域链的本质上是一个指向变量对象的指针列表。变量对象是一个包含了执行环境中所有变量和函数的对象。作用域链的前端始终都是当前执行上下文的变量对象。全局执行上下文的变量对象（也就是全局对象）始终是作用域链的最后一个对象。
 
@@ -299,9 +377,31 @@ console.log(a.call(null)) // [object Null]
 
 ## 变量提升
 
+造成变量声明提升的**本质原因**是 js 引擎在代码执行前有一个解析的过程，创建了执行上下文，初始化了一些代码执行时需要用到的对象。当访问一个变量时，会到当前执行上下文中的作用域链中去查找，而作用域链的首端指向的是当前执行上下文的变量对象，这个变量对象是执行上下文的一个属性，它包含了函数的形参、所有的函数和变量声明，这个对象的是在代码解析的时候创建的。
+
 在生成执行环境时，会有两个阶段。第一个阶段是创建的阶段，JS 解释器会找出需要提升的变量和函数，并且给他们提前在内存中开辟好空间，函数的话会将整个函数存入内存中，变量只声明并且赋值为 `undefined`，所以在第二个阶段，也就是代码执行阶段，我们可以直接提前使用。
 
+1. **创建阶段**
+
+- this 绑定
+  - 在全局执行上下文中，this 指向全局对象（window 对象）
+  - 在函数执行上下文中，this 指向取决于函数如何调用。如果它被一个引用对象调用，那么 this 会被设置成那个对象，否则 this 的值被设置为全局对象或者 undefined
+- 创建词法环境组件
+  - 词法环境是一种有**标识符-变量映射**的数据结构，标识符是指变量/函数名，变量是对实际对象或原始数据的引用。
+  - 词法环境的内部有两个组件：
+    - **环境记录器**:用来储存变量个函数声明的实际位置
+    - **外部环境的引用**：可以访问父级作用域
+- 创建变量环境组件
+  - 变量环境也是一个词法环境，其环境记录器持有变量声明语句在执行上下文中创建的绑定关系
+
+2. **执行阶段**
+
+此阶段会完成对变量的分配，最后执行完代码
+
 在提升的过程中，相同的函数会覆盖上一个函数，并且函数优先于变量提升
+
+- 解析和预编译过程中的声明提升可以**提高性能**，让函数可以在执行时预先为变量分配栈空间
+- 声明提升还可以提高 JS 代码的**容错性**，使一些不规范的代码也可以正常执行
 
 ## 计算精度
 
@@ -314,9 +414,9 @@ console.log(a.call(null)) // [object Null]
 很多十进制小数用二进制表示都是无限循环的，JS 采用的浮点数标准却会裁剪掉循环的数字，就会出现精度丢失的问题：
 
 ```js
-0.100000000000000002 === 0.1 // true
-0.200000000000000002 === 0.2 // true
-0.1 + 0.2 === 0.30000000000000004 // true
+0.100000000000000002 === 0.1; // true
+0.200000000000000002 === 0.2; // true
+0.1 + 0.2 === 0.30000000000000004; // true
 ```
 
 console.log(0.1) 却是正确的？
@@ -324,13 +424,25 @@ console.log(0.1) 却是正确的？
 因为在输入内容的时候，二进制被转换为了十进制，十进制又被转换为了字符串，在这个转换的过程中发生了取近似值的过程，所以打印出来的其实是一个近似值。
 
 ```js
-console.log(0.100000000000000002) // 0.1
+console.log(0.100000000000000002); // 0.1
 ```
 
-解决办法：
+**解决办法：**
 
 ```js
-parseFloat((0.1 + 0.2).toFixed(10)) === 0.3 // true
+parseFloat((0.1 + 0.2).toFixed(10)) === 0.3; // true
+```
+
+**设置误差范围**
+
+通常称为“`机器精度`”。对 JavaScript 来说，这个值通常为 2-52，在 ES6 中，提供了`Number.EPSILON`属性，而它的值就是`2-52`，只要判断`0.1+0.2-0.3`是否小于`Number.EPSILON`，如果小于，就可以判断为`0.1+0.2 ===0.3`
+
+```js
+function numberEpsilon(arg1, arg2) {
+  return Math.abs(arg1 - arg2) < Number.EPSILON;
+}
+
+console.log(numberEpsilon(0.1 + 0.2, 0.3)); // true
 ```
 
 ## 内存泄漏
@@ -349,23 +461,28 @@ V8 实现了准确式 GC，GC 算法采用了分代式垃圾回收机制。这�
 
 新创建的对象或者只经历过一次的垃圾回收的对象被称为新生代。经历过多次垃圾回收的对象被称为老生代。
 
-- 新生代：
+**新生代**：
 
 新生代中的对象一般存活时间较短，使用 Scavenge GC 算法。
 
 将内存空间分为两部分，分别为 From 空间和 To 空间。在这两个空间中，必定有一个空间是使用的，另一个空间是空闲的。新分配的对象会被放入 From 空间中，当 From 空间被占满时，新生代 GC 就会启动了。算法会检查 From 空间中存活的对象，如果满足条件则晋升到老生代，不满足则复制到 To 空间中，如果有失活的对象就会销毁。当复制完成后将 From 空间和 To 空间互换，这样 GC 就结束了
 
-- 老生代
+**老生代**：
 
 老生代中的对象一般存活时间较长且数量也多，使用两个算法：
 
-1. 标记清除：先所有都加上标记，再把环境中引用到的变量去除标记。剩下的就是没用的了
-2. 引用计数：跟踪记录每个值被引用的次数。清除引用次数为 0 的变量。(会有循环引用问题:循环引用如果大量存在就会导致内存泄露。)
+1. **标记清除**：先所有都加上标记，再把环境中引用到的变量去除标记。剩下的就是没用的了
+2. **引用计数**：跟踪记录每个值被引用的次数。清除引用次数为 0 的变量。(会有循环引用问题:循环引用如果大量存在就会导致内存泄露。)
 
 出现在老生代的情况：
 
 1. 新生代中的对象是否已经经历过一次 Scavenge 算法，如果经历过的话，会将对象从新生代空间移到老生代空间中。
 2. To 空间的对象占比大小超过 25 %。在这种情况下，为了不影响到内存分配，会将对象从新生代空间移到老生代空间中。
+
+**减少垃圾回收**
+* **对数组进行优化**：在清空一个数组时，最简单的方法就是给其赋值为[ ]，但是与此同时会创建一个新的空对象，可以将数组的长度设置为0，以此来达到清空数组的目的。
+* **对object进行优化**：对象尽量复用，对于不再使用的对象，就将其设置为null，尽快被回收。
+* **对函数进行优化**：在循环中的函数表达式，如果可以复用，尽量放在函数的外面。
 
 ## 私有变量
 
@@ -375,27 +492,27 @@ V8 实现了准确式 GC，GC 算法采用了分代式垃圾回收机制。这�
 const obj = {
   name: '张三',
   getName() {
-    return this.name
+    return this.name;
   },
-}
+};
 object.defineProperty(obj, 'name', {
   configurable: false,
   enumerable: false,
-})
+});
 ```
 
 - 闭包实现
 
 ```js
 function Person(name) {
-  var _name = name
+  var _name = name;
   this.getName = function () {
-    return this.name
-  }
+    return this.name;
+  };
 }
-var p = new Person('张三')
-console.log(p._name) // undefined
-console.log(p.getName()) // '张三'
+var p = new Person('张三');
+console.log(p._name); // undefined
+console.log(p.getName()); // '张三'
 ```
 
 ## 请求方法
@@ -405,18 +522,29 @@ console.log(p.getName()) // '张三'
 ```js
 const ajax = (url,method,async,data){
   return new Promise((resolve,reject)=>{
-    const xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest();
+    // 创建 Http 请求
+    xhr.open(method,url,async);
+    // 设置状态监听函数
     xhr.onreadystatechange = ()=>{
       if(xhr.readyState === 4){
         if(xhr.status === 200){
-          resolve(xhr.responseText)
+          resolve(xhr.responseText);
         }else{
-          reject(xhr.status)
+          reject(xhr.status);
         }
       }
-    }
-    xhr.open(method,url,async)
-    xhr.send(data || null)
+    };
+    // 设置请求失败时的监听函数
+    xhr.onerror = () => {
+      reject(new Error(xhr.statusText));
+    };
+    // 设置请求头信息
+    xhr.responseType = "json";
+    // 设置请求头信息
+    xhr.setRequestHeader("Accept", "application/json");
+    // 发送请求
+    xhr.send(data || null);
   })
 }
 ```
@@ -452,18 +580,18 @@ const ajax = (url,method,async,data){
 ```js
 // defaults.js
 function getDefaultAdapter() {
-  var adapter
+  var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = require('./adapters/xhr')
+    adapter = require('./adapters/xhr');
   } else if (
     typeof process !== 'undefined' &&
     Object.prototype.toString.call(process) === '[object process]'
   ) {
     // For node use HTTP adapter
-    adapter = require('./adapters/http')
+    adapter = require('./adapters/http');
   }
-  return adapter
+  return adapter;
 }
 ```
 
@@ -477,23 +605,23 @@ function getDefaultAdapter() {
 ```js
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data
+    var requestData = config.data;
 
-    var request = new XMLHttpRequest()
+    var request = new XMLHttpRequest();
 
     request.open(
       config.method.toUpperCase(),
       buildURL(fullPath, config.params, config.paramsSerializer),
       true
-    )
-    request.onreadystatechange = function handleLoad() {}
-    request.onabort = function handleAbort() {}
-    request.onerror = function handleError() {}
-    request.ontimeout = function handleTimeout() {}
+    );
+    request.onreadystatechange = function handleLoad() {};
+    request.onabort = function handleAbort() {};
+    request.onerror = function handleError() {};
+    request.ontimeout = function handleTimeout() {};
 
-    request.send(requestData)
-  })
-}
+    request.send(requestData);
+  });
+};
 ```
 
 导出了一个函数，接受一个配置参数，返回一个 Promise。这就是 XMLHttpRequest 的使用姿势呀，先创建了一个 xhr 然后 open 启动请求，监听 xhr 状态，然后 send 发送请求。
@@ -503,7 +631,7 @@ module.exports = function xhrAdapter(config) {
 ```js
 request.onreadystatechange = function handleLoad() {
   if (!request || request.readyState !== 4) {
-    return
+    return;
   }
 
   // The request errored out and we didn't get a response, this will be
@@ -514,18 +642,18 @@ request.onreadystatechange = function handleLoad() {
     request.status === 0 &&
     !(request.responseURL && request.responseURL.indexOf('file:') === 0)
   ) {
-    return
+    return;
   }
 
   // Prepare the response
   var responseHeaders =
     'getAllResponseHeaders' in request
       ? parseHeaders(request.getAllResponseHeaders())
-      : null
+      : null;
   var responseData =
     !config.responseType || config.responseType === 'text'
       ? request.responseText
-      : request.response
+      : request.response;
   var response = {
     data: responseData,
     status: request.status,
@@ -533,13 +661,13 @@ request.onreadystatechange = function handleLoad() {
     headers: responseHeaders,
     config: config,
     request: request,
-  }
+  };
 
-  settle(resolve, reject, response)
+  settle(resolve, reject, response);
 
   // Clean up request
-  request = null
-}
+  request = null;
+};
 ```
 
 首先对状态进行过滤，只有当请求完成时（readyState === 4）才往下处理。
@@ -551,9 +679,9 @@ Axios 针对这个例外情况也做了处理。
 
 ```js
 function settle(resolve, reject, response) {
-  var validateStatus = response.config.validateStatus
+  var validateStatus = response.config.validateStatus;
   if (!response.status || !validateStatus || validateStatus(response.status)) {
-    resolve(response)
+    resolve(response);
   } else {
     reject(
       createError(
@@ -563,7 +691,7 @@ function settle(resolve, reject, response) {
         response.request,
         response
       )
-    )
+    );
   }
 }
 ```
@@ -584,10 +712,10 @@ if (utils.isStandardBrowserEnv()) {
     (config.withCredentials || isURLSameOrigin(fullPath)) &&
     config.xsrfCookieName
       ? cookies.read(config.xsrfCookieName)
-      : undefined
+      : undefined;
 
   if (xsrfValue) {
-    requestHeaders[config.xsrfHeaderName] = xsrfValue
+    requestHeaders[config.xsrfHeaderName] = xsrfValue;
   }
 }
 ```
@@ -597,32 +725,32 @@ if (utils.isStandardBrowserEnv()) {
 ```js
 // 拦截器可以拦截请求或响应
 // 拦截器的回调将在请求或响应的 then 或 catch 回调前被调用
-var instance = axios.create(options)
+var instance = axios.create(options);
 
 var requestInterceptor = axios.interceptors.request.use(
   (config) => {
     // do something before request is sent
-    return config
+    return config;
   },
   (err) => {
     // do somthing with request error
-    return Promise.reject(err)
+    return Promise.reject(err);
   }
-)
+);
 
 // 移除已设置的拦截器
-axios.interceptors.request.eject(requestInterceptor)
+axios.interceptors.request.eject(requestInterceptor);
 ```
 
 那么拦截器是怎么实现的呢？定位到源码 lib/core/Axios.js 第 14 行
 
 ```js
 function Axios(instanceConfig) {
-  this.defaults = instanceConfig
+  this.defaults = instanceConfig;
   this.interceptors = {
     request: new InterceptorManager(),
     response: new InterceptorManager(),
-  }
+  };
 }
 ```
 
@@ -630,7 +758,7 @@ function Axios(instanceConfig) {
 
 ```js
 function InterceptorManager() {
-  this.handlers = []
+  this.handlers = [];
 }
 
 InterceptorManager.prototype.use = function use(fulfilled, rejected, options) {
@@ -639,23 +767,23 @@ InterceptorManager.prototype.use = function use(fulfilled, rejected, options) {
     rejected: rejected,
     synchronous: options ? options.synchronous : false,
     runWhen: options ? options.runWhen : null,
-  })
-  return this.handlers.length - 1
-}
+  });
+  return this.handlers.length - 1;
+};
 
 InterceptorManager.prototype.eject = function eject(id) {
   if (this.handlers[id]) {
-    this.handlers[id] = null
+    this.handlers[id] = null;
   }
-}
+};
 
 InterceptorManager.prototype.forEach = function forEach(fn) {
   utils.forEach(this.handlers, function forEachHandler(h) {
     if (h !== null) {
-      fn(h)
+      fn(h);
     }
-  })
-}
+  });
+};
 ```
 
 **InterceptorManager 是一个简单的事件管理器**，实现了对拦截器的管理，通过 handlers 存储拦截器，然后提供了添加，移除，遍历执行拦截器的实例方法，存储的每一个拦截器对象都包含了作为 Promise 中 resolve 和 reject 的回调以及两个配置项。
@@ -680,33 +808,33 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 ```js
 function dispatchRequest(config) {
-  throwIfCancellationRequested(config)
+  throwIfCancellationRequested(config);
 
   // Transform request data
   config.data = transformData(
     config.data,
     config.headers,
     config.transformRequest
-  )
+  );
 
-  var adapter = config.adapter || defaults.adapter
+  var adapter = config.adapter || defaults.adapter;
 
   return adapter(config).then(
     function onAdapterResolution(response) {
-      throwIfCancellationRequested(config) // 如果请求被取消，则抛出异常
+      throwIfCancellationRequested(config); // 如果请求被取消，则抛出异常
 
       // Transform response data
       response.data = transformData(
         response.data,
         response.headers,
         config.transformResponse
-      )
+      );
 
-      return response
+      return response;
     },
     function onAdapterRejection(reason) {
       if (!isCancel(reason)) {
-        throwIfCancellationRequested(config) // 取消请求
+        throwIfCancellationRequested(config); // 取消请求
 
         // Transform response data
         if (reason && reason.response) {
@@ -714,13 +842,13 @@ function dispatchRequest(config) {
             reason.response.data,
             reason.response.headers,
             config.transformResponse
-          )
+          );
         }
       }
 
-      return Promise.reject(reason)
+      return Promise.reject(reason);
     }
-  )
+  );
 }
 ```
 
@@ -730,10 +858,10 @@ function dispatchRequest(config) {
 // 源码 core/transformData.js
 function transformData(data, headers, fns) {
   utils.forEach(fns, function transform(fn) {
-    data = fn(data, headers)
-  })
+    data = fn(data, headers);
+  });
 
-  return data
+  return data;
 }
 ```
 
@@ -748,8 +876,8 @@ var defaults = {
   // Line 31
   transformRequest: [
     function transformRequest(data, headers) {
-      normalizeHeaderName(headers, 'Accept')
-      normalizeHeaderName(headers, 'Content-Type')
+      normalizeHeaderName(headers, 'Accept');
+      normalizeHeaderName(headers, 'Content-Type');
       if (
         utils.isFormData(data) ||
         utils.isArrayBuffer(data) ||
@@ -758,43 +886,44 @@ var defaults = {
         utils.isFile(data) ||
         utils.isBlob(data)
       ) {
-        return data
+        return data;
       }
       if (utils.isArrayBufferView(data)) {
-        return data.buffer
+        return data.buffer;
       }
       if (utils.isURLSearchParams(data)) {
         setContentTypeIfUnset(
           headers,
           'application/x-www-form-urlencoded;charset=utf-8'
-        )
-        return data.toString()
+        );
+        return data.toString();
       }
       if (utils.isObject(data)) {
-        setContentTypeIfUnset(headers, 'application/json;charset=utf-8')
-        return JSON.stringify(data)
+        setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+        return JSON.stringify(data);
       }
-      return data
+      return data;
     },
   ],
 
   transformResponse: [
     function transformResponse(data) {
-      var result = data
+      var result = data;
       if (utils.isString(result) && result.length) {
         try {
-          result = JSON.parse(result)
+          result = JSON.parse(result);
         } catch (e) {
           /* Ignore */
         }
       }
-      return result
+      return result;
     },
   ],
-}
+};
 ```
 
 #### CancelToken
+
 其实不管是浏览器端的 xhr 或 Node.js 里 http 模块的 request 对象，都提供了 abort 方法用于取消请求，所以我们只需要在合适的时机调用 abort 就可以实现取消请求了。
 
 那么，什么是合适的时机呢？控制权交给用户就合适了。所以这个合适的时机应该由用户决定，也就是说我们需要将取消请求的方法暴露出去，Axios 通过 CancelToken 实现取消请求，我们来一起看下它的姿势。
@@ -806,15 +935,15 @@ const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
 
 // 方式一，使用 CancelToken 实例提供的静态属性 source
-axios.post("/user/12345", { name: "***" }, { cancelToken: source.token });
+axios.post('/user/12345', { name: '***' }, { cancelToken: source.token });
 source.cancel();
 
 // 方式二，使用 CancelToken 构造函数自己实例化
 let cancel;
 
 axios.post(
-  "/user/12345",
-  { name: "***" },
+  '/user/12345',
+  { name: '***' },
   {
     cancelToken: new CancelToken(function executor(c) {
       cancel = c;
@@ -829,8 +958,8 @@ cancel();
 
 ```js
 function CancelToken(executor) {
-  if (typeof executor !== "function") {
-    throw new TypeError("executor must be a function.");
+  if (typeof executor !== 'function') {
+    throw new TypeError('executor must be a function.');
   }
 
   var resolvePromise;
@@ -851,11 +980,12 @@ function CancelToken(executor) {
 }
 ```
 
-CancelToken 就是一个由 promise 控制的极简的状态机，实例化时会在实例上挂载一个 promise，这个 promise 的 resolve 回调暴露给了外部方法 executor，这样一来，我们从外部调用这个 executor方法后就会得到一个状态变为 fulfilled 的 promise，那有了这个 promise 后我们如何取消请求呢？
+CancelToken 就是一个由 promise 控制的极简的状态机，实例化时会在实例上挂载一个 promise，这个 promise 的 resolve 回调暴露给了外部方法 executor，这样一来，我们从外部调用这个 executor 方法后就会得到一个状态变为 fulfilled 的 promise，那有了这个 promise 后我们如何取消请求呢？
 
 是不是只要在请求时拿到这个 promise 实例，然后在 then 回调里取消请求就可以了？
 
 定位到适配器的源码 lib/adapters/xhr.js 第 158 行
+
 ```js
 if (config.cancelToken) {
   // Handle cancellation
@@ -871,7 +1001,9 @@ if (config.cancelToken) {
   });
 }
 ```
+
 以及源码 lib/adaptors/http.js 第 291 行
+
 ```js
 if (config.cancelToken) {
   // Handle cancellation
@@ -883,6 +1015,7 @@ if (config.cancelToken) {
   });
 }
 ```
+
 在适配器里 CancelToken 实例的 promise 的 then 回调里调用了 xhr 或 http.request 的 abort 方法。试想一下，如果我们没有从外部调用取消 CancelToken 的方法，是不是意味着 resolve 回调不会执行，适配器里的 promise 的 then 回调也不会执行，就不会调用 abort 取消请求了。
 
 # 函数
@@ -905,9 +1038,9 @@ function (){}//匿名函数
 
 ```js
 //ES5
-var sum = function () {}
+var sum = function () {};
 //ES6
-let sum = () => {} //如果{}内容只有一行{}和return关键字可省,
+let sum = () => {}; //如果{}内容只有一行{}和return关键字可省,
 ```
 
 3. 构造函数
@@ -915,18 +1048,18 @@ let sum = () => {} //如果{}内容只有一行{}和return关键字可省,
 使用 Function 构造函数定义函数的方式是一个函数表达式,这种方式会导致解析两次代码，影响性能。第一次解析常规的 JavaScript 代码，第二次解析传入构造函数的字符串
 
 ```js
-const sum = new Function('a', 'b', 'return a + b')
+const sum = new Function('a', 'b', 'return a + b');
 ```
 
 ## this
 
 > 绑定优先级 new > 显示 > 隐示
 
-1. 默认绑定：全局环境中，`this` 默认绑定到 `window`。
-2. 隐式绑定：一般地，被直接对象所包含的函数调用时，也称为方法调用，`this` 隐式绑定到该直接对象。
+1. 默认绑定(函数调用)：全局环境中，`this` 默认绑定到 `window`。
+2. 隐式绑定(方法调用)：一般地，被直接对象所包含的函数调用时，也称为方法调用，`this` 隐式绑定到该直接对象。
    隐式丢失：隐式丢失是指被隐式绑定的函数丢失绑定对象，从而默认绑定到 `window`。
 3. 显式绑定：通过 `call()、apply()、bind()` 方法把对象绑定到 `this` 上，叫做显式绑定。
-4. new 绑定：如果函数或者方法调用之前带有关键字 `new`，它就构成构造函数调用。对于 `this` 绑定来说，称为 `new` 绑定。
+4. new 绑定(构造器调用)：如果函数或者方法调用之前带有关键字 `new`，它就构成构造函数调用。对于 `this` 绑定来说，称为 `new` 绑定。
 
 ### call
 
@@ -949,15 +1082,15 @@ const sum = new Function('a', 'b', 'return a + b')
 ```js
 Function.prototype.myCall = function (context) {
   if (typeof this !== 'function') {
-    throw new TypeError('Error')
+    throw new TypeError('Error');
   }
-  context = context || window
-  context.fn = this
-  const args = [...arguments].slice(1)
-  const result = context.fn(...args)
-  delete context.fn
-  return result
-}
+  context = context || window;
+  context.fn = this;
+  const args = [...arguments].slice(1);
+  const result = context.fn(...args);
+  delete context.fn;
+  return result;
+};
 ```
 
 ### apply
@@ -974,19 +1107,19 @@ Function.prototype.myCall = function (context) {
 ```js
 Function.prototype.myApply = function (context) {
   if (typeof this !== 'function') {
-    throw new TypeError('Error')
+    throw new TypeError('Error');
   }
-  context = context || window
-  context.fn = this
-  let result
+  context = context || window;
+  context.fn = this;
+  let result;
   if (arguments[1]) {
-    result = context.fn(...arguments[1])
+    result = context.fn(...arguments[1]);
   } else {
-    result = context.fn()
+    result = context.fn();
   }
-  delete context.fn
-  return result
-}
+  delete context.fn;
+  return result;
+};
 ```
 
 ### bind
@@ -1005,17 +1138,17 @@ Function.prototype.myApply = function (context) {
 ```js
 Function.prototype.myBind = function (context) {
   if (typeof this !== 'function') {
-    throw new TypeError('Error')
+    throw new TypeError('Error');
   }
-  const self = this
-  const args = [...arguments].slice(1)
+  const self = this;
+  const args = [...arguments].slice(1);
   return function F() {
     if (this instanceof F) {
-      return new self(...args, ...arguments)
+      return new self(...args, ...arguments);
     }
-    return self.apply(context, args.concat(...arguments))
-  }
-}
+    return self.apply(context, args.concat(...arguments));
+  };
+};
 ```
 
 ## 防抖
@@ -1028,15 +1161,15 @@ Function.prototype.myBind = function (context) {
 
 ```js
 function debounce(func, wait) {
-  let timeout = null
+  let timeout = null;
   return function () {
-    let context = this
-    let args = arguments
-    if (timeout) clearTimeout(timeout)
+    let context = this;
+    let args = arguments;
+    if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => {
-      func.apply(context, args)
-    }, wait)
-  }
+      func.apply(context, args);
+    }, wait);
+  };
 }
 ```
 
@@ -1050,17 +1183,17 @@ function debounce(func, wait) {
 
 ```js
 function throttle(func, wait) {
-  let timeout = null
+  let timeout = null;
   return function () {
-    let context = this
-    let args = arguments
+    let context = this;
+    let args = arguments;
     if (!timeout) {
       timeout = setTimeout(() => {
-        timeout = null
-        func.apply(context, args)
-      }, wait)
+        timeout = null;
+        func.apply(context, args);
+      }, wait);
     }
-  }
+  };
 }
 ```
 
@@ -1078,7 +1211,7 @@ function throttle(func, wait) {
 
 除了 `Function.prototype.bind()` 之外每个函数都有 `prototype` 属性就是原型，原型的 `constructor` 属性指向构造函数，构造函数又通过 `prototype` 属性指回原型
 
-`原型链`：每个对象拥有一个原型对象，通过 `__proto__` 指针指向上一个原型 ，并从中继承方法和属性，同时原型对象也可能拥有原型，这样一层一层，最终指向 null，这种关系被称为原型链 (prototype chain)
+`原型链`：每个对象拥有一个原型对象，通过 `__proto__` 指针指向上一个原型 ，并从中继承方法和属性，同时原型对象也可能拥有原型，这样一层一层，最终指向 null，这种关系被称为原型链 (prototype chain)，现在浏览器中都实现了 `__proto__ ` 属性来访问这个属性，但是最好不要使用这个属性，因为它不是规范中规定的。ES5 中新增了一个 `Object.getPrototypeOf()` 方法，可以通过这个方法来获取对象的原型。
 
 1. `Object` 是所有对象的爸爸，所有对象都可以通过 `__proto__` 找到它
 2. `Function` 是所有函数的爸爸，所有函数都可以通过 `__proto__` 找到它
@@ -1106,17 +1239,37 @@ function throttle(func, wait) {
 
 ```js
 function myNew() {
-  const obj = {}
+  const obj = {};
   //取得该方法的第一个参数(并删除第一个参数)，该参数是构造函数
-  const constructor = [].shift.call(arguments)
+  const constructor = [].shift.call(arguments);
   //将新对象的内部属性__proto__指向构造函数的原型，这样新对象就可以访问原型中的属性和方法
-  obj.__proto__ = constructor.prototype
+  obj.__proto__ = constructor.prototype;
   //取得构造函数的返回值
-  const result = constructor.apply(obj, arguments)
+  const result = constructor.apply(obj, arguments);
   //如果返回值是一个对象就返回该对象，否则返回构造函数的一个实例对象
-  return result instanceof Object ? result : obj
+  return result instanceof Object ? result : obj;
 }
 ```
+
+## 对象创建
+
+### 工厂模式
+用函数来封装创建对象的细节，从而通过调用函数来达到复用的目的。但是它有一个很大的问题就是创建出来的对象无法和某个类型联系起来，它只是简单的封装了复用代码，而没有建立起对象和类型间的关系
+
+### 构造函数模式
+js 中每一个函数都可以作为构造函数，只要一个函数是通过 new 来调用的，那么就可以把它称为构造函数。执行构造函数首先会创建一个对象，然后将对象的原型指向构造函数的 prototype 属性，然后将执行上下文中的 this 指向这个对象，最后再执行整个函数，如果返回值不是对象，则返回新建的对象。因为 this 的值指向了新建的对象，因此可以使用 this 给对象赋值。构造函数模式相对于工厂模式的优点是，所创建的对象和构造函数建立起了联系，因此可以通过原型来识别对象的类型。但是构造函数存在一个缺点就是，造成了不必要的函数对象的创建，因为在 js 中函数也是一个对象，因此如果对象属性中如果包含函数的话，那么每次都会新建一个函数对象，浪费了不必要的内存空间，因为函数是所有的实例都可以通用的
+
+### 原型模式
+每一个函数都有一个 prototype 属性，这个属性是一个对象，它包含了通过构造函数创建的所有实例都能共享的属性和方法。因此可以使用原型对象来添加公用属性和方法，从而实现代码的复用。这种方式相对于构造函数模式来说，解决了函数对象的复用问题。但是这种模式也存在一些问题，一个是没有办法通过传入参数来初始化值，另一个是如果存在一个引用类型如 Array 这样的值，那么所有的实例将共享一个对象，一个实例对引用类型值的改变会影响所有的实例
+
+### 组合模式(构造函数模式和原型模式)
+创建自定义类型的最常见方式。因为构造函数模式和原型模式分开使用都存在一些问题，因此可以组合使用这两种模式，通过构造函数来初始化对象的属性，通过原型对象来实现函数方法的复用。这种方法很好的解决了两种模式单独使用时的缺点，但是有一点不足的就是，因为使用了两种不同的模式，所以对于代码的封装性不够好
+
+### 动态原型模式
+将原型方法赋值的创建过程移动到了构造函数的内部，通过对属性是否存在的判断，可以实现仅在第一次调用函数时对原型对象赋值一次的效果。这一种方式很好地对上面的混合模式进行了封装
+
+### 寄生构造函数模式
+基于一个已有的类型，在实例化时对实例化的对象进行扩展。这样既不用修改原来的构造函数，也达到了扩展对象的目的。它的一个缺点和工厂模式一样，无法实现对象的识别
 
 ## 继承
 
@@ -1138,12 +1291,12 @@ javascript 中的继承主要还是依靠于原型链，原型处于原型链中
 
 ```js
 function Parent() {
-  this.name = 'parent'
+  this.name = 'parent';
 }
 function Child() {
-  this.type = 'child'
+  this.type = 'child';
 }
-Child.prototype = new Parent()
+Child.prototype = new Parent();
 ```
 
 ### 原型式继承
@@ -1153,14 +1306,14 @@ Child.prototype = new Parent()
 ```js
 const parent = {
   name: 'parent',
-}
+};
 const object = function (o) {
   function F() {}
-  F.prototype = o
-  return new F()
-}
-const child1 = object(parent)
-console.log(child1.name) // parent
+  F.prototype = o;
+  return new F();
+};
+const child1 = object(parent);
+console.log(child1.name); // parent
 ```
 
 这个函数将原型链继承的核心代码封装成了一个函数，但这个函数有了不同的适用场景：如果你有一个已知的对象，想在它的基础上再创建一个新对象，那么你只需要把已知对象传给 object 函数即可
@@ -1175,8 +1328,8 @@ const child2 = Object.create(parent, {
     enumerable: true,
     configurable: true,
   },
-})
-console.log(child2.name) // parent
+});
+console.log(child2.name); // parent
 ```
 
 **注意**，`object.create()`通过第二个参数新增的属性是直接挂载到新建对象本身，而不是挂载在它的原型上。**_原型式继承非常适合不需要单独创建构造函数，但仍然需要在对象间共享信息的场合。_**
@@ -1195,11 +1348,11 @@ console.log(child2.name) // parent
 
 ```js
 function Parent() {
-  this.name = 'parent'
+  this.name = 'parent';
 }
 function Child() {
-  Parent.call(this)
-  this.type = 'child'
+  Parent.call(this);
+  this.type = 'child';
 }
 ```
 
@@ -1211,16 +1364,16 @@ function Child() {
 
 ```js
 function Parent(name) {
-  this.name = [name]
+  this.name = [name];
 }
 Parent.prototype.getName = function () {
-  return this.name
-}
+  return this.name;
+};
 function Child() {
-  Parent.call(this, 'xxx') // 调用构造函数并传入参数
+  Parent.call(this, 'xxx'); // 调用构造函数并传入参数
 }
 //原型链继承
-Child.prototype = new Parent() // 将父类的实例作为子类的原型 再次调用父类构造函数
+Child.prototype = new Parent(); // 将父类的实例作为子类的原型 再次调用父类构造函数
 ```
 
 ### 寄生组合继承
@@ -1229,19 +1382,19 @@ Child.prototype = new Parent() // 将父类的实例作为子类的原型 再次
 
 ```js
 function Parent(name) {
-  this.name = [name]
+  this.name = [name];
 }
 Parent.prototype.getName = function () {
-  return this.name
-}
+  return this.name;
+};
 function Child() {
   // 构造函数继承
-  Parent.call(this, 'xxx')
+  Parent.call(this, 'xxx');
 }
 // 原型链继承
 // Child.prototype = new Parent()
-Child.prototype = Object.create(Parent.prototype) // 将`指向父类实例`改为`指向父类原型`
-Child.prototype.constructor = Child // 修正构造函数
+Child.prototype = Object.create(Parent.prototype); // 将`指向父类实例`改为`指向父类原型`
+Child.prototype.constructor = Child; // 修正构造函数
 ```
 
 ### ES6 的 extends 被编译后
@@ -1250,7 +1403,7 @@ Child.prototype.constructor = Child // 修正构造函数
 function _possibleConstructorReturn(self, call) {
   return call && (typeof call === 'object' || typeof call === 'function')
     ? call
-    : self
+    : self;
 }
 
 function _inherits(subClass, superClass) {
@@ -1261,28 +1414,28 @@ function _inherits(subClass, superClass) {
       writable: true,
       configurable: true,
     },
-  })
+  });
   if (superClass)
     Object.setPrototypeOf
       ? Object.setPrototypeOf(subClass, superClass)
-      : (subClass.__proto__ = superClass)
+      : (subClass.__proto__ = superClass);
 }
 
 var Parent = function Parent() {
   // 验证是否是 Parent 构造出来的 this
-  _classCallCheck(this, Parent)
-}
+  _classCallCheck(this, Parent);
+};
 var Child = (function (_Parent) {
-  _inherits(Child, _Parent)
+  _inherits(Child, _Parent);
   function Child() {
-    _classCallCheck(this, Child)
+    _classCallCheck(this, Child);
     return _possibleConstructorReturn(
       this,
       (Child.__proto__ || Object.getPrototypeOf(Child)).apply(this, arguments)
-    )
+    );
   }
-  return Child
-})(Parent)
+  return Child;
+})(Parent);
 ```
 
 核心是`_inherits`函数，可以看到它采用的是————**寄生组合继承方式**，同时证明了这种方式的成功。不过这里加了一个`Object.setPrototypeOf(subClass, superClass)`，用来继承父类的静态方法。
@@ -1375,10 +1528,10 @@ add(1)(2)(3)(4)； // 10
 ```js
 function structuralClone(obj) {
   return new Promise((resolve) => {
-    const { port1, port2 } = new MessageChannel()
-    port2.onmessage = (ev) => resolve(ev.data)
-    port1.postMessage(obj)
-  })
+    const { port1, port2 } = new MessageChannel();
+    port2.onmessage = (ev) => resolve(ev.data);
+    port1.postMessage(obj);
+  });
 }
 ```
 
@@ -1388,17 +1541,17 @@ function structuralClone(obj) {
 // 简单实现
 function deepClone(obj) {
   function isObject(o) {
-    return (typeof o === 'object' || typeof o === 'function') && o !== null
+    return (typeof o === 'object' || typeof o === 'function') && o !== null;
   }
   if (!isObject(obj)) {
-    throw new Error('非对象')
+    throw new Error('非对象');
   }
-  let isArray = Array.isArray(obj)
-  let newObj = isArray ? [...obj] : { ...obj }
+  let isArray = Array.isArray(obj);
+  let newObj = isArray ? [...obj] : { ...obj };
   Reflect.ownKeys(newObj).forEach((key) => {
-    newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key]
-  })
-  return newObj
+    newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key];
+  });
+  return newObj;
 }
 ```
 
@@ -1410,15 +1563,15 @@ function deepClone(obj) {
 
 ```js
 function flatten(arr) {
-  let result = []
+  let result = [];
   arr.forEach((item) => {
     if (Array.isArray(item)) {
-      result = result.concat(flatten(item))
+      result = result.concat(flatten(item));
     } else {
-      result.push(item)
+      result.push(item);
     }
-  })
-  return result
+  });
+  return result;
 }
 ```
 
@@ -1428,8 +1581,8 @@ function flatten(arr) {
 function flatten(arr) {
   // 本质和 flat1 一样的，都是递归
   return arr.reduce((prev, cur) => {
-    return prev.concat(Array.isArray(cur) ? flatten(cur) : cur)
-  }, [])
+    return prev.concat(Array.isArray(cur) ? flatten(cur) : cur);
+  }, []);
 }
 ```
 
@@ -1440,7 +1593,7 @@ function flatten(arr) {
   while (arr.some((item) => Array.isArray(item))) {
     // 相当于 [].concat('1', 2, [3, 4])
     // concat 方法本身就会把参数中的数组展开
-    arr = [].concat(...arr)
+    arr = [].concat(...arr);
   }
 }
 ```
@@ -1450,11 +1603,23 @@ function flatten(arr) {
 ```js
 function flatten(arr) {
   // flat() 方法会移除数组中的空项
-  return arr.flat(Infinity)
+  return arr.flat(Infinity);
 }
 ```
 
 # 遍历
+
+## 数组的遍历方法有哪
+
+| 方法                      | 是否改变原数组 | 特点                                                                                                                             |
+| ------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| forEach()                 | 否             | 数组方法，不改变原数组，没有返回值                                                                                               |
+| map()                     | 否             | 数组方法，不改变原数组，有返回值，可链式调用                                                                                     |
+| filter()                  | 否             | 数组方法，过滤数组，返回包含符合条件的元素的数组，可链式调用                                                                     |
+| for...of                  | 否             | for...of 遍历具有 Iterator 迭代器的对象的属性，返回的是数组的元素、对象的属性值，不能遍历普通的 obj 对象，将异步循环变成同步循环 |
+| every() 和 some()         | 否             | 数组方法，some()只要有一个是 true，便返回 true；而 every()只要有一个是 false，便返回 false.                                      |
+| find() 和 findIndex()     | 否             | 数组方法，find()返回的是第一个符合条件的值；findIndex()返回的是第一个返回条件的值的索引值                                        |
+| reduce() 和 reduceRight() | 否             | 数组方法，reduce()对数组正序操作；reduceRight()对数组逆序操作                                                                    |
 
 ## for in 和 for of 的区别
 
@@ -1462,18 +1627,18 @@ function flatten(arr) {
 
 ```js
 // for in
-var obj = { a: 1, b: 2, c: 3 }
+var obj = { a: 1, b: 2, c: 3 };
 
 for (let key in obj) {
-  console.log(key)
+  console.log(key);
 }
 // a b c
 
 //for of
-const array1 = ['a', 'b', 'c']
+const array1 = ['a', 'b', 'c'];
 
 for (const val of array1) {
-  console.log(val)
+  console.log(val);
 }
 // a b c
 ```
@@ -1489,19 +1654,19 @@ for (const val of array1) {
 - 使用`for in`会遍历数组所有的可枚举属性，包括原型，如果不想遍历原型方法和属性的话，可以在循环内部判断一下，使用`hasOwnProperty()`方法可以判断某属性是不是该对象的实例属性
 
 ```js
-var arr = [1, 2, 3]
-Array.prototype.a = 123
+var arr = [1, 2, 3];
+Array.prototype.a = 123;
 
 for (let index in arr) {
-  let res = arr[index]
-  console.log(res)
+  let res = arr[index];
+  console.log(res);
 }
 //1 2 3 123
 
 for (let index in arr) {
   if (arr.hasOwnProperty(index)) {
-    let res = arr[index]
-    console.log(res)
+    let res = arr[index];
+    console.log(res);
   }
 }
 // 1 2 3
@@ -1518,9 +1683,26 @@ var myObject = {
   a: 1,
   b: 2,
   c: 3,
-}
+};
 for (var key of Object.keys(myObject)) {
-  console.log(key + ': ' + myObject[key])
+  console.log(key + ': ' + myObject[key]);
 }
 //a:1 b:2 c:3
 ```
+
+## use strict
+
+use strict 是一种 ECMAscript5 添加的（严格模式）运行模式，这种模式使得 Javascript 在更严格的条件下运行。
+
+设立严格模式的目的如下：
+
+- 消除 Javascript 语法的不合理、不严谨之处，减少怪异行为;
+- 消除代码运行的不安全之处，保证代码运行的安全；
+- 提高编译器效率，增加运行速度；
+- 为未来新版本的 Javascript 做好铺垫。
+
+区别：
+
+- 禁止使用 with 语句。
+- 禁止 this 关键字指向全局对象。
+- 对象不能有重名的属性。

@@ -216,6 +216,7 @@ let b = gen()
 console.log(b.next()) // { value: 2, done: false }
 console.log(b.next()) // { value: 3, done: false }
 console.log(b.next()) // { value: undefined, done: true }
+
 ```
 
 ## async/await
