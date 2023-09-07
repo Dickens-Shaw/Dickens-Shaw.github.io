@@ -1,6 +1,7 @@
 # 框架
 
 ## MVC、MVVM
+常见的软件架构设计模式，主要通过分离关注点的方式来组织代码结构，优化开发效率。
 
 View 和 Model：
 
@@ -9,9 +10,15 @@ View 和 Model：
 
 ### MVC
 
-传统的 MVC 架构通常是使用控制器更新模型，视图从模型中获取数据去渲染。当用户有输入时，会通过控制器去更新模型，并且通知视图进行更新。
+MVC 通过分离 Model、View 和 Controller 的方式来组织代码结构。
+
+其中 View 负责页面的显示逻辑，Model 负责存储页面的业务数据，以及对相应数据的操作。并且 View 和 Model 应用了观察者模式，当 Model 层发生改变的时候它会通知有关 View 层更新页面。
+
+Controller 层是 View 层和 Model 层的纽带，它主要负责用户与应用的响应操作，当用户与页面产生交互的时候，Controller 中的事件触发器就开始工作了，通过调用 Model 层，来完成对 Model 的修改，然后 Model 层再去通知 View 层更新。
 
 但是 MVC 有一个巨大的缺陷就是控制器承担的责任太大了，随着项目愈加复杂，控制器中的代码会越来越臃肿，导致出现不利于维护的情况。
+
+![/images/](/images/mvc.png)
 
 ### MVVM
 
@@ -24,6 +31,9 @@ View 和 Model：
 - 这个隐式的 Binder 层就是 Vue 通过解析模板中的插值和指令从而实现 View 与 ViewModel 的绑定。
 
 对于 MVVM 来说，其实最重要的并不是通过双向绑定或者其他的方式将 View 与 ViewModel 绑定起来，而是 `通过 ViewModel 将视图中的状态和用户的行为分离出一个抽象`，这才是 MVVM 的精髓
+
+![/images/](/images/mvvm.png)
+
 
 ## 虚拟 DOM
 
