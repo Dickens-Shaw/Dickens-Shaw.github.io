@@ -3,21 +3,102 @@
 ## Fiber
 
 React Fiber 是一种基于浏览器的单线程调度算法.
+
 React 16 之前 ，reconcilation 算法实际上是递归，想要中断递归是很困难的，React 16 开始使用了循环来代替之前的递归.
+
 Fiber：一种将 recocilation （递归 diff），拆分成无数个小任务的算法；它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（16ms）内，还有没有足够的时间允许计算。
+
+为了给用户制造一种应用很快的“假象”，不能让一个任务长期霸占着资源。 可以将浏览器的渲染、布局、绘制、资源加载(例如 HTML 解析)、事件响应、脚本执行视作操作系统的“进程”，需要通过某些调度策略合理地分配 CPU 资源，从而提高浏览器的用户响应速率, 同时兼顾任务执行效率。
+
+所以 React 通过Fiber 架构，让这个执行过程变成可被中断。“适时”地让出 CPU 执行权，除了可以让浏览器及时地响应用户的交互，还有其他好处:
+* 分批延时对DOM进行操作，避免一次性操作大量 DOM 节点，可以得到更好的用户体验；
+* 给浏览器一点喘息的机会，它会对代码进行编译优化（JIT）及进行热代码优化，或者对 reflow 进行修正。
 
 react 在进行组件渲染时，从 setState 开始到渲染完成整个过程是同步的（“一气呵成”）。如果需要渲染的组件比较庞大，js 执行会占据主线程时间较长，会导致页面响应度变差，使得 react 在动画、手势等应用中效果比较差。
 为了解决这个问题，react 团队经过两年的工作，重写了 react 中核心算法——reconciliation。并在 v16 版本中发布了这个新的特性。为了区别之前和之后的 reconciler，通常将之前的 reconciler 称为 stack reconciler，重写后的称为 fiber reconciler，简称为 Fiber。
 
-Fiber 可以提升复杂 React 应用的可响应性和性能。Fiber 即是 React 新的调度算法（reconciliation algorithm）
-每次有 state 的变化 React 重新计算，如果计算量过大，浏览器主线程来不及做其他的事情，比如 rerender 或者 layout，那例如动画就会出现卡顿现象。
-React 制定了一种名为 Fiber 的数据结构，加上新的算法，使得大量的计算可以被拆解，异步化，浏览器主线程得以释放，保证了渲染的帧率。从而提高响应性。
+Fiber 可以提升复杂 React 应用的可响应性和性能。
+
+从**架构角度**来看，Fiber 即是 React 新的调度算法（reconciliation algorithm）(即调和过程)，每次有 state 的变化 React 重新计算，如果计算量过大，浏览器主线程来不及做其他的事情，比如 rerender 或者 layout，那例如动画就会出现卡顿现象。
+
+从**编码角度**来看，React 制定了一种名为 Fiber 的数据结构，加上新的算法，使得大量的计算可以被拆解，异步化，浏览器主线程得以释放，保证了渲染的帧率。从而提高响应性。
+
 React 将更新分为了两个时期：
-
 - render/reconciliation：可打断，React 在 workingProgressTree 上复用 current 上的 Fiber 数据结构来一步地（通过 requestIdleCallback）来构建新的 tree，标记处需要更新的节点，放入队列中。
-- Commit：不可打断。在第二阶段，React 将其所有的变更一次性更新到 DOM 上。
+- commit：不可打断。在第二阶段，React 将其所有的变更一次性更新到 DOM 上。
 
-核心思想是将渲染分割成多个事务，更新的时候根据事务优先级来调度执行顺序。之前的更新是直接从父节点递归子节点压栈，执行，弹栈，没有优先级，也不能控制顺序；Fiber 为了实现调度功能，重构了栈，即虚拟栈(virtual stack)，这样栈的执行顺序就能定制了，调度、暂停、终止、复用事务都成为可能。
+**核心思想**
+
+Fiber 也称协程或者纤程。它和线程并不一样，协程本身是没有并发或者并行能力的（需要配合线程），它只是一种控制流程的让出机制。让出 CPU 的执行权，让 CPU 能在这段时间执行其他的操作。渲染的过程可以被中断，可以将控制权交回浏览器，让位给高优先级的任务，浏览器空闲后再恢复渲染。
+
+将渲染分割成多个事务，更新的时候根据事务优先级来调度执行顺序。之前的更新是直接从父节点递归子节点压栈，执行，弹栈，没有优先级，也不能控制顺序；Fiber 为了实现调度功能，重构了栈，即虚拟栈(virtual stack)，这样栈的执行顺序就能定制了，调度、暂停、终止、复用事务都成为可能。
+
+**Fiber 的数据结构**
+
+一个 fiber就是一个 JavaScript对象，包含了元素的信息、该元素的更新操作队列、类型，其数据结构如下
+
+```js
+type Fiber = {
+  // 用于标记fiber的WorkTag类型，主要表示当前fiber代表的组件类型如FunctionComponent、ClassComponent等
+  tag: WorkTag,
+  // ReactElement里面的key
+  key: null | string,
+  // ReactElement.type，调用`createElement`的第一个参数
+  elementType: any,
+  // The resolved function/class/ associated with this fiber.
+  // 表示当前代表的节点类型
+  type: any,
+  // 表示当前FiberNode对应的element组件实例
+  stateNode: any,
+
+  // 指向他在Fiber节点树中的`parent`，用来在处理完这个节点之后向上返回
+  return: Fiber | null,
+  // 指向自己的第一个子节点
+  child: Fiber | null,
+  // 指向自己的兄弟结构，兄弟节点的return指向同一个父节点
+  sibling: Fiber | null,
+  index: number,
+
+  ref: null | (((handle: mixed) => void) & { _stringRef: ?string }) | RefObject,
+
+  // 当前处理过程中的组件props对象
+  pendingProps: any,
+  // 上一次渲染完成之后的props
+  memoizedProps: any,
+
+  // 该Fiber对应的组件产生的Update会存放在这个队列里面
+  updateQueue: UpdateQueue<any> | null,
+
+  // 上一次渲染的时候的state
+  memoizedState: any,
+
+  // 一个列表，存放这个Fiber依赖的context
+  firstContextDependency: ContextDependency<mixed> | null,
+
+  mode: TypeOfMode,
+
+  // Effect
+  // 用来记录Side Effect
+  effectTag: SideEffectTag,
+
+  // 单链表用来快速查找下一个side effect
+  nextEffect: Fiber | null,
+
+  // 子树中第一个side effect
+  firstEffect: Fiber | null,
+  // 子树中最后一个side effect
+  lastEffect: Fiber | null,
+
+  // 代表任务在未来的哪个时间点应该被完成，之后版本改名为 lanes
+  expirationTime: ExpirationTime,
+
+  // 快速确定子树中是否有不在等待的变化
+  childExpirationTime: ExpirationTime,
+
+  // fiber的版本池，即记录fiber更新过程，便于恢复
+  alternate: Fiber | null,
+}
+```
 
 ## 时间分片
 
@@ -102,10 +183,32 @@ classExampleComponentextendsReact.Component{
 ## 事件机制
 
 JSX 上写的事件并没有绑定在对应的真实 DOM 上，而是通过事件代理的方式，将所有的事件都统一绑定在了 document 上。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件
-好处：
+
+除此之外，冒泡到 document 上的事件也不是原生的浏览器事件，而是由 react 自己实现的合成事件（SyntheticEvent）。因此如果不想要是事件冒泡的话应该调用`event.preventDefault()`方法，而不是调用`event.stopProppagation()`方法。
+
+_注：React17 之后可以使用`e.stopPropagation()`阻止事件冒泡_
+
+![/image](/images/syntheticEvent.png)
+
+**好处：**
 
 1. 合成事件首先抹平了浏览器之间的兼容问题，另外这是一个跨浏览器原生事件包装器，赋予了跨浏览器开发的能力
 2. 对于原生浏览器事件来说，浏览器会给监听器创建一个事件对象。如果你有很多的事件监听，那么就需要分配很多的事件对象，造成高额的内存分配问题。但是对于合成事件来说，有一个事件池专门来管理它们的创建和销毁，当事件需要被使用时，就会从池子中复用对象，事件回调结束后，就会销毁事件对象上的属性，从而便于下次复用事件对象
+
+**合成事件**
+
+合成事件是 react 模拟原生 DOM 事件所有能力的一个事件对象，其优点如下：
+
+- 兼容所有浏览器，更好的跨平台；
+- 将事件统一存放在一个数组，避免频繁的新增与删除（垃圾回收）。
+- 方便 react 统一管理和事务机制。
+
+在 React 底层，主要对合成事件做了两件事：
+
+- **事件委派**：React 会把所有的事件绑定到结构的最外层，使用统一的事件监听器，这个事件监听器上维持了一个映射来保存所有组件内部事件监听和处理函数。
+- **自动绑定**：React 组件中，每个方法的上下文都会指向该组件的实例，即自动绑定 this 为当前组件。
+
+事件的执行顺序为原生事件先执行，合成事件后执行，合成事件会冒泡绑定到 document 上，所以尽量避免原生事件与合成事件混用，如果原生事件阻止冒泡，可能会导致合成事件不执行，因为需要冒泡到 document 上合成事件才会执行。
 
 ## 组件通信
 
@@ -181,7 +284,7 @@ memoization 是一个过程，它允许我们缓存递归/昂贵的函数调用�
 
 #### React.memo()
 
-React.memo() 是一个高阶组件 (HOC)，它接收一个组件A作为参数并返回一个组件B，如果组件B的 props（或其中的值）没有改变，则组件 B 会阻止组件 A 重新渲染
+React.memo() 是一个高阶组件 (HOC)，它接收一个组件 A 作为参数并返回一个组件 B，如果组件 B 的 props（或其中的值）没有改变，则组件 B 会阻止组件 A 重新渲染
 
 #### useMemo()
 
@@ -246,36 +349,98 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 ## HOC
 
-- 定义：就是类似高阶函数的定义,将组件作为参数或者返回一个组件的组件;
+**官方解释 ∶**
+
+> 高阶组件（HOC）是 React 中用于复用组件逻辑的一种高级技巧。HOC 自身不是 React API 的一部分，它是一种基于 React 的组合特性而形成的设计模式。
+
+简言之，HOC 是一种组件的设计模式，HOC 接受一个组件和额外的参数（如果需要），返回一个新的组件。
 
 高阶组件是重用组件逻辑的高级方法，是一种源于 React 的组件模式。 HOC 是自定义组件，在它之内包含另一个组件。它们可以接受子组件提供的任何动态，但不会修改或复制其输入组件中的任何行为。你可以认为 HOC 是“纯（Pure）”组件.
 
-- 作用:
+```jsx
+// hoc的定义
+function withSubscription(WrappedComponent, selectData) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        data: selectData(DataSource, props)
+      };
+    }
+    // 一些通用的逻辑处理
+    render() {
+      // ... 并使用新数据渲染被包装的组件!
+      return <WrappedComponent data={this.state.data} {...this.props} />;
+    }
+  };
 
-  1. 抽取重复代码，实现组件复用，常见场景,页面复用;
-  2. 条件渲染，控制组件的渲染逻辑（渲染劫持），常见场景,权限控制;
-  3. 捕获/劫持被处理组件的生命周期，常见场景,组件渲染性能追踪、日志打点
+// 使用
+const BlogPostWithSubscription = withSubscription(BlogPost,
+  (DataSource, props) => DataSource.getBlogPost(props.id));
+```
 
-- 实现：
+**作用:**
 
-  1. 属性代理
-  2. 反向继承：利用 super 改变改组件的 this 方向,继而就可以在该组件处理容器组件的一些值
+1. 抽取重复代码，实现组件复用，常见场景,页面复用;
+2. 条件渲染，控制组件的渲染逻辑（渲染劫持），常见场景,权限控制;
+3. 捕获/劫持被处理组件的生命周期，常见场景,组件渲染性能追踪、日志打点
 
-- 优势：
+**实现：**
 
-  1. HOC 通过外层组件通过 Props 影响内层组件的状态，而不是直接改变其 State 不存在冲突和互相干扰,这就降低了耦合度
-  2. 不同于 Mixin 的打平+合并，HOC 具有天然的层级结构（组件树结构），这又降低了复杂度
+1. 属性代理
+2. 反向继承：利用 super 改变改组件的 this 方向,继而就可以在该组件处理容器组件的一些值
 
-- 缺陷：
-  1. 扩展性限制: HOC 无法从外部访问子组件的 State 因此无法通过 shouldComponentUpdate 滤掉不必要的更新,React 在支持 ES6 Class 之后提供了 React.PureComponent 来解决这个问题
-  2. Ref 传递问题: Ref 被隔断,后来的 React.forwardRef 来解决这个问题
-  3. Wrapper Hell: HOC 可能出现多层包裹组件的情况,多层抽象同样增加了复杂度和理解成本
-  4. 命名冲突: 如果高阶组件多次嵌套,没有使用命名空间的话会产生冲突,然后覆盖老属性
-  5. 不可见性: HOC 相当于在原有组件外层再包装一个组件,你压根不知道外层的包装是啥,对于你是黑盒
+**优势：**
+
+1. HOC 通过外层组件通过 Props 影响内层组件的状态，而不是直接改变其 State 不存在冲突和互相干扰,这就降低了耦合度
+2. 不同于 Mixin 的打平+合并，HOC 具有天然的层级结构（组件树结构），这又降低了复杂度
+
+**缺陷：**
+
+1. 扩展性限制: HOC 无法从外部访问子组件的 State 因此无法通过 shouldComponentUpdate 滤掉不必要的更新,React 在支持 ES6 Class 之后提供了 React.PureComponent 来解决这个问题
+2. Ref 传递问题: Ref 被隔断,后来的 React.forwardRef 来解决这个问题
+3. Wrapper Hell: HOC 可能出现多层包裹组件的情况,多层抽象同样增加了复杂度和理解成本
+4. 命名冲突: 如果高阶组件多次嵌套,没有使用命名空间的话会产生冲突,然后覆盖老属性
+5. 不可见性: HOC 相当于在原有组件外层再包装一个组件,你压根不知道外层的包装是啥,对于你是黑盒
+
+## Render props
+
+**官方解释 ∶**
+
+> "render prop"是指一种在 React 组件之间使用一个值为函数的 prop 共享代码的简单技术
+
+具有 render prop 的组件接受一个返回 React 元素的函数，将 render 的渲染逻辑注入到组件内部。在这里，"render"的命名可以是任何其他有效的标识符。
+
+```jsx
+// DataProvider组件内部的渲染逻辑如下
+class DataProvider extends React.Components {
+  state = {
+    name: 'Tom',
+  };
+
+  render() {
+    return (
+      <div>
+        <p>共享数据组件自己内部的渲染逻辑</p>
+        {this.props.render(this.state)}
+      </div>
+    );
+  }
+}
+
+// 调用方式
+<DataProvider render={(data) => <h1>Hello {data.name}</h1>} />;
+```
+
+
+**优点**：数据共享、代码复用，将组件内的state作为props传递给调用者，将渲染逻辑交给调用者。
+
+**缺点**：无法在 return 语句外访问数据、嵌套写法不够优雅
 
 ## Hooks
 
-> Hooks 让我们在函数组件中可以使用 state 和其他功能
+**官方解释∶**
+>Hook是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。通过自定义hook，可以复用代码逻辑。
 
 - 原理：
   由于每次渲染都会不断的执行并产生闭包，那么从性能上和 GC 压力上都会稍逊于 Vue3。它的关键字是「每次渲染都重新执行」
@@ -299,7 +464,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 - 缺陷：
 
   1. 额外的学习成本（Functional Component 与 Class Component 之间的困惑）
-  2. 写法上有限制（不能出现在条件、循环中），并且写法限制增加了重构成本
+  2. 写法上有限制（只能在组件顶层使，且不能出现在条件、循环中），并且写法限制增加了重构成本
   3. 破坏了 PureComponent、React.memo 浅比较的性能优化效果（为了取最新的 props 和 state，每次 render()都要重新创建事件处函数）
   4. 在闭包场景可能会引用到旧的 state、props 值
   5. 内部实现上不直观（依赖一份可变的全局状态，不再那么“纯”）
@@ -307,18 +472,18 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 - 对原有 React 的 API 封装的钩子函数
 
-|  钩子名  | 作用|
-| :------------------: | ------------------ |
-| useState | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了     |
-|useEffect | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化 |
-|useContext| 定义一个全局的对象,类似 context   |
-|useReducer| 可以增强函数提供类似 Redux 的功能 |
-|     useCallback| 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
-| useMemo  | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值 |
-|  useRef  | 获取 ref 属性对应的 dom     |
-| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值   |
-|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发     |
-|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发  |
+|        钩子名        | 作用                                                                                                                                                                                                                        |
+| :------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       useState       | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了                                                                 |
+|      useEffect       | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化                                                                                                                   |
+|      useContext      | 定义一个全局的对象,类似 context                                                                                                                                                                                             |
+|      useReducer      | 可以增强函数提供类似 Redux 的功能                                                                                                                                                                                           |
+|     useCallback      | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
+|       useMemo        | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值                                                                                                                                                       |
+|        useRef        | 获取 ref 属性对应的 dom                                                                                                                                                                                                     |
+| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值                                                                                                                                                                                       |
+|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发                                                                                                                                   |
+|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发                                                                                                                                                                          |
 
 ## Hooks & Mixin & HOC
 
@@ -335,7 +500,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 ## props 和 state
 
-| 条件     | State | Props |
+| 条件                 | State | Props |
 | -------------------- | :---: | :---: |
 | 从父组件中接收初始值 |  Yes  |  Yes  |
 | 父组件可以改变值     |  No   |  Yes  |
@@ -381,7 +546,7 @@ Immutable Data 就是一旦创建，就不能再被更改的数据。对 Immutab
 
 React 中的 Batch Update 是通过「Transaction」实现的。在 React 源码关于 Transaction 的部分， Transaction 的作用：
 
-用大白话说就是在实际的 useState/setState 前后各加了段逻辑给包了起来。只要是在同一个事务中的 setState 会进行合并（注意，useState不会进行state的合并）处理。
+用大白话说就是在实际的 useState/setState 前后各加了段逻辑给包了起来。只要是在同一个事务中的 setState 会进行合并（注意，useState 不会进行 state 的合并）处理。
 
 - 为什么 setTimeout 不能进行事务操作
 
@@ -391,7 +556,7 @@ React 中的 Batch Update 是通过「Transaction」实现的。在 React 源码
 
 所以当遇到 setTimeout/setInterval/Promise.then(fn)/fetch 回调/xhr 网络回调时，react 都是无法控制的。
 
-相关react 源码如下：
+相关 react 源码如下：
 
 ```js
 if (executionContext === NoContext) {
@@ -400,7 +565,7 @@ if (executionContext === NoContext) {
   // scheduleCallbackForFiber to preserve the ability to schedule a callback
   // without immediately flushing it. We only do this for user-initiated
   // updates, to preserve historical behavior of legacy mode.
-  flushSyncCallbackQueue()
+  flushSyncCallbackQueue();
 }
 ```
 
@@ -425,7 +590,7 @@ setState 是修改其中的部分状态，相当于 Object.assign，只是覆盖
 - 语法：
 
 ```js
-React.cloneElement(element, [props], [...children])
+React.cloneElement(element, [props], [...children]);
 ```
 
 - 作用：这个方法的作用是复制组件,给组件传值或者添加属性
@@ -435,8 +600,8 @@ React.cloneElement(element, [props], [...children])
 React.Children.map(children, (child) => {
   return React.cloneElement(child, {
     count: _this.state.count,
-  })
-})
+  });
+});
 ```
 
 ### Fragment
@@ -453,9 +618,15 @@ React.Children.map(children, (child) => {
   - 触发式动画
   - 与第三方 DOM 库集成
 
-## 纯组件
+## PureComponent
 
-纯（Pure） 组件是可以编写的最简单、最快的组件。它们可以替换任何只有 render() 的组件。这些组件增强了代码的简单性和应用的性能。
+PureComponent表示一个纯组件，可以用来优化React程序，减少render函数执行的次数，从而提高组件的性能。
+
+在React中，当prop或者state发生变化时，可以通过在shouldComponentUpdate生命周期函数中执行return false来阻止页面的更新，从而减少不必要的render执行。React.PureComponent会自动执行 shouldComponentUpdate。
+
+不过，pureComponent中的 shouldComponentUpdate() 进行的是**浅比较**，也就是说如果是引用数据类型的数据，只会比较不是同一个地址，而不会比较这个地址里面的数据是否一致。浅比较会忽略属性和或状态突变情况，其实也就是数据引用指针没有变化，而数据发生改变的时候render是不会执行的。如果需要重新渲染那么就需要重新开辟空间引用数据。PureComponent一般会用在一些纯展示组件上。
+
+使用pureComponent的**好处**：当组件更新时，如果组件的props或者state都没有改变，render函数就不会触发。省去虚拟DOM的生成和对比过程，达到提升性能的目的。这是因为react自动做了一层浅比较。
 
 ## Key
 
@@ -662,7 +833,7 @@ dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了
 
 ## 在 React 中如何识别一个表单项里的表单做到了最小粒度 / 代价的渲染？
 
-首先，最小粒度 / 代价的渲染的表单项or组件应该具备什么样的特性:
+首先，最小粒度 / 代价的渲染的表单项 or 组件应该具备什么样的特性:
 
 - 简单易用
 - 父组件可通过代码操作表单数据
@@ -670,12 +841,12 @@ dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了
 - 支持自定义组件
 - 支持表单校验
 
-而这个表单项or组件实现起来主要分为三部分：
+而这个表单项 or 组件实现起来主要分为三部分：
 
 - Form：用于传递表单上下文。
-- Field： 表单域组件，用于自动传入value和onChange到表单组件。
+- Field： 表单域组件，用于自动传入 value 和 onChange 到表单组件。
 - FormStore： 存储表单数据，封装相关操作。
 
-为了能减少使用ref，同时又能操作表单数据（取值、修改值、手动校验等），我将用于存储数据的FormStore，从Form组件中分离出来，通过new FormStore()创建并手动传入Form组件。
+为了能减少使用 ref，同时又能操作表单数据（取值、修改值、手动校验等），我将用于存储数据的 FormStore，从 Form 组件中分离出来，通过 new FormStore()创建并手动传入 Form 组件。
 符合以上标准，就可以认为这个表单做到了最小粒度/最小代价的渲染。
-对于有大量表单的页面，可以使用Lighthouse作为衡量工具，来排查和优化页面。
+对于有大量表单的页面，可以使用 Lighthouse 作为衡量工具，来排查和优化页面。

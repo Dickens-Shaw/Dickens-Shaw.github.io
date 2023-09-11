@@ -33,9 +33,39 @@
 
   也就是简单重复的工作交给机器来做，自动化也就是有很多自动化工具代替我们来完成，例如持续集成、自动化构建、自动化部署、自动化测试等等
 
-# Git
+## Git
 
-## Git Hook 在项目中的作用
+### git 和 svn 的区别
+- git 和 svn 最大的区别在于 git 是分布式的，而 svn 是集中式的。因此我们不能再离线的情况下使用 svn。如果服务器出现问题，就没有办法使用 svn 来提交代码。
+- svn 中的分支是整个版本库的复制的一份完整目录，而 git 的分支是指针指向某次提交，因此 git 的分支创建更加开销更小并且分支上的变化不会影响到其他人。svn 的分支变化会影响到所有的人。
+- svn 的指令相对于 git 来说要简单一些，比 git 更容易上手。
+- GIT把内容按元数据方式存储，而SVN是按文件：因为git目录是处于个人机器上的一个克隆版的版本库，它拥有中心版本库上所有的东西，例如标签，分支，版本记录等。
+- GIT分支和SVN的分支不同：svn会发生分支遗漏的情况，而git可以同一个工作目录下快速的在几个分支间切换，很容易发现未被合并的分支，简单而快捷的合并这些文件。
+- GIT没有一个全局的版本号，而SVN有
+- GIT的内容完整性要优于SVN：GIT的内容存储使用的是SHA-1哈希算法。这能确保代码内容的完整性，确保在遇到磁盘故障和网络问题时降低对版本库的破坏
+
+### 常用命令
+```js
+git init                     // 新建 git 代码库
+git add                      // 添加指定文件到暂存区
+git rm                       // 删除工作区文件，并且将这次删除放入暂存区
+git commit -m [message]      // 提交暂存区到仓库区
+git branch                   // 列出所有分支
+git checkout -b [branch]     // 新建一个分支，并切换到该分支
+git status                   // 显示有变更文件的状态
+```
+
+### git pull 和 git fetch 的区别
+- git fetch 只是将远程仓库的变化下载下来，并没有和本地分支合并。
+- git pull 会将远程仓库的变化下载下来，并和当前分支合并。
+
+
+### git rebase 和 git merge 的区别
+git merge 和 git rebase 都是用于分支合并，关键在 commit 记录的处理上不同：
+- git merge 会新建一个新的 commit 对象，然后两个分支以前的 commit 记录都指向这个新 commit 记录。这种方法会保留之前每个分支的 commit 历史。
+- git rebase 会先找到两个分支的第一个共同的 commit 祖先记录，然后将提取当前分支这之后的所有 commit 记录，然后将这个 commit 记录添加到目标分支的最新提交后面。经过这个合并后，两个分支合并后的 commit 记录就变为了线性的记录了。
+
+### Git Hook 在项目中的作用
 
 - 多人开发代码语法、规范强制统一
 - commit message 格式化、是否符合某种规范
@@ -43,7 +73,7 @@
 - 服务器代码有新的更新的时候通知所有开发成员
 - 代码提交后的项目自动打包（git receive 之后）
 
-## Git Hook 常用的钩子
+### Git Hook 常用的钩子
 
 1. ClientSide hooks：
 
@@ -62,13 +92,13 @@
 - update, 也是收到 push 动作之前被执行，但是有可能被执行多次，每个 branch 一次。
 - post-receive, 当 push 动作已经完成的时候会被触发，可以用此 hook 来 push notification 等，比如发邮件，通知持续构建服务器等。
 
-# Webpack
+## Webpack
 
 一个用于现代 JavaScript 应用程序的 静态模块打包工具。当 webpack 处理应用程序时，它会在内部从一个或多个入口点构建一个 依赖图(`dependency graph`)，然后将你项目中所需的每一个模块组合成一个或多个 `bundles`，它们均为静态资源，用于展示你的内容。
 
 作用：代码分割、文件压缩合并、编译兼容、模块合并、高级语法翻译、按需加载、代码校验、自动刷新、模块热替换、Tree Shaking
 
-## 核心概念
+### 核心概念
 
 - Entry：入口，指示 Webpack 应该使用哪个模块，来作为构建其内部 依赖图(dependency graph) 的开始。
 - Output：输出结果，告诉 Webpack 在哪里输出它所创建的 bundle，以及如何命名这些文件。
@@ -79,7 +109,7 @@
 - Mode：模式，告知 webpack 使用相应模式的内置优化
 - Browser Compatibility：浏览器兼容性，Webpack 支持所有符合 ES5 标准 的浏览器（IE8 以上版本）
 
-## 构建流程
+### 构建流程
 
 - 初始化参数： 从配置文件和 Shell 语句中读取与合并参数，得到最终的参数
 - 开始编译： 用上一步得到的参数初始化 Compiler 对象，加载所有配置的插件，执行对象的 run 方法开始执行编译
@@ -95,7 +125,7 @@
 - 编译： 从 Entry 出发，针对每个 Module 串行调用对应的 Loader 去翻译文件的内容，再找到该 Module 依赖的 Module ，递归地进行编译处理
 - 输出： 将编译后的 Module 组合成 Chunk，将 Chunk 转换成文件，输出到文件系统中。
 
-## Loader
+### Loader
 
 > webpack 中提供了一种处理多种文件格式的机制，这便是 Loader，我们可以把 Loader 当成一个转换器，它可以将某种格式的文件转换成 webpack 支持打包的模块。
 
@@ -104,28 +134,28 @@
 - test 属性，识别出哪些文件会被转换。
 - use 属性，定义出在进行转换时，应该使用哪个 loader。
 
-### 特点
+#### 特点
 
 - loader 本质上是一个函数，output=loader(input) // input 可为工程源文件的字符串，也可是上一个 loader 转化后的结果；
 - 第一个 loader 的传入参数只有一个：资源文件(resource file)的内容；
 - loader 支持链式调用，webpack 打包时是按照数组从后往前的顺序将资源交给 loader 处理的。
 - 支持同步或异步函数。
 
-### 代码结构
+#### 代码结构
 
 ```js
 // source：资源输入，对于第一个执行的 loader 为资源文件的内容；后续执行的 loader 则为前一个 loader 的执行结果
 // sourceMap: 可选参数，代码的 sourcemap 结构
 // data: 可选参数，其它需要在 Loader 链中传递的信息，比如 posthtml/posthtml-loader 就会通过这个参数传递参数的 AST 对象
-const loaderUtils = require('loader-utils')
+const loaderUtils = require('loader-utils');
 module.exports = function (source, sourceMap?, data?) {
   // 获取到用户给当前 Loader 传入的 options
-  const options = loaderUtils.getOptions(this) // TODO： 此处为转换source的逻辑
-  return source
-}
+  const options = loaderUtils.getOptions(this); // TODO： 此处为转换source的逻辑
+  return source;
+};
 ```
 
-### 类型
+#### 类型
 
 1. 同步 loader：
 
@@ -134,9 +164,9 @@ module.exports = function (source, sourceMap?, data?) {
 ```js
 module.exports = function (source) {
   // 对 source 进行一些处理
-  const res = doSomething(source)
-  return res
-}
+  const res = doSomething(source);
+  return res;
+};
 ```
 
 也可以直接使用 `this.callback()` 这个 api，然后在最后直接 **return undefined** 的方式告诉 webpack 去 `this.callback()` 寻找他要的结果，这个 api 接受这些参数：
@@ -155,12 +185,12 @@ this.callback(
 ```js
 module.exports = function (content) {
   // 获取到用户传给当前 loader 的参数
-  const options = this.getOptions()
-  const res = someSyncOperation(content, options)
-  this.callback(null, res, sourceMaps)
+  const options = this.getOptions();
+  const res = someSyncOperation(content, options);
+  this.callback(null, res, sourceMaps);
   // 注意这里由于使用了 this.callback 直接 return 就行
-  return
-}
+  return;
+};
 ```
 
 _\*从 webpack 5 开始，this.getOptions 可以获取到 loader 上下文对象_
@@ -171,12 +201,12 @@ _\*从 webpack 5 开始，this.getOptions 可以获取到 loader 上下文对象
 
 ```js
 module.exports = function (content) {
-  var callback = this.async()
+  var callback = this.async();
   someAsyncOperation(content, function (err, result) {
-    if (err) return callback(err)
-    callback(null, result, sourceMaps, meta)
-  })
-}
+    if (err) return callback(err);
+    callback(null, result, sourceMaps, meta);
+  });
+};
 ```
 
 3. Raw loader：
@@ -184,11 +214,11 @@ module.exports = function (content) {
 
 ```js
 module.exports = function (content) {
-  console.log(content instanceof Buffer) // true
-  return doSomeOperation(content)
-}
+  console.log(content instanceof Buffer); // true
+  return doSomeOperation(content);
+};
 
-module.exports.raw = true
+module.exports.raw = true;
 ```
 
 4. Pitching loader：
@@ -203,16 +233,16 @@ loader 是按照从右往左的顺序被调用的，但是实际上，在此之�
 
 ```js
 module.exports = function (content) {
-  return someSyncOperation(content, this.data.value) // 这里的 this.data.value === 42
-}
+  return someSyncOperation(content, this.data.value); // 这里的 this.data.value === 42
+};
 
 module.exports.pitch = function (remainingRequest, precedingRequest, data) {
-  data.value = 42
+  data.value = 42;
   // return 如果某一个 loader 的 pitch 方法中返回了值，那么他会直接跳过后续的步骤
-}
+};
 ```
 
-### API
+#### API
 
 - this.addDependency：加入一个文件进行监听，一旦文件产生变化就会重新调用这个 loader 进行处理
 - this.cacheable：默认情况下 loader 的处理结果会有缓存效果，给这个方法传入 false 可以关闭这个效果
@@ -226,7 +256,7 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 - this.resourcePath：不包含参数的路径：`'/abc/resource.js'`
 - this.sourceMap：bool 类型，是否应该生成一个 sourceMap
 
-### 常用 loader
+#### 常用 loader
 
 - babel-loader 中间桥梁，通过调用 babel/core 中的 api 来告诉 webpack 要如何处理 js
 - style-loader 负责把样式插入到 DOM 中，方法是在 head 中插入一个 style 标签，并把样式写入到这个标签的 innerHTML 里
@@ -243,13 +273,13 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 - thread-loader 可以让 webpack 在多个进程中并行执行 loader，提高打包速度。
 - cache-loader 在性能开销较大的 loader 之前添加此 loader，将结果缓存到磁盘里
 
-## Plugin
+### Plugin
 
 > Webpack 就像一条生产线，要经过一系列处理流程后才能将源文件转换成输出结果。 这条生产线上的每个处理流程的职责都是单一的，多个流程之间有存在依赖关系，只有完成当前处理后才能交给下一个流程去处理。 插件就像是一个插入到生产线中的一个功能，在特定的时机对生产线上的资源做处理。
 
 > Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展 Webpack 的功能，在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。Webpack 的事件流机制保证了插件的有序性，使得整个系统扩展性很好。
 
-### 基本结构
+#### 基本结构
 
 - 一个 JavaScript 命名函数或 JavaScript 类。
 - 在插件函数的 prototype 上定义一个 apply 方法。
@@ -280,7 +310,7 @@ class HelloPlugin{
 module.exports = HelloPlugin
 ```
 
-### Compiler and Compilation
+#### Compiler and Compilation
 
 - `compiler` 对象可以理解为一个和 webpack 环境整体绑定的一个对象，它包含了所有的环境配置，包括 options，loader 和 plugin，当 webpack 启动时，这个对象会被实例化，并且他是**全局唯一**的，上面我们说到的 apply 方法传入的参数就是它。
 
@@ -295,16 +325,16 @@ class HelloCompilationPlugin {
     compiler.hooks.compilation.tap('HelloCompilationPlugin', (compilation) => {
       // 现在可以通过 compilation 对象绑定各种钩子
       compilation.hooks.optimize.tap('HelloCompilationPlugin', () => {
-        console.log('资源已经优化完毕。')
-      })
-    })
+        console.log('资源已经优化完毕。');
+      });
+    });
   }
 }
 
-module.exports = HelloCompilationPlugin
+module.exports = HelloCompilationPlugin;
 ```
 
-### 同步与异步
+#### 同步与异步
 
 plugin 的 hooks 是有同步和异步区分的，在同步的情况下，我们使用 `<hookName>.tap` 的方式进行调用，而在异步 hook 内我们可以进行一些异步操作，并且有异步操作的情况下，请使用 `tapAsync` 或者 `tapPromise` 方法来告知 webpack 这里的内容是异步的
 
@@ -320,15 +350,15 @@ class HelloAsyncPlugin {
       (compilation, callback) => {
         // 执行某些异步操作...
         setTimeout(function () {
-          console.log('异步任务完成...')
-          callback()
-        }, 1000)
+          console.log('异步任务完成...');
+          callback();
+        }, 1000);
       }
-    )
+    );
   }
 }
 
-module.exports = HelloAsyncPlugin
+module.exports = HelloAsyncPlugin;
 ```
 
 - tapPromise
@@ -342,18 +372,18 @@ class HelloAsyncPlugin {
       // 返回一个 promise ，异步任务完成后 resolve
       return new Promise((resolve, reject) => {
         setTimeout(function () {
-          console.log('异步任务完成...')
-          resolve()
-        }, 1000)
-      })
-    })
+          console.log('异步任务完成...');
+          resolve();
+        }, 1000);
+      });
+    });
   }
 }
 
-module.exports = HelloAsyncPlugin
+module.exports = HelloAsyncPlugin;
 ```
 
-### 常用的 plugin
+#### 常用的 plugin
 
 - copy-webpack-plugin 将已存在的文件复制到指定目录
 - html-webpack-plugin 自动生成 HTML5 文件，并引入 webpack 打包好的 js 等文件。
@@ -368,18 +398,18 @@ module.exports = HelloAsyncPlugin
 - purge-css-plugin 可以去除未使用的 css, 一般与 glob、glob-all 配合使用。
 - optimize-css-assets-webpack-plugin 用于 CSS 压缩
 - split-chunks-plugin 用于提取 js 中公共代码。webpack4 内置插件。
-- webpack-bundle-analyzer 可视化 webpack 输出文件的体积，分析生成Bundle的每个模块体积大小
+- webpack-bundle-analyzer 可视化 webpack 输出文件的体积，分析生成 Bundle 的每个模块体积大小
 - terser-webpack-plugin 用于处理 js 的压缩和混淆，开启多进程并行、缓存模式
-- speed-measure-webpack-plugin 分析每个loader和plugin执行耗时具体情况
+- speed-measure-webpack-plugin 分析每个 loader 和 plugin 执行耗时具体情况
 - hard-source-webpack-plugin 为模块提供中间缓存，快速提升二次构建的速度。
 
-## 动态加载
+### 动态加载
 
 import()和 require.ensure
 
 原理：动态的创建 script 标签，以及通过 jsonp 去请求 chunk
 
-## Babel 原理
+### Babel 原理
 
 本质就是编译器，分为三步：
 
@@ -387,7 +417,7 @@ import()和 require.ensure
 2. 遍历 AST，根据插件变换相应的节点，
 3. 最后把 AST 转换为代码
 
-## 热跟新原理
+### 热跟新原理
 
 1. 当修改了一个或多个文件；
 2. 文件系统接收更改并通知 webpack；
@@ -395,7 +425,7 @@ import()和 require.ensure
 4. HMR Server 使用 webSocket 通知 HMR runtime 需要更新，HMR 运行时通过 HTTP 请求更新 jsonp；
 5. HMR 运行时替换更新中的模块，如果确定这些模块无法更新，则触发整个页面刷新。
 
-## Tree Shaking
+### Tree Shaking
 
 Tree-Shaking 是一种基于 ES Module 规范的 Dead Code Elimination 技术，它会在运行过程中静态分析模块之间的导入导出，确定 ESM 模块中哪些导出值未曾其它模块使用，并将其删除，以此实现打包产物的优化。
 
@@ -408,24 +438,25 @@ Tree-Shaking 是一种基于 ES Module 规范的 Dead Code Elimination 技术，
 }
 ```
 
-通过配置sideEffects，Tree Shaking便开启了，webpack打包时会自动剔除没有引用的js文件。对于业务文件冗余，但又不敢轻易删除的项目特别适合开启Tree Shaking，可以大幅度减少打包体积。
+通过配置 sideEffects，Tree Shaking 便开启了，webpack 打包时会自动剔除没有引用的 js 文件。对于业务文件冗余，但又不敢轻易删除的项目特别适合开启 Tree Shaking，可以大幅度减少打包体积。
 
-### 在 Webpack 中启动 Tree Shaking
+#### 在 Webpack 中启动 Tree Shaking
 
 必须同时满足三个条件：
 
 1. 使用 ESM 规范编写模块代码
 2. 配置 optimization.usedExports 为 true，启动标记功能
 3. 启动代码优化功能，可以通过如下方式实现：
-  - 配置 mode = production
-  - 配置 optimization.minimize = true
-  - 提供 optimization.minimizer 数组
+
+- 配置 mode = production
+- 配置 optimization.minimize = true
+- 提供 optimization.minimizer 数组
 
 ```js
 // webpack.config.js
 module.exports = {
-  entry: "./src/index",
-  mode: "production",
+  entry: './src/index',
+  mode: 'production',
   devtool: false,
   optimization: {
     usedExports: true,
@@ -433,19 +464,21 @@ module.exports = {
 };
 ```
 
-### 理论基础
+#### 理论基础
 
 在 CommonJs、AMD、CMD 等旧版本的 JavaScript 模块化方案中，导入导出行为是高度动态，难以预测的，例如：
+
 ```js
-if(process.env.NODE_ENV === 'development'){
+if (process.env.NODE_ENV === 'development') {
   require('./bar');
   exports.foo = 'foo';
 }
 ```
 
 而 ESM 方案则从规范层面规避这一行为，它要求所有的导入导出语句只能出现在模块顶层，且导入导出的模块名必须为字符串常量，这意味着下述代码在 ESM 方案下是非法的：
+
 ```js
-if(process.env.NODE_ENV === 'development'){
+if (process.env.NODE_ENV === 'development') {
   import bar from 'bar';
   export const foo = 'foo';
 }
@@ -453,7 +486,7 @@ if(process.env.NODE_ENV === 'development'){
 
 所以，ESM 下模块之间的依赖关系是高度确定的，与运行状态无关，编译工具只需要对 ESM 模块做静态分析，就可以从代码字面量中推断出哪些模块值未曾被其它模块使用，这是实现 Tree Shaking 技术的必要条件。
 
-### 实现原理
+#### 实现原理
 
 Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些没有被用过，二是使用 Terser 删掉这些没被用到的导出语句。标记过程大致可划分为三个步骤：
 
@@ -467,20 +500,22 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 
 但实际上标记功能只会影响到模块的导出语句，真正执行“Shaking”操作的是 Terser 插件提供的 DCE 功能。
 
-#### 收集模块导出
+##### 收集模块导出
 
 首先，Webpack 需要弄清楚每个模块分别有什么导出值，这一过程发生在 make 阶段，大体流程：
 
 1. 将模块的所有 ESM 导出语句转换为 Dependency 对象，并记录到 module 对象的 dependencies 集合，转换规则：
-  - 具名导出转换为 HarmonyExportSpecifierDependency 对象
-  - default 导出转换为 HarmonyExportExpressionDependency 对象
+
+- 具名导出转换为 HarmonyExportSpecifierDependency 对象
+- default 导出转换为 HarmonyExportExpressionDependency 对象
+
 2. 所有模块都编译完毕后，触发 compilation.hooks.finishModules 钩子，开始执行 FlagDependencyExportsPlugin 插件回调
 3. FlagDependencyExportsPlugin 插件从 entry 开始读取 ModuleGraph 中存储的模块信息，遍历所有 module 对象
 4. 遍历 module 对象的 dependencies 数组，找到所有 HarmonyExportXXXDependency 类型的依赖对象，将其转换为 ExportInfo 对象并记录到 ModuleGraph 体系中
 
 经过 FlagDependencyExportsPlugin 插件处理后，所有 ESM 风格的 export 语句都会记录在 ModuleGraph 体系内，后续操作就可以从 ModuleGraph 中直接读取出模块的导出值。
 
-#### 标记模块导出
+##### 标记模块导出
 
 模块导出信息收集完毕后，Webpack 需要标记出各个模块的导出列表中，哪些导出值有被其它模块用到，哪些没有，这一过程发生在 Seal 阶段，主流程：
 
@@ -489,11 +524,11 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 3. 遍历 module 对象对应的 exportInfo 数组
 4. 为每一个 exportInfo 对象执行 compilation.getDependencyReferencedExports 方法，确定其对应的 dependency 对象有否被其它模块使用
 5. 被任意模块使用到的导出值，调用 exportInfo.setUsedConditionally 方法将其标记为已被使用。
-6. exportInfo.setUsedConditionally 内部修改 exportInfo._usedInRuntime 属性，记录该导出被如何使用
+6. exportInfo.setUsedConditionally 内部修改 exportInfo.\_usedInRuntime 属性，记录该导出被如何使用
 
-上面是极度简化过的版本，中间还存在非常多的分支逻辑与复杂的集合操作，我们抓住重点：标记模块导出这一操作集中在 FlagDependencyUsagePlugin 插件中，执行结果最终会记录在模块导出语句对应的 exportInfo._usedInRuntime 字典中
+上面是极度简化过的版本，中间还存在非常多的分支逻辑与复杂的集合操作，我们抓住重点：标记模块导出这一操作集中在 FlagDependencyUsagePlugin 插件中，执行结果最终会记录在模块导出语句对应的 exportInfo.\_usedInRuntime 字典中
 
-#### 生成代码
+##### 生成代码
 
 由导出语句对应的 HarmonyExportXXXDependency 类实现，大体的流程：
 
@@ -503,40 +538,178 @@ Webpack 中，Tree-shaking 的实现一是先标记出模块导出值中哪些�
 4. 遍历 initFragments 数组，生成最终结果
 
 基本上，这一步的逻辑就是用前面收集好的 exportsInfo 对象未模块的导出值分别生成导出语句。
-#### 删除代码
 
-经过前面几步操作之后，模块导出列表中未被使用的值都不会定义在 __webpack_exports__ 对象中，形成一段不可能被执行的 Dead Code 效果.
+##### 删除代码
+
+经过前面几步操作之后，模块导出列表中未被使用的值都不会定义在 **webpack_exports** 对象中，形成一段不可能被执行的 Dead Code 效果.
 
 在此之后，将由 Terser、UglifyJS 等 DCE 工具“摇”掉这部分无效代码，构成完整的 Tree Shaking 操作。
 
-#### 总结
+##### 总结
 
 - 在 FlagDependencyExportsPlugin 插件中根据模块的 dependencies 列表收集模块导出值，并记录到 ModuleGraph 体系的 exportsInfo 中
-- 在 FlagDependencyUsagePlugin 插件中收集模块的导出值的使用情况，并记录到 exportInfo._usedInRuntime 集合中
+- 在 FlagDependencyUsagePlugin 插件中收集模块的导出值的使用情况，并记录到 exportInfo.\_usedInRuntime 集合中
 - 在 HarmonyExportXXXDependency.Template.apply 方法中根据导出值的使用情况生成不同的导出语句
 - 使用 DCE 工具删除 Dead Code，实现完整的树摇效果
 
-## 优化打包速度
+### 优化打包速度
 
-- 减少文件搜索范围：比如通过别名、设置 loader 的 test，include & exclude
-- Webpack4 默认压缩并行
-- Happypack 将 Loader 的同步执行转换为并行的
-- DLLPlugin 将特定的类库提前打包然后引入
-- babel 也可以缓存编译
+#### 优化 Loader
 
-## 优化项目
+对于 Loader 来说，影响打包效率首当其冲必属 `Babel` 了。因为 `Babel` 会将代码转为字符串生成 AST，然后对 AST 继续进行转变最后再生成新的代码，项目越大，转换代码越多，效率就越低。
 
-- 对于 Webpack4，打包项目使用 production 模式，这样会自动开启代码压缩
-- 使用 ES6 模块来开启 tree shaking，这个技术可以移除没有使用的代码
+**优化 Loader 的文件搜索范围**
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        // js 文件才使用 babel
+        test: /\.js$/,
+        loader: 'babel-loader',
+        // 只在 src 文件夹下查找
+        include: [resolve('src')],
+        // 不会去查找的路径
+        exclude: /node_modules/,
+      },
+    ],
+  },
+};
+```
+
+**缓存 Babel 编译过的文件**
+
+```js
+// 下次只需要编译更改过的代码文件即可，这样可以大幅度加快打包时间
+loader: 'babel-loader?cacheDirectory=true';
+```
+
+#### Happypack
+
+```js
+module: {
+  loaders: [
+    {
+      test: /\.js$/,
+      include: [resolve('src')],
+      exclude: /node_modules/,
+      // id 后面的内容对应下面
+      loader: 'happypack/loader?id=happybabel'
+    }
+  ]
+},
+plugins: [
+  new HappyPack({
+    id: 'happybabel',
+    loaders: ['babel-loader?cacheDirectory'],
+    // 开启 4 个线程
+    threads: 4
+  })
+]
+```
+
+受限于 Node 是单线程运行的，所以 Webpack 在打包的过程中也是单线程的，特别是在执行 Loader 的时候，长时间编译的任务很多，这样就会导致等待的情况。
+
+HappyPack **可以将 Loader 的同步执行转换为并行的**，这样就能充分利用系统资源来加快打包效率了
+
+#### DLLPlugin
+
+**DLLPlugin 可以将特定的类库提前打包然后引入。** 这种方式可以极大的减少打包类库的次数，只有当类库更新版本才有需要重新打包，并且也实现了将公共代码抽离成单独文件的优化方案。
+
+```js
+// 单独配置在一个文件中
+// webpack.dll.conf.js
+const path = require('path');
+const webpack = require('webpack');
+module.exports = {
+  entry: {
+    // 想统一打包的类库
+    vendor: ['react'],
+  },
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: '[name].dll.js',
+    library: '[name]-[hash]',
+  },
+  plugins: [
+    new webpack.DllPlugin({
+      // name 必须和 output.library 一致
+      name: '[name]-[hash]',
+      // 该属性需要与 DllReferencePlugin 中一致
+      context: __dirname,
+      path: path.join(__dirname, 'dist', '[name]-manifest.json'),
+    }),
+  ],
+};
+```
+
+然后需要执行这个配置文件生成依赖文件，接下来需要使用 DllReferencePlugin 将依赖文件引入项目中
+
+```js
+// webpack.conf.js
+module.exports = {
+  // ...省略其他配置
+  plugins: [
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      // manifest 就是之前打包出来的 json 文件
+      manifest: require('./dist/vendor-manifest.json'),
+    }),
+  ],
+};
+```
+
+#### 代码压缩
+
+在 Webpack3 中，一般使用 `UglifyJS` 来压缩代码，但是这个是单线程运行的，为了加快效率，可以使用 `webpack-parallel-uglify-plugin` 来并行运行` UglifyJS`，从而提高效率。
+
+在 Webpack4 中，不需要以上这些操作了，只需要将 `mode` 设置为 `production` 就可以默认开启以上功能。代码压缩也是我们必做的性能优化方案，当然我们不止可以压缩 JS 代码，还可以压缩 HTML、CSS 代码，并且在压缩 JS 代码的过程中，我们还可以通过配置实现比如删除 `console.log` 这类代码的功能。
+
+#### 其它
+
+- resolve.extensions：用来表明文件后缀列表，默认查找顺序是 ['.js', '.json']，如果你的导入文件没有添加后缀就会按照这个顺序查找文件。我们应该尽可能减少后缀列表长度，然后将出现频率高的后缀排在前面
+- resolve.alias：可以通过别名的方式来映射一个路径，能让 Webpack 更快找到路径
+- module.noParse：如果你确定一个文件下没有其他依赖，就可以使用该属性让 Webpack 不扫描该文件，这种方式对于大型的类库很有帮助
+
+### 减少打包体积
+
 - 优化图片，对于小图可以使用 base64 的方式写入文件中
-- 按照路由拆分代码，实现按需加载
-- 给打包出来的文件名添加哈希，实现浏览器缓存文件
+- 按照路由拆分代码，实现**按需加载**，将每个路由页面单独打包为一个文件，对于 `loadash` 这种大型类库同样可以使用这个功能
+- **Scope Hoisting** 会分析出模块之间的依赖关系，尽可能的把打包出来的模块合并到一个函数中去
 
-# Rollup
+```js
+module.exports = {
+  optimization: {
+    concatenateModules: true,
+  },
+};
+```
+
+- 使用 ES6 模块来开启 `tree shaking`，这个技术可以移除没有使用的代码，Webpack 4 后开启生产环境就会自动启动这个优化功能
+
+### 优化项目性能
+
+- **压缩代码**：删除多余的代码、注释、简化代码的写法等等⽅式。可以利⽤ webpack 的 UglifyJsPlugin 和 ParallelUglifyPlugin 来压缩 JS ⽂件， 利⽤ cssnano （css-loader?minimize）来压缩 css
+- **利⽤ CDN 加速**: 在构建过程中，将引⽤的静态资源路径修改为 CDN 上对应的路径。可以利⽤ webpack 对于 output 参数和各 loader 的 publicPath 参数来修改资源路径
+- **Tree Shaking**: 将代码中永远不会⾛到的⽚段删除掉。可以通过在启动 webpack 时追加参数 --optimize-minimize 来实现
+- **Code Splitting**: 将代码按路由维度或者组件分块(chunk),这样做到按需加载,同时可以充分利⽤浏览器缓存
+- **提取公共第三⽅库**: SplitChunksPlugin 插件来进⾏公共模块抽取,利⽤浏览器缓存可以⻓期缓存这些⽆需频繁变动的公共代码
+
+### 提⾼构建速度
+
+- 多⼊⼝情况下，使⽤ CommonsChunkPlugin 来提取公共代码
+- 通过 externals 配置来提取常⽤库
+- 利⽤ DllPlugin 和 DllReferencePlugin 预编译资源模块 通过 DllPlugin 来对那些我们引⽤但是绝对不会修改的 npm 包来进⾏预编译，再通过 DllReferencePlugin 将预编译的模块加载进来。
+- 使⽤ Happypack 实现多线程加速编译
+- 使⽤ webpack-uglify-parallel 来提升 uglifyPlugin 的压缩速度。 原理上 webpack-uglify-parallel 采⽤了多核并⾏压缩来提升压缩速度
+- 使⽤ Tree-shaking 和 Scope Hoisting 来剔除多余代码
+
+## Rollup
 
 Rollup 是一个 JavaScript 模块打包器，可以将小块代码编译成大块复杂的代码，例如 library 或应用程序。并且可以对代码模块使用新的标准化格式，比如 CommonJS 和 es module。
 
-## 构建流程
+### 构建流程
 
 Rollup 相对 Webpack 而言，打包出来的包会更加轻量化，更适用于类库打包，因为内置了 Tree Shaking 机制，在分析代码阶段就知晓哪些文件引入并未调用，打包时就会自动擦除未使用的代码。
 
@@ -549,7 +722,7 @@ Rollup 相对 Webpack 而言，打包出来的包会更加轻量化，更适用�
 
 > Acorn 是一个 JavaScript 语法解析器，它将 JavaScript 字符串解析成语法抽象树 AST
 
-## 核心概念
+### 核心概念
 
 - input：入口文件路径
 - output：输出文件、输出格式（amd/es6/iife/umd/cjs）、sourcemap 启用等
@@ -557,15 +730,15 @@ Rollup 相对 Webpack 而言，打包出来的包会更加轻量化，更适用�
 - external: 提取外部依赖
 - global: 配置全局变量
 
-## 配置
+### 配置
 
 ```js
-import commonjs from '@rollup/plugin-commonjs'
-import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 // 解析json
-import json from '@rollup/plugin-json'
+import json from '@rollup/plugin-json';
 // 压缩代码
-import { terser } from 'rollup-plugin-terser'
+import { terser } from 'rollup-plugin-terser';
 export default {
   input: 'src/main.js',
   output: [
@@ -583,37 +756,37 @@ export default {
   // 但是又个例外， 是需要放到 babel 之后的
   plugins: [json(), resolve(), commonjs()],
   external: ['vue'],
-}
+};
 ```
 
-# 测试
+## 测试
 
-## 单元测试
+### 单元测试
 
 > 对最小可测试单元（一般为单个函数、类或组件）进行检查和验证
 
 Mocha、断言库 Chai、Sinon、Jest 等。我们可以先选择 jest 来学习，因为它集成了 Mocha，chai，jsdom，sinon 等功能
 
-## 组件测试
+### 组件测试
 
 > 针对某个组件功能进行测试
 
 因为很多组件涉及了 DOM 操作，可以借助组件测试框架来做，比如使用 Cypress
 
-## e2e 测试
+### e2e 测试
 
 > 端到端测试，主要是模拟用户对页面进行一系列操作并验证其是否符合预期，使用 Cypress
 
-# 基础建设
+## 基础建设
 
-## 脚手架
+### 脚手架
 
 解耦：脚手架与模板分离
 脚手架负责构建流程，通过命令行与用户交互，获取项目信息
 模板负责统一项目结构、工作流程、依赖项管理
 脚手架需要检测模板的版本是否有更新，支持模板的删除与新建
 
-## 组件库
+### 组件库
 
 选择通用、合适、便捷的构建工具，方便打包代码，并且易于调试；
 注重代码质量和开发效率，有类型推断及静态检查能力（提前写好 TS）；
@@ -621,12 +794,12 @@ api 简单易用，易于上手，文档实时更新；
 支持按需加载，支持组件的继承，支持组件的插件化；
 易于开发者拓展、版本升级保持向前兼容。
 
-# NPM
+### NPM
 
+### npm run \*\*\*
 
-## npm run ***
-1. 运行 npm run xxx的时候，npm 会先在当前目录的 node_modules/.bin 查找要执行的程序，如果找到则运行；
-2. 没有找到则从全局的 node_modules/.bin 中查找，npm i -g xxx就是安装到到全局目录；
+1. 运行 npm run xxx 的时候，npm 会先在当前目录的 node_modules/.bin 查找要执行的程序，如果找到则运行；
+2. 没有找到则从全局的 node_modules/.bin 中查找，npm i -g xxx 就是安装到到全局目录；
 3. 如果全局目录还是没找到，那么就从 path 环境变量中查找有没有其他同名的可执行程序。
 
 ```js
@@ -640,10 +813,10 @@ vue-cli-service.cmd
 vue-cli-service.ps1
 ```
 
-以vue-cli-service serve为例
+以 vue-cli-service serve 为例
 
-从 package-lock.json 中可知，当我们npm i 整个新建的vue项目的时候，npm 将 bin/vue-cli-service.js 作为 bin 声明了。
+从 package-lock.json 中可知，当我们 npm i 整个新建的 vue 项目的时候，npm 将 bin/vue-cli-service.js 作为 bin 声明了。
 
-所以在 npm install 时，npm 读到该配置后，就将该文件软链接到 ./node_modules/.bin 目录下，而 npm 还会自动把node_modules/.bin加入$PATH，这样就可以直接作为命令运行依赖程序和开发依赖程序，不用全局安装了。
+所以在 npm install 时，npm 读到该配置后，就将该文件软链接到 ./node_modules/.bin 目录下，而 npm 还会自动把 node_modules/.bin 加入$PATH，这样就可以直接作为命令运行依赖程序和开发依赖程序，不用全局安装了。
 
 假如我们在安装包时，使用 npm install -g xxx 来安装，那么会将其中的 bin 文件加入到全局，比如 create-react-app 和 vue-cli ，在全局安装后，就可以直接使用如 vue-cli projectName 这样的命令来创建项目了。
