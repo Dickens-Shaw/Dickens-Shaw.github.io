@@ -203,29 +203,78 @@ webpack 处理 CSS:
 
 在实际使用中，css-loader 的执行顺序一定要安排在 style-loader 的前面。因为只有完成了编译过程，才可以对 css 代码进行插入；若提前插入了未编译的代码，那么 webpack 是无法理解这坨东西的，它会无情报错
 
-
-### 12. requestAnimationframe
+### 12. requestAnimationFrame
 
 > 全称 `requestAnimationFrame`，请求桢动画。
 
-实现动画效果的方法比较多，Javascript 中可以通过定时器 `setTimeout` 来实现，css3 可以使用 `transition` 和 `animation` 来实现，HTML5 中的 canvas 也可以实现。除此之外，HTML5 还提供一个专门用于请求动画的 API，那就是 `requestAnimationFrame` ，顾名思义就是请求动画帧
+实现动画效果的方法比较多，Javascript 中可以通过定时器 `setTimeout` 来实现，css3 可以使用 `transition` 和 `animation` 来实现，HTML5 中的 canvas 也可以实现。除此之外，HTML5 还提供一个专门用于请求动画的 API，那就是 `requestAnimationFrame` ，顾名思义就是**请求动画帧**
 
-`window.requestAnimationFrame()` 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行
+> `window.requestAnimationFrame()` 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行
 
-优势：
+**语法：** window.requestAnimationFrame(callback); 其中，callback 是下一次重绘之前更新动画帧所调用的函数(即上面所说的回调函数)。该回调函数会被传入 DOMHighResTimeStamp 参数，它表示 requestAnimationFrame() 开始去执行回调函数的时刻。该方法属于**宏任务**，所以会在执行完微任务之后再去执行。
 
-CPU 节能：使用 `setTInterval` 实现的动画，当页面被隐藏或最小化时， `setTInterval` 仍然在后台执行动画任务，由于此时页面处于不可见或不可用状态，刷新动画是没有意义的，完全是浪费 CPU 资源。而 `requestAnimationFrame` 则完全不同，当页面处理未激活的状态下，该页面的屏幕刷新任务也会被系统暂停，因此跟着系统步伐走的 `requestAnimationFrame` 也会停止渲染，当页面被激活时，动画就从上次停留的地方继续执行，有效节省了 CPU 开销。
+**取消动画：** 使用 cancelAnimationFrame()来取消执行动画，该方法接收一个参数——requestAnimationFrame 默认返回的 id，只需要传入这个 id 就可以取消动画了。
 
-函数节流：在高频率事件( resize, scroll 等)中，为了防止在一个刷新间隔内发生多次函数执行， `requestAnimationFrame` 可保证每个刷新间隔内，函数只被执行一次，这样既能保证流畅性，也能更好的节省函数执行的开销，一个刷新间隔内函数执行多次时没有意义的，因为显示器每 16.7ms 刷新一次，多次绘制并不会在屏幕上体现出来。
+```js
+var globalID;
+function animate() {
+  // done(); 一直运行
+  globalID = requestAnimationFrame(animate); // Do something animate
+}
+globalID = requestAnimationFrame(animate); //开始
+cancelAnimationFrame(globalID); //结束
+```
 
-减少 DOM 操作： `requestAnimationFrame` 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒 60 帧。
+**优势：**
 
-`setTimeout` 执行动画的缺点：
+- **CPU 节能**：使用 `setTInterval` 实现的动画，当页面被隐藏或最小化时， `setTInterval` 仍然在后台执行动画任务，由于此时页面处于不可见或不可用状态，刷新动画是没有意义的，完全是浪费 CPU 资源。而 `requestAnimationFrame` 则完全不同，当页面处理未激活的状态下，该页面的屏幕刷新任务也会被系统暂停，因此跟着系统步伐走的 `requestAnimationFrame` 也会停止渲染，当页面被激活时，动画就从上次停留的地方继续执行，有效节省了 CPU 开销。
+- **函数节流**：在高频率事件( resize, scroll 等)中，为了防止在一个刷新间隔内发生多次函数执行， `requestAnimationFrame` 可保证每个刷新间隔内，函数只被执行一次，这样既能保证流畅性，也能更好的节省函数执行的开销，一个刷新间隔内函数执行多次时没有意义的，因为显示器每 16.7ms 刷新一次，多次绘制并不会在屏幕上体现出来。
+- **减少 DOM 操作**： `requestAnimationFrame` 会把每一帧中的所有 DOM 操作集中起来，在一次重绘或回流中就完成，并且重绘或回流的时间间隔紧紧跟随浏览器的刷新频率，一般来说，这个频率为每秒 60 帧。
 
-它通过设定间隔时间来不断改变图像位置，达到动画效果。但是容易出现卡顿、抖动的现象；原因是：
+**Polyfill:**
 
-`setTimeout` 任务被放入异步队列，只有当主线程任务执行完后才会执行队列中的任务，因此实际执行时间总是比设定时间要晚；
-`setTimeout` 的固定时间间隔不一定与屏幕刷新时间相同，会引起丢帧。
+```js
+window._requestAnimationFrame = (function () {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function (callback) {
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
+})();
+```
+`setTimeout` 执行动画的缺点：它通过设定间隔时间来不断改变图像位置，达到动画效果。但是容易出现卡顿、抖动的现象；原因是：
+
+- `setTimeout` 任务被放入异步队列，只有当主线程任务执行完后才会执行队列中的任务，因此实际执行时间总是比设定时间要晚；
+- `setTimeout` 的固定时间间隔不一定与屏幕刷新时间相同，会引起丢帧。
+
+**应用场景：**
+
+1. 监听 scroll 函数
+
+```js
+$(window).on('scroll', function () {
+  window.requestAnimationFrame(scrollHandler);
+});
+```
+
+2. 平滑滚动到页面顶部
+
+```js
+const scrollToTop = () => {
+  const c = document.documentElement.scrollTop || document.body.scrollTop;
+  if (c > 0) {
+    window.requestAnimationFrame(scrollToTop);
+    window.scrollTo(0, c - c / 8);
+  }
+};
+scrollToTop();
+```
+
+3. 大量数据渲染
+4. 监控卡顿方法： 每秒中计算一次网页的 FPS，获得一列数据，然后分析。通俗地解释就是，通过 requestAnimationFrame API 来定时执行一些 JS 代码，如果浏览器卡顿，无法很好地保证渲染的频率，1s 中 frame 无法达到 60 帧，即可间接地反映浏览器的渲染帧率。
 
 ## 二、页面布局
 
@@ -594,11 +643,9 @@ z-index 元素的 position 属性需要是 relative，absolute 或是 fixed。
 2. 元素没有设置 position 属性为非 static 属性。解决：设置该元素的 position 属性为 relative，absolute 或是 fixed 中的一种；
 3. 元素在设置 z-index 的同时还设置了 float 浮动。解决：float 去除，改为 display：inline-block；
 
-
 ### 4. fixed 不相对于浏览器定位
 
 当元素祖先的 transform 属性非 none 时，容器由视口改为该祖先。
-
 
 ## 四、场景应用
 
@@ -620,8 +667,9 @@ z-index 元素的 position 属性需要是 relative，absolute 或是 fixed。
 
 解决方案：
 
-1. 直接写 0.5px
-   如果之前 1px 的样式这样写：
+1. **直接写 0.5px**
+
+如果之前 1px 的样式这样写：
 
 ```css
 border: 1px solid #333;
@@ -643,8 +691,9 @@ border: 1px solid #333;
 
 直接把 1px 改成 1/devicePixelRatio 后的值，这是目前为止最简单的一种方法。这种方法的缺陷在于兼容性不行，IOS 系统需要 8 及以上的版本，安卓系统则直接不兼容。
 
-2. 伪元素先放大后缩小
-   这个方法的可行性会更高，兼容性也更好。唯一的缺点是代码会变多。
+2. **伪元素先放大后缩小**
+   
+这个方法的可行性会更高，兼容性也更好。唯一的缺点是代码会变多。
 
 思路是先放大、后缩小：
 
@@ -672,7 +721,7 @@ border: 1px solid #333;
 }
 ```
 
-3. viewport 缩放来解决
+3. **viewport 缩放来解决**
 
 这个思路就是对 meta 标签里几个关键属性下手：
 
@@ -695,4 +744,3 @@ metaEl.setAttribute(
 ```
 
 这样解决了，但这样做的副作用也很大，整个页面被缩放了。这时 1px 已经被处理成物理像素大小，这样的大小在手机上显示边框很合适。但是，一些原本不需要被缩小的内容，比如文字、图片等，也被无差别缩小掉了
-
