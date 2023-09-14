@@ -89,9 +89,9 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
 
 - Promise.all
 
-  - 原理：返回一个 promise，在这个 promise 中给所有传入的 promise 的 then 方法中都注册上回调，回调成功了就把值放到结果数组中，所有回调都成功了就让返回的这个 promise 去 resolve，把结果数组返回出去
+**原理：**
 
-  - 手撕
+返回一个 promise，在这个 promise 中给所有传入的 promise 的 then 方法中都注册上回调，回调成功了就把值放到结果数组中，所有回调都成功了就让返回的这个 promise 去 resolve，把结果数组返回出去
 
 ```js
 MyPromise.all = function (iterable) {
@@ -118,9 +118,9 @@ MyPromise.all = function (iterable) {
 
 - Promise.race
 
-  - 原理：race 和 all 大同小异，只不过它不会等所有 promise 都成功，而是谁快就把谁返回出去
+**原理：**
 
-  - 手撕
+race 和 all 大同小异，只不过它不会等所有 promise 都成功，而是谁快就把谁返回出去
 
 ```js
 MyPromise.race = function (iterable) {
@@ -141,9 +141,9 @@ MyPromise.race = function (iterable) {
 
 - Promise.allSettled
 
-  - 原理：返回一个 promise，在这个 promise 中给所有传入的 promise 的 then 方法中都注册上回调，回调成功了就把值放到结果数组中，所有回调都成功了就让返回的这个 promise 去 resolve，把结果数组返回出去
+**原理：**
 
-  - 手撕
+返回一个 promise，在这个 promise 中给所有传入的 promise 的 then 方法中都注册上回调，回调成功了就把值放到结果数组中，所有回调都成功了就让返回的这个 promise 去 resolve，把结果数组返回出去
 
 ```js
 MyPromise.allSettled = function (iterable) {

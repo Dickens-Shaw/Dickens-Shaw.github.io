@@ -160,13 +160,11 @@ Array.prototype.isPrototypeOf(obj);
 
 在 MDN 中的解释：`instanceof`  运算符用来测试一个对象在其原型链中是否存在一个构造函数的  prototype  属性。其意思就是判断对象是否是某一数据类型（如 Array）的实例，请重点关注一下是判断一个对象是否是数据类型的实例。在这里字面量值，2， true ，'str'不是实例，所以判断值为 false。
 
-- 实现分析
+**实现分析：**
 
-  1. 首先获取类型的原型
-  2. 然后获得对象的原型
-  3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
-
-- 手撕
+1. 首先获取类型的原型
+2. 然后获得对象的原型
+3. 然后一直循环判断对象的原型是否等于类型的原型，直到对象原型为 null，因为原型链最终为 null
 
 ```js
 function myInstanceof(left, right) {
@@ -286,15 +284,13 @@ if (3n) {
 
 > `new`关键字就是绑定了实例与原型的关系，并且在实例的的上下文中调用构造函数
 
-- 实现分析：
+**实现分析：**
 
-  1. 创建一个空对象
-  2. 获取构造函数
-  3. 设置空对象的原型
-  4. 绑定 `this` 并执行构造函数
-  5. 确保返回值为对象
-
-- 手撕：
+1. 创建一个空对象
+2. 获取构造函数
+3. 设置空对象的原型
+4. 绑定 `this` 并执行构造函数
+5. 确保返回值为对象
 
 ```js
 function myNew() {
@@ -1828,69 +1824,11 @@ let sum = () => {}; //如果{}内容只有一行{}和return关键字可省,
 const sum = new Function('a', 'b', 'return a + b');
 ```
 
-### 判断构造函数与实例关系
-
-- `instanceof` 操作符
-
-  递归获取左侧对象的原型，判断其是否和右侧的原型对象相等，这里使用`Object.getPrototypeOf()`
-
-- `isPrototypeOf` 方法
-
-  不关心构造函数，它只需要一个可以用来判断的对象就行了，这里使用`Parent.prototype.isPrototypeOf(child)`，判断在`child`的原型链中是否出现过`Parent.prototype`
-
-
-### ES6 的 extends 被编译后
-
-```js
-function _possibleConstructorReturn(self, call) {
-  return call && (typeof call === 'object' || typeof call === 'function')
-    ? call
-    : self;
-}
-
-function _inherits(subClass, superClass) {
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true,
-    },
-  });
-  if (superClass)
-    Object.setPrototypeOf
-      ? Object.setPrototypeOf(subClass, superClass)
-      : (subClass.__proto__ = superClass);
-}
-
-var Parent = function Parent() {
-  // 验证是否是 Parent 构造出来的 this
-  _classCallCheck(this, Parent);
-};
-var Child = (function (_Parent) {
-  _inherits(Child, _Parent);
-  function Child() {
-    _classCallCheck(this, Child);
-    return _possibleConstructorReturn(
-      this,
-      (Child.__proto__ || Object.getPrototypeOf(Child)).apply(this, arguments)
-    );
-  }
-  return Child;
-})(Parent);
-```
-
-核心是`_inherits`函数，可以看到它采用的是————**寄生组合继承方式**，同时证明了这种方式的成功。不过这里加了一个`Object.setPrototypeOf(subClass, superClass)`，用来继承父类的静态方法。
-
-
-
 ### 防抖
 
 即短时间内大量触发同一事件，只会执行一次函数，实现原理为设置一个定时器，约定在 xx 毫秒后再触发事件处理，`每次触发事件都会重新设置计时器`，直到 xx 毫秒内无第二次操作。
 
 常用于搜索框/滚动条的监听事件处理，如果不做防抖，每输入一个字/滚动屏幕，都会触发事件处理，造成性能浪费。
-
-- 手撕：
 
 ```js
 function debounce(func, wait) {
@@ -1911,8 +1849,6 @@ function debounce(func, wait) {
 防抖是延迟执行，而节流是间隔执行，函数节流即每隔一段时间就执行一次，实现原理为设置一个定时器，约定 xx 毫秒后执行事件，如果时间到了，那么执行函数并重置定时器，和防抖的区别在于，防抖每次触发事件都重置定时器，而节流在`定时器到时间后再清空定时器`
 
 节流可以使用在 scroll 函数的事件监听上
-
-- 手撕：
 
 ```js
 function throttle(func, wait) {
@@ -1971,7 +1907,7 @@ function structuralClone(obj) {
 }
 ```
 
-- 手撕
+- 递归
 
 ```js
 // 简单实现
