@@ -1,19 +1,21 @@
 # Vue
 
-## 基本原理
+## 一、Vue 基础
 
-当一个 Vue 实例创建时，vue 会遍历 data 选项的属性，用 Object.defineProperty（vue3.0 使用 proxy ）将它们转为 getter/setter 并且在内部追踪相关依赖，在属性被访问和修改时通知变化。 每个组件实例都有相应的 watcher 程序实例，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的 setter 被调用时，会通知 watcher 重新计算，从而致使它关联的组件得以更新。
+### 1. 基本原理
+
+当一个 Vue 实例创建时，Vue 会遍历 data 选项的属性，用 Object.defineProperty（Vue3.0 使用 proxy）将它们转为 getter/setter 并且在内部追踪相关依赖，在属性被访问和修改时通知变化。 每个组件实例都有相应的 watcher 程序实例，它会在组件渲染的过程中把属性记录为依赖，之后当依赖项的 setter 被调用时，会通知 watcher 重新计算，从而致使它关联的组件得以更新。
 
 ![/images/](/images/vue1.png)
 
-## 响应式原理
+### 2. 响应式原理
 
 通过**数据劫持**结合**发布-订阅模式**实现：
 
-1. 实现一个监听器 Observer：对数据对象进行遍历，包括子属性对象的属性，利用 Object.defineProperty() 对属性都加上 setter 和 getter。这样的话，给这个对象的某个值赋值，就会触发 setter，那么就能监听到了数据变化。
+1. 实现一个监听器 `Observer`：对数据对象进行遍历，包括子属性对象的属性，利用 `Object.defineProperty()` 对属性都加上 `setter` 和 `getter`。这样的话，给这个对象的某个值赋值，就会触发 `setter`，那么就能监听到了数据变化。
 
 ```js
-function definereactive(obj, key, val) {
+function defineReactive(obj, key, val) {
   var dep = new Dep();
   Object.defineProperty(obj, key, {
     get: function () {
@@ -35,14 +37,14 @@ function definereactive(obj, key, val) {
 }
 function observe(obj, vm) {
   Object.keys(obj).forEach(function (key) {
-    definereactive(vm, key, obj[key]);
+    defineReactive(vm, key, obj[key]);
   });
 }
 ```
 
-2. 实现一个解析器 Compile：解析 Vue 模板指令，将模板中的变量都替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，调用更新函数进行数据更新。
+2. 实现一个解析器 `Compile`：解析 Vue 模板指令，将模板中的变量都替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，调用更新函数进行数据更新。
 
-3. 实现一个订阅者 Watcher：Watcher 订阅者是 Observer 和 Compile 之间通信的桥梁 ，主要的任务是订阅 Observer 中的属性值变化的消息，当收到属性值变化的消息时，触发解析器 Compile 中对应的更新函数。
+3. 实现一个订阅者 `Watcher`：`Watcher` 订阅者是 `Observer` 和 `Compile` 之间通信的桥梁 ，主要的任务是订阅 `Observer` 中的属性值变化的消息，当收到属性值变化的消息时，触发解析器 `Compile` 中对应的更新函数。
 
 ```js
 function Watcher(vm, node, name, type) {
@@ -67,7 +69,7 @@ Watcher.prototype = {
 };
 ```
 
-4.实现一个订阅器 Dep：订阅器采用 发布-订阅 设计模式，用来收集订阅者 Watcher，对监听器 Observer 和 订阅者 Watcher 进行统一管理。
+4.实现一个订阅器 `Dep`：订阅器采用 `发布-订阅` 设计模式，用来收集订阅者 `Watcher`，对监听器 `Observer` 和 订阅者 `Watcher` 进行统一管理。
 
 ```js
 function Dep() {
@@ -87,7 +89,7 @@ Dep.prototype = {
 
 ![/images/](/images/vue2.png)
 
-tips：
+**注意：**
 
 1. 任何一个 Vue Component 都有一个与之对应的 Watcher 实例。
 2. Vue 的 data 上的属性会被添加 getter 和 setter 属性。
@@ -96,178 +98,9 @@ tips：
 5. 在初始化 data props 时，递归对象，给每一个属性双向绑定，对于数组而言，会拿到原型重写函数，实现手动派发更新。因为函数不能监听到数据的变动，和 proxy 比较一下。
 6. 除了以上数组函数，通过索引改变数组数据或者给对象添加新属性也不能触发，需要使用自带的 set 函数，这个函数内部也是手动派发更新
 7. 在组件挂载时，会实例化渲染观察者，传入组件更新的回调。在实例化过程中，会对模板中的值对象进行求值，触发依赖收集。在触发依赖之前，会保存当前的渲染观察者，用于组件含有子组件的时候，恢复父组件的观察者。触发依赖收集后，会清理掉不需要的依赖，性能优化，防止不需要的地方去重复渲染。
-8. 改变值会触发依赖更新，会将收集到的所有依赖全部拿出来，放入 nextTick 中统一执行。执行过程中，会先对观察者进行排序，渲染的最后执行。先执行 beforeupdate 钩子函数，然后执行观察者的回调。在执行回调的过程中，可能 watch 会再次 push 进来，因为存在在回调中再次赋值，判断无限循环。
+8. 改变值会触发依赖更新，会将收集到的所有依赖全部拿出来，放入 nextTick 中统一执行。执行过程中，会先对观察者进行排序，渲染的最后执行。先执行 beforeUpdate 钩子函数，然后执行观察者的回调。在执行回调的过程中，可能 watch 会再次 push 进来，因为存在在回调中再次赋值，判断无限循环。
 
-## 单项数据流
-
-所有 prop 都使得其父子 prop 之间形成了一个单向下行绑定：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外修改父组件的状态。
-额外的，每次父组件发生变更时，子组件中所有 prop 都将会刷新为最新的值。这意味着你不应该在一个子组件内部改变 prop。如果你这样做了，Vue 会在浏览器控制台中发出警告。子组件想修改时，只能通过 $emit 派发一个自定义事件，父组件接收到后，由父组件修改。
-
-## 生命周期
-
-1. 在 beforeCreate 钩子函数调用的时候，是获取不到 props 或者 data 中的数据的，因为这些数据的初始化都在 initState 中。
-
-2. 然后会执行 created 钩子函数，在这一步的时候已经可以访问到之前不能访问到的数据，但是这时候组件还没被挂载，所以是看不到的。
-
-3. 接下来会先执行 beforeMount 钩子函数，开始创建 VDOM，最后执行 mounted 钩子，并将 VDOM 渲染为真实 DOM 并且渲染数据。组件中如果有子组件的话，会递归挂载子组件，只有当所有子组件全部挂载完毕，才会执行根组件的挂载钩子。
-
-4. 接下来是数据更新时会调用的钩子函数 beforeUpdate 和 updated，这两个钩子函数没什么好说的，就是分别在数据更新前和更新后会调用。
-
-5. 另外还有 keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数。
-
-6. 最后就是销毁组件的钩子函数 beforeDestroy 和 destroyed。前者适合移除事件、定时器等等，否则可能会引起内存泄露的问题。然后进行一系列的销毁操作，如果有子组件的话，也会递归销毁子组件，所有子组件都销毁完毕后才会执行根组件的 destroyed 钩子函数。
-
-## 组件通信
-
-- 父子组件
-  1. 父组件通过 props 传递数据给子组件，子组件通过 emit 发送事件传递数据给父组件（单项数据流）
-  2. ref、$parent / $children 对象来访问组件实例中的方法和数据
-  3. .sync 属性是个语法糖
-
-```js
-<!--父组件中-->
-<input :value.sync="value" />
-<!--以上写法等同于-->
-<input :value="value" @update:value="(v) => (value = v)" />
-<!--子组件中-->
-<script>
-this.$emit('update:value', 1)
-</script>
-```
-
-- 兄弟组件
-  查找父组件中的子组件实现，也就是 this.$parent.$children，在 $children 中可以通过组件 name 查询到需要的组件实例，然后进行通信
-
-- 跨层级组件
-
-  1. provide / inject：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
-  2. $attrs：包含了父作用域中不被 prop 所识别 (且获取) 的特性绑定 ( class 和 style 除外 )。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 ( class 和 style 除外 )，并且可以通过 v-bind="$attrs" 传入内部组件。通常配合 inheritAttrs 选项一起使用。
-  3. $listeners：包含了父作用域中的 (不含 .native 修饰器的) v-on 事件监听器。它可以通过 v-on="$listeners" 传入内部组件
-
-- 任意组件
-  Vuex 或者 Event Bus
-
-## 渲染过程
-
-- 初次渲染：
-
-  1. 解析模板为 render 函数
-  2. 触发响应式，监听 data 属性的 getter setter
-  3. 执行 render 函数，会生成 vnode 并且渲染出页面
-
-- 更新渲染：
-
-  1. 修改 data，触发 setter
-  2. 重新执行 render 函数，生成新的 vnode
-  3. diff 算法对比新旧 vnode ，更新页面
-
-- 异步渲染
-
-Vue 是组件级更新，如果不采用异步更新，那么每次更新数据都会对当前组件进行重新渲染，所以为了性能， Vue 会在本轮数据更新后，在异步更新视图。核心思想 nextTick。
-
-如果同一个watcher被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和 DOM 操作是非常重要的。
-
-`dep.notify（）` 通知 watcher 进行更新， `subs[i].update` 依次调用 `watcher` 的 `update` ， `queueWatcher` 将 `watcher` 去重放入队列， `nextTick（ flushSchedulerQueue ）`在下一 `tick` 中刷新 并执行（已去重）`watcher` 队列（异步）。
-
-## 编译过程
-
-vue 的模版编译过程主要如下：**template -> ast -> render 函数**
-
-vue 在模版编译版本的码中会执行 `compileToFunctions` 将 template 转化为 render 函数：
-
-```js
-// 将模板编译为render函数
-const { render, staticRenderFns } = compileToFunctions(
-  template,
-  {
-    shouldDecodeNewlines,
-    shouldDecodeNewlinesForHref,
-    delimiters: this.$options.delimiters,
-    comments: this.$options.comments,
-  },
-  this
-);
-```
-
-1. **调用parse方法将template转化为 AST（抽象语法树）：**
-
-通过各种各样的正则表达式去匹配模板中的内容，然后将内容提取出来做各种逻辑操作生成一个最基本的 AST 对象
-```js
-const ast = parse(template.trim(), options)
-```
-**AST元素节点总共三种类型：type为1表示普通元素、2为表达式、3为纯文本*
-
-2. **对静态节点做优化：**
-
-对节点进行了静态内容提取，也就是将永远不会变动的节点提取了出来打个标记，实现复用 Virtual DOM，跳过对比算法的功能，这对运行时模板更新起到了极大的优化作用。
-```js
-optimize(ast,options)
-```
-3. **将 AST 转换为 render 函数：**
-
-generate将ast抽象语法树编译成 render字符串并将静态部分放到 `staticRenderFns` 中，最后通过 `new Function(render)` 生成render函数
-```js
-const code = generate(ast, options)
-```
-
-## 性能优化
-
-- v-if 和 v-show 区分使用场景
-- computed 和 watch 区分使用场景
-- v-for 遍历必须为 item 添加 key，且避免同时使用 v-if
-- 长列表性能优化
-- 事件的销毁
-- 图片资源懒加载
-- 路由懒加载
-- 第三方插件的按需引入
-- 优化无限列表性能
-- 服务端渲染 SSR or 预渲染
-
-## Diff
-
-diff 学习 snabbdom.js
-双端标记学习 cito.js
-vue 的数据检测原理是可以知道哪里用到了某个数据，数据变化的时候可以直接通知到对应的 watcher 进行修改。那为什么还需要用 diff 算法呢？因为粒度太细，会有很多 watcher 同时观察某个状态，会有一些内存开销以及一些依赖追踪的开销，所以 Vue.js 2.0 采用了一个中等粒度的解决方案，状态侦测不再细化到某个具体节点，而是组件，组件内部通过虚拟 DOM 来渲染视图，这可以大大缩减依赖数量和 watcher 数量
-
-在 Vue.js 2.0 版本中组件更新渲染的时候，会使用新创建的虚拟节点和将上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实 DOM 节点，从而避免不必要的 DOM 操作，节省一定的性能。
-在采取 diff 算法比较新旧节点的时候，比较只会在同层级进行, 不会跨层级比较。
-
-diff 算法源码执行函数依次是：
-
-- patch (oldVnode, vnode) ：
-  - 调用 sameVnode 方法更具 tag、key 判断是否为相同元素：
-  - 相同则走 patchVnode()
-  - 不同则创建新的删除旧的
-- patchVnode (oldVnode, vnode)
-  - 如果新旧节点都有 children 则调用 updateChildren
-  - 否则通过对比新旧节点有无 text 和 children 来做相应的增删或更新
-- updateChildren (parentElm, oldCh, newCh)
-
-  通过`双端标记法`
-  对比新老 children 的 start 和 end 是否相等，头头、尾尾、头尾、尾头
-
-  如果四种都未命中则拿新 children 的开始的 key 去老 children 里找：
-
-  - 没有的话直接添加
-  - 有的话对比 tag(sel)是否相等：
-    - 不等则直接添加
-    - 相等的话，调用 patchVnode 后。将找到的 old 节点值为 undefine，然后添加新的节点
-
-## mixin 和 mixins 区别
-
-mixin 用于全局混入，会影响到每个组件实例，通常插件都是这样做初始化的，可以全局混入装好的 ajax 或者一些工具函数
-
-mixins 应该是我们最常使用的扩展组件的方式了。如果多个组件中有相同的业务逻辑，就可以将这些逻辑剥离出来，通过 mixins 混入代码，比如上拉下拉加载数据这种逻辑等等。
-mixins 混入的钩子函数会先于组件内的钩子函数执行，并且在遇到同名选项的时候也会有选择性的进行合并
-
-## v-show 与 v-if 区别
-
-v-show 只是在 display: none 和 display: block 之间切换。无论初始条件是什么都会被渲染出来，后面只需要切换 CSS，DOM 还是一直保留着的。所以总的来说 v-show 在初始渲染时有更高的开销，但是切换开销很小，**更适合于频繁切换的场景**。
-
-v-if 会调用`addIfCondition`方法，生成 vnode 的时候会忽略对应节点，render 的时候就不会渲染。当属性切换时会触发销毁/挂载组件，所以总的来说在切换时开销更高，更适合不经常切换的场景。
-并且基于 v-if 的这种**惰性渲染机制**，可以在必要的时候才去渲染组件，**减少整个页面的初始渲染开销**。
-
-## computed
+### 3. computed 计算属性
 
 计算属性，依赖其他属性计算值。并且 computed 的值有缓存，只有当计算值变化才变化触发渲染
 
@@ -283,7 +116,7 @@ v-if 会调用`addIfCondition`方法，生成 vnode 的时候会忽略对应节�
 - 如果一个属性是由其他属性计算而来的，这个属性依赖其他的属性，一般会使用 computed
 - 如果 computed 属性的属性值是函数，那么默认使用 get 方法，函数的返回值就是属性的属性值；在 computed 中，属性有一个 get 方法和一个 set 方法，当数据发生变化时，会调用 set 方法。
 
-## watch
+### 4. watch 侦听器
 
 更多的是观察的作用，无缓存性，监听到值得变化就会执行回调
 
@@ -299,41 +132,7 @@ v-if 会调用`addIfCondition`方法，生成 vnode 的时候会忽略对应节�
 - 当一个属性发生变化时，就需要执行相应的操作
 - 监听数据必须是 data 中声明的或者父组件传递过来的 props 中的数据，当发生变化时，会触发其他操作
 
-## 组件 data 为什么是函数
-
-Vue 组件可能存在多个实例，如果使用对象形式定义 data，则会导致它们共用一个 data 对象，作用域没有隔离，那么状态变更将会影响所有组件实例，这是不合理的；
-
-采用函数形式定义，在 initData 时会将其作为工厂函数返回全新 data 对象，每个实例可以维护一份被返回对象的独立的拷贝，组件实例之间的 data 属性值不会互相影响，有效规避多实例之间状态污染问题。
-
-而在 Vue 根实例创建过程中则不存在该限制，也是因为根实例只能有一个不会被复用，不存在引用对象的问题，所以不需要担心这种情况
-
-## v-for 的 key
-
-在虚拟 DOM 算法，在新旧 nodes 对比时辨识 VNode。
-
-如果不使用 key，Vue 会使用一种最大限度减少新增或删除元素并且尽可能地尝试修复/再利用相同类型元素的算法。（就地复用 tag 相同的真实 DOM 元素）。
-
-使用 key, 则直接复用 key 值相同的元素。
-
-带 key 的组件能够触发过渡效果，以及触发组件的声明周期
-
-## v-model
-
-v-model 在模板编译的时候转换代码
-
-v-model 本质是 :value 和 @input，但是略微有点区别。在输入控件下，有两个事件监听，输入中文时只有当输出中文才触发数据赋值
-
-v-model 和:bind 同时使用，前者优先级更高，如果 :value 会出现冲突
-
-v-model 因为语法糖的原因，还可以用于父子通信，默认会利用名为 value 的 prop 和名为 input 的事件，通过 prop 和 $.emit 实现
-
-## Vue.set 原理
-
-1. 如果目标是数组，直接使用数组的 splice 方法触发相应式；
-
-2. 如果目标是对象，会先判读属性是否存在、对象是否是响应式，最终如果要对属性进行响应式处理，则是通过调用 defineReactive 方法进行响应式处理（defineReactive 方法就是 Vue 在初始化对象时，给对象属性采用 Object.defineProperty 动态添加 getter 和 setter 的功能所调用的方法）
-
-## slot 插槽
+### 5. slot 插槽
 
 是 Vue 的内容分发机制，组件内部的模板引擎使用 slot 元素作为承载分发内容的出口。插槽 slot 是子组件的一个模板标签元素，而这一个标签元素是否显示，以及怎么显示是由父组件决定的。
 
@@ -347,160 +146,108 @@ v-model 因为语法糖的原因，还可以用于父子通信，默认会利用
 
 当子组件 vm 实例化时，获取到父组件传入的 slot 标签的内容，存放在 vm.$slot中，默认插槽为vm.$slot.default，具名插槽为 vm.$slot.xxx，xxx 为插槽名，当组件执行渲染函数时候，遇到slot标签，使用$slot 中的内容进行替换，此时可以为插槽传递数据，若存在数据，则可称该插槽为作用域插槽。
 
-## nextTick
+### 6. filters 过滤器
 
-可以让我们在下次 DOM 更新循环结束之后执行延迟回调，用于获得更新后的 DOM
+根据过滤器的名称，过滤器是用来过滤数据的，在 Vue 中使用 filters 来过滤数据，filters 不会修改数据，而是过滤数据，改变用户看到的输出（计算属性 computed ，方法 methods 都是通过修改数据来处理数据格式的输出显示）。
 
-在 Vue 2.4 之前都是使用的 microtasks，但是 microtasks 的优先级过高，在某些情况下可能会出现比事件冒泡更快的情况，但如果都使用 macrotasks 又可能会出现渲染的性能问题。所以在新版本中，会默认使用 microtasks，但在特殊情况下会使用 macrotasks，比如 v-on。
+使用场景：
 
-**使用场景**
+- 需要格式化数据的情况，比如需要处理时间、价格等数据格式的输出 / 显示。
+- 比如后端返回一个 年月日的日期字符串，前端需要展示为 多少天前 的数据格式，此时就可以用 fliters 过滤器来处理数据。
 
-第一个参数为：回调函数（可以获取最近的 DOM 结构）
+过滤器是一个函数，它会把表达式中的值始终当作函数的第一个参数。过滤器用在插值表达式 {{ }} 和 v-bind 表达式 中，然后放在操作符“ | ”后面进行指示。
 
-第二个参数为：执行函数上下文
-
-```js
-// 修改数据
-vm.message = '修改后的值';
-// DOM 还没有更新
-console.log(vm.$el.textContent); // 原始的值
-Vue.nextTick(function () {
-  // DOM 更新了
-  console.log(vm.$el.textContent); // 修改后的值
-});
-```
-
-组件内使用 `vm.$nextTick()` 实例方法只需要通过`this.$nextTick()`，并且回调函数中的 this 将自动绑定到当前的 Vue 实例上
+例如，在显示金额，给商品价格添加单位：
 
 ```js
-this.message = '修改后的值';
-console.log(this.$el.textContent); // => '原始的值'
-this.$nextTick(function () {
-  console.log(this.$el.textContent); // => '修改后的值'
-});
-```
+<li>商品价格：{{item.price | filterPrice}}</li>
 
-`$nextTick()` 会返回一个 `Promise` 对象，可以是用`async/await`完成相同作用的事情
-
-```js
-this.message = '修改后的值';
-console.log(this.$el.textContent); // => '原始的值'
-await this.$nextTick();
-console.log(this.$el.textContent); // => '修改后的值'
-```
-
-**实现原理**
-
-源码位置：`/src/core/util/next-tick.js`
-
-`callbacks` 也就是异步操作队列
-
-`callbacks` 新增回调函数后又执行了 `timerFunc` 函数， `pending` 是用来标识同一个时间只能执行一次
-
-```js
-export function nextTick(cb?: Function, ctx?: Object) {
-  let _resolve;
-
-  // cb 回调函数会经统一处理压入 callbacks 数组
-  callbacks.push(() => {
-    if (cb) {
-      // 给 cb 回调函数执行加上了 try-catch 错误处理
-      try {
-        cb.call(ctx);
-      } catch (e) {
-        handleError(e, ctx, 'nextTick');
-      }
-    } else if (_resolve) {
-      _resolve(ctx);
+ filters: {
+    filterPrice (price) {
+      return price ? ('￥' + price) : '--'
     }
-  });
-
-  // 执行异步延迟函数 timerFunc
-  if (!pending) {
-    pending = true;
-    timerFunc();
   }
-
-  // 当 nextTick 没有传入函数参数的时候，返回一个 Promise 化的调用
-  if (!cb && typeof Promise !== 'undefined') {
-    return new Promise((resolve) => {
-      _resolve = resolve;
-    });
-  }
-}
 ```
 
-`timerFunc` 函数定义，这里是根据当前环境支持什么方法则确定调用哪个，分别有：
+### 7. 事件修饰符
 
-`Promise.then、MutationObserver、setImmediate、setTimeout`
+- `.stop`：等同于 JavaScript 中的 `event.stopPropagation()` ，防止事件冒泡；
+- `.prevent`：等同于 JavaScript 中的 `event.preventDefault()` ，防止执行预设的行为（如果事件可取消，则取消该事件，而不停止事件的进一步传播）；
+- `.capture`：与事件冒泡的方向相反，事件捕获由外到内；
+- `.self`：只会触发自己范围内的事件，不包含子元素；
+- `.once`：只会触发一次。
 
-通过上面任意一种方法，进行降级操作
+### 8. v-if/v-show/v-html 原理
 
-```js
-export let isUsingMicroTask = false;
-if (typeof Promise !== 'undefined' && isNative(Promise)) {
-  //判断1：是否原生支持Promise
-  const p = Promise.resolve();
-  timerFunc = () => {
-    p.then(flushCallbacks);
-    if (isIOS) setTimeout(noop);
-  };
-  isUsingMicroTask = true;
-} else if (
-  !isIE &&
-  typeof MutationObserver !== 'undefined' &&
-  (isNative(MutationObserver) ||
-    MutationObserver.toString() === '[object MutationObserverConstructor]')
-) {
-  //判断2：是否原生支持MutationObserver
-  let counter = 1;
-  const observer = new MutationObserver(flushCallbacks);
-  const textNode = document.createTextNode(String(counter));
-  observer.observe(textNode, {
-    characterData: true,
-  });
-  timerFunc = () => {
-    counter = (counter + 1) % 2;
-    textNode.data = String(counter);
-  };
-  isUsingMicroTask = true;
-} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
-  //判断3：是否原生支持setImmediate
-  timerFunc = () => {
-    setImmediate(flushCallbacks);
-  };
-} else {
-  //判断4：上面都不行，直接用setTimeout
-  timerFunc = () => {
-    setTimeout(flushCallbacks, 0);
-  };
-}
-```
+- **v-if：** 调用`addIfCondition`方法，生成 vNode 的时候会忽略对应节点，`render`的时候就不会渲染；
+- **v-show：** 生成 vNode，`render`的时候也会渲染成真实节点，只是在`render`过程中会在节点的属性中修改`show`属性值，也就是常说的`display`；
+- **v-html：** 先移除节点下的所有节点，调用`html`方法，通过`addProp`添加`innerHTML`属性，归根结底还是设置`innerHTML`为 v-html 的值。
 
-无论是微任务还是宏任务，都会放到 flushCallbacks 使用
+### 9 .v-if 和 v-show 区别
 
-这里将 callbacks 里面的函数复制一份，同时 callbacks 置空
+- **手段：** v-if 是动态的向 DOM 树内添加或者删除 DOM 元素；v-show 是通过设置 DOM 元素的 display 样式属性控制显隐；
+- **编译过程：** v-if 切换有一个局部编译/卸载的过程，切换过程中合适地销毁和重建内部的事件监听和子组件；v-show 只是简单的基于 css 切换；
+- **编译条件：** v-if 是惰性的，如果初始条件为假，则什么也不做；只有在条件第一次变为真时才开始局部编译; v-show 是在任何条件下，无论首次条件是否为真，都被编译，然后被缓存，而且 DOM 元素保留；
+- **性能消耗：** v-if 有更高的切换消耗；v-show 有更高的初始渲染消耗；
+- **使用场景：** v-if 适合运营条件不大可能改变；v-show 适合频繁切换。
 
-依次执行 callbacks 里面的函数
+### 10. v-model
 
-```js
-function flushCallbacks() {
-  pending = false;
-  const copies = callbacks.slice(0);
-  callbacks.length = 0;
-  for (let i = 0; i < copies.length; i++) {
-    copies[i]();
-  }
-}
-```
+v-model 在**模板编译的时候转换代码**
 
-**小结：**
+1. **作用在表单元素上**
 
-1. 把回调函数放入 callbacks 等待执行
-2. 将执行函数放到微任务或者宏任务中
-3. 事件循环到了微任务或者宏任务，执行函数依次执行 callbacks 中的回调
+   本质是 :value 和 @input，但是略微有点区别。在输入控件下，有两个事件监听，输入中文时只有当输出中文才触发数据赋值
 
-## keep-alive
+   v-model 和:bind 同时使用，前者优先级更高，如果 :value 会出现冲突
+
+   ```js
+   <input v-model="sth" />
+   //  等同于
+   <input
+    v-bind:value="message"
+    v-on:input="message=$event.target.value"
+   >
+   //$event 指代当前触发的事件对象;
+   //$event.target 指代当前触发的事件对象的dom;
+   //$event.target.value 就是当前dom的value值;
+   //在@input方法中，value => sth;
+   //在:value中,sth => value;
+   ```
+
+2. **作用在组件上**
+
+   因为语法糖的原因，还可以用于父子通信，默认会利用名为 value 的 prop 和名为 input 的事件，通过 prop 和 $.emit 实现
+
+   ```js
+   // 父组件
+   <aa-input v-model="aa"></aa-input>
+   // 等价于
+   <aa-input :value="aa" @input="aa=$event.target.value"></aa-input>
+
+   // 子组件：
+   <input :value="aa" @input="onmessage"></aa-input>
+
+   props:{value:aa}
+   methods:{
+     onmessage(e){
+       $emit('input',e.target.value)
+     }
+   }
+
+   ```
+
+
+### 11.  data 为什么是函数
+
+Vue 组件可能存在多个实例，如果使用对象形式定义 data，则会导致它们共用一个 data 对象，作用域没有隔离，那么状态变更将会影响所有组件实例，这是不合理的；
+
+采用函数形式定义，在 initData 时会将其作为工厂函数返回全新 data 对象，每个实例可以维护一份被返回对象的独立的拷贝，组件实例之间的 data 属性值不会互相影响，有效规避多实例之间状态污染问题。
+
+而在 Vue 根实例创建过程中则不存在该限制，也是因为根实例只能有一个不会被复用，不存在引用对象的问题，所以不需要担心这种情况
+
+
+### 12. keep-alive
 
 keep-alive 是 Vue 内置组件，主要用于保留组件状态或避免重新渲染。
 
@@ -719,7 +466,172 @@ LRU（Least rencently used）算法根据数据的历史访问记录来进行淘
 - 每当缓存命中（即缓存数据被访问），则将数据移到链表头部
 - 链表满的时候，将链表尾部的数据丢弃。
 
-## 数组封装
+
+### 13. $nextTick
+
+可以让我们在下次 DOM 更新循环结束之后执行延迟回调，用于获得更新后的 DOM
+
+在 Vue 2.4 之前都是使用的 microtasks，但是 microtasks 的优先级过高，在某些情况下可能会出现比事件冒泡更快的情况，但如果都使用 macrotasks 又可能会出现渲染的性能问题。所以在新版本中，会默认使用 microtasks，但在特殊情况下会使用 macrotasks，比如 v-on。
+
+**核心：** 是利用了如 Promise 、MutationObserver、setImmediate、setTimeout的原生 JavaScript 方法来模拟对应的微/宏任务的实现
+
+**本质：** 是为了利用 JavaScript 的这些异步回调任务队列来实现 Vue 框架中自己的异步回调队列，同时也允许开发者在实际项目中使用这个方法来满足实际应用中对 DOM 更新数据时机的后续逻辑处理
+
+nextTick 是典型的将底层 JavaScript 执行原理应用 `EventLoop` 到具体案例中的示例，引入异步更新队列机制的原因∶
+- 如果是同步更新，则多次对一个或多个属性赋值，会频繁触发 UI/DOM 的渲染，可以减少一些无用渲染
+- 同时由于 VirtualDOM 的引入，每一次状态发生变化后，状态变化的信号会发送给组件，组件内部使用 VirtualDOM 进行计算得出需要更新的具体的 DOM 节点，然后对 DOM 进行更新操作，每次更新状态后的渲染过程需要更多的计算，而这种无用功也将浪费更多的性能，所以异步渲染变得更加至关重要
+
+**使用场景**
+
+- 在数据变化后执行的某个操作，而这个操作需要使用随数据变化而变化的DOM结构的时候，这个操作就需要方法在nextTick()的回调函数中。
+- 在vue生命周期中，如果在created()钩子进行DOM操作，也一定要放在nextTick()的回调函数中。
+
+第一个参数为：回调函数（可以获取最近的 DOM 结构）
+
+第二个参数为：执行函数上下文
+
+```js
+// 修改数据
+vm.message = '修改后的值';
+// DOM 还没有更新
+console.log(vm.$el.textContent); // 原始的值
+Vue.nextTick(function () {
+  // DOM 更新了
+  console.log(vm.$el.textContent); // 修改后的值
+});
+```
+
+组件内使用 `vm.$nextTick()` 实例方法只需要通过`this.$nextTick()`，并且回调函数中的 this 将自动绑定到当前的 Vue 实例上
+
+```js
+this.message = '修改后的值';
+console.log(this.$el.textContent); // => '原始的值'
+this.$nextTick(function () {
+  console.log(this.$el.textContent); // => '修改后的值'
+});
+```
+
+`$nextTick()` 会返回一个 `Promise` 对象，可以是用`async/await`完成相同作用的事情
+
+```js
+this.message = '修改后的值';
+console.log(this.$el.textContent); // => '原始的值'
+await this.$nextTick();
+console.log(this.$el.textContent); // => '修改后的值'
+```
+
+**实现原理**
+
+源码位置：`/src/core/util/next-tick.js`
+
+`callbacks` 也就是异步操作队列
+
+`callbacks` 新增回调函数后又执行了 `timerFunc` 函数， `pending` 是用来标识同一个时间只能执行一次
+
+```js
+export function nextTick(cb?: Function, ctx?: Object) {
+  let _resolve;
+
+  // cb 回调函数会经统一处理压入 callbacks 数组
+  callbacks.push(() => {
+    if (cb) {
+      // 给 cb 回调函数执行加上了 try-catch 错误处理
+      try {
+        cb.call(ctx);
+      } catch (e) {
+        handleError(e, ctx, 'nextTick');
+      }
+    } else if (_resolve) {
+      _resolve(ctx);
+    }
+  });
+
+  // 执行异步延迟函数 timerFunc
+  if (!pending) {
+    pending = true;
+    timerFunc();
+  }
+
+  // 当 nextTick 没有传入函数参数的时候，返回一个 Promise 化的调用
+  if (!cb && typeof Promise !== 'undefined') {
+    return new Promise((resolve) => {
+      _resolve = resolve;
+    });
+  }
+}
+```
+
+`timerFunc` 函数定义，这里是根据当前环境支持什么方法则确定调用哪个，分别有：
+
+`Promise.then、MutationObserver、setImmediate、setTimeout`
+
+通过上面任意一种方法，进行降级操作
+
+```js
+export let isUsingMicroTask = false;
+if (typeof Promise !== 'undefined' && isNative(Promise)) {
+  //判断1：是否原生支持Promise
+  const p = Promise.resolve();
+  timerFunc = () => {
+    p.then(flushCallbacks);
+    if (isIOS) setTimeout(noop);
+  };
+  isUsingMicroTask = true;
+} else if (
+  !isIE &&
+  typeof MutationObserver !== 'undefined' &&
+  (isNative(MutationObserver) ||
+    MutationObserver.toString() === '[object MutationObserverConstructor]')
+) {
+  //判断2：是否原生支持MutationObserver
+  let counter = 1;
+  const observer = new MutationObserver(flushCallbacks);
+  const textNode = document.createTextNode(String(counter));
+  observer.observe(textNode, {
+    characterData: true,
+  });
+  timerFunc = () => {
+    counter = (counter + 1) % 2;
+    textNode.data = String(counter);
+  };
+  isUsingMicroTask = true;
+} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
+  //判断3：是否原生支持setImmediate
+  timerFunc = () => {
+    setImmediate(flushCallbacks);
+  };
+} else {
+  //判断4：上面都不行，直接用setTimeout
+  timerFunc = () => {
+    setTimeout(flushCallbacks, 0);
+  };
+}
+```
+
+无论是微任务还是宏任务，都会放到 flushCallbacks 使用
+
+这里将 callbacks 里面的函数复制一份，同时 callbacks 置空
+
+依次执行 callbacks 里面的函数
+
+```js
+function flushCallbacks() {
+  pending = false;
+  const copies = callbacks.slice(0);
+  callbacks.length = 0;
+  for (let i = 0; i < copies.length; i++) {
+    copies[i]();
+  }
+}
+```
+
+**小结：**
+
+1. 把回调函数放入 callbacks 等待执行
+2. 将执行函数放到微任务或者宏任务中
+3. 事件循环到了微任务或者宏任务，执行函数依次执行 callbacks 中的回调
+
+### 14. 数组封装
 
 在 Vue 中，对响应式处理利用的是 Object.defineProperty 对数据进行拦截，而这个方法并不能监听到数组内部变化，数组长度变化，数组的截取变化等，所以需要对这些操作进行 hack，让 Vue 能监听到其中的变化。
 
@@ -773,6 +685,190 @@ methodsToPatch.forEach(function (method) {
 ```
 
 简单来说就是，重写了数组中的那些原生方法，首先获取到这个数组的`__ob__`，也就是它的`Observer`对象，如果有新的值，就调用`observeArray`继续对新的值观察变化（也就是通过`target__proto__ == arrayMethods`来改变了数组实例的型），然后手动调用 notify，通知渲染 watcher，执行 update。
+
+### 15. 模板编译
+
+Vue 的模版编译过程主要如下：**template -> ast -> render 函数**
+
+Vue 在模版编译版本的码中会执行 `compileToFunctions` 将 template 转化为 render 函数：
+
+```js
+// 将模板编译为render函数
+const { render, staticRenderFns } = compileToFunctions(
+  template,
+  {
+    shouldDecodeNewlines,
+    shouldDecodeNewlinesForHref,
+    delimiters: this.$options.delimiters,
+    comments: this.$options.comments,
+  },
+  this
+);
+```
+
+1. **调用 parse 方法将 template 转化为 AST（抽象语法树）：**
+
+通过各种各样的正则表达式去匹配模板中的内容，然后将内容提取出来做各种逻辑操作生成一个最基本的 AST 对象
+
+```js
+const ast = parse(template.trim(), options);
+```
+
+\*_AST 元素节点总共三种类型：type 为 1 表示普通元素、2 为表达式、3 为纯文本_
+
+2. **对静态节点做优化：**
+
+对节点进行了静态内容提取，也就是将永远不会变动的节点提取了出来打个标记，实现复用 Virtual DOM，跳过对比算法的功能，这对运行时模板更新起到了极大的优化作用。
+
+```js
+optimize(ast, options);
+```
+
+3. **将 AST 转换为 render 函数：**
+
+generate 将 ast 抽象语法树编译成 render 字符串并将静态部分放到 `staticRenderFns` 中，最后通过 `new Function(render)` 生成 render 函数
+
+```js
+const code = generate(ast, options);
+```
+
+## 单项数据流
+
+所有 prop 都使得其父子 prop 之间形成了一个单向下行绑定：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外修改父组件的状态。
+额外的，每次父组件发生变更时，子组件中所有 prop 都将会刷新为最新的值。这意味着你不应该在一个子组件内部改变 prop。如果你这样做了，Vue 会在浏览器控制台中发出警告。子组件想修改时，只能通过 $emit 派发一个自定义事件，父组件接收到后，由父组件修改。
+
+## 生命周期
+
+1. 在 beforeCreate 钩子函数调用的时候，是获取不到 props 或者 data 中的数据的，因为这些数据的初始化都在 initState 中。
+
+2. 然后会执行 created 钩子函数，在这一步的时候已经可以访问到之前不能访问到的数据，但是这时候组件还没被挂载，所以是看不到的。
+
+3. 接下来会先执行 beforeMount 钩子函数，开始创建 VDOM，最后执行 mounted 钩子，并将 VDOM 渲染为真实 DOM 并且渲染数据。组件中如果有子组件的话，会递归挂载子组件，只有当所有子组件全部挂载完毕，才会执行根组件的挂载钩子。
+
+4. 接下来是数据更新时会调用的钩子函数 beforeUpdate 和 updated，这两个钩子函数没什么好说的，就是分别在数据更新前和更新后会调用。
+
+5. 另外还有 keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数。
+
+6. 最后就是销毁组件的钩子函数 beforeDestroy 和 destroyed。前者适合移除事件、定时器等等，否则可能会引起内存泄露的问题。然后进行一系列的销毁操作，如果有子组件的话，也会递归销毁子组件，所有子组件都销毁完毕后才会执行根组件的 destroyed 钩子函数。
+
+## 组件通信
+
+- 父子组件
+
+1. 父组件通过 props 传递数据给子组件，子组件通过 emit 发送事件传递数据给父组件（单项数据流）
+2. ref、$parent / $children 对象来访问组件实例中的方法和数据
+3. .sync 属性是个语法糖
+
+```js
+<!--父组件中-->
+<input :value.sync="value" />
+<!--以上写法等同于-->
+<input :value="value" @update:value="(v) => (value = v)" />
+<!--子组件中-->
+<script>
+this.$emit('update:value', 1)
+</script>
+```
+
+- 兄弟组件
+  查找父组件中的子组件实现，也就是 this.$parent.$children，在 $children 中可以通过组件 name 查询到需要的组件实例，然后进行通信
+
+- 跨层级组件
+
+  1. provide / inject：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
+  2. $attrs：包含了父作用域中不被 prop 所识别 (且获取) 的特性绑定 ( class 和 style 除外 )。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 ( class 和 style 除外 )，并且可以通过 v-bind="$attrs" 传入内部组件。通常配合 inheritAttrs 选项一起使用。
+  3. $listeners：包含了父作用域中的 (不含 .native 修饰器的) v-on 事件监听器。它可以通过 v-on="$listeners" 传入内部组件
+
+- 任意组件
+  Vuex 或者 Event Bus
+
+## 渲染过程
+
+- 初次渲染：
+
+  1. 解析模板为 render 函数
+  2. 触发响应式，监听 data 属性的 getter setter
+  3. 执行 render 函数，会生成 vnode 并且渲染出页面
+
+- 更新渲染：
+
+  1. 修改 data，触发 setter
+  2. 重新执行 render 函数，生成新的 vnode
+  3. diff 算法对比新旧 vnode ，更新页面
+
+- 异步渲染
+
+Vue 是组件级更新，如果不采用异步更新，那么每次更新数据都会对当前组件进行重新渲染，所以为了性能， Vue 会在本轮数据更新后，在异步更新视图。核心思想 nextTick。
+
+如果同一个 watcher 被多次触发，只会被推入到队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和 DOM 操作是非常重要的。
+
+`dep.notify（）` 通知 watcher 进行更新， `subs[i].update` 依次调用 `watcher` 的 `update` ， `queueWatcher` 将 `watcher` 去重放入队列， `nextTick（ flushSchedulerQueue ）`在下一 `tick` 中刷新 并执行（已去重）`watcher` 队列（异步）。
+
+## 性能优化
+
+- v-if 和 v-show 区分使用场景
+- computed 和 watch 区分使用场景
+- v-for 遍历必须为 item 添加 key，且避免同时使用 v-if
+- 长列表性能优化
+- 事件的销毁
+- 图片资源懒加载
+- 路由懒加载
+- 第三方插件的按需引入
+- 优化无限列表性能
+- 服务端渲染 SSR or 预渲染
+
+## Diff
+
+diff 学习 snabbdom.js
+双端标记学习 cito.js
+Vue 的数据检测原理是可以知道哪里用到了某个数据，数据变化的时候可以直接通知到对应的 watcher 进行修改。那为什么还需要用 diff 算法呢？因为粒度太细，会有很多 watcher 同时观察某个状态，会有一些内存开销以及一些依赖追踪的开销，所以 Vue.js 2.0 采用了一个中等粒度的解决方案，状态侦测不再细化到某个具体节点，而是组件，组件内部通过虚拟 DOM 来渲染视图，这可以大大缩减依赖数量和 watcher 数量
+
+在 Vue.js 2.0 版本中组件更新渲染的时候，会使用新创建的虚拟节点和将上一次渲染时缓存的虚拟节点进行对比，然后根据对比结果只更新需要更新的真实 DOM 节点，从而避免不必要的 DOM 操作，节省一定的性能。
+在采取 diff 算法比较新旧节点的时候，比较只会在同层级进行, 不会跨层级比较。
+
+diff 算法源码执行函数依次是：
+
+- patch (oldVnode, vnode) ：
+  - 调用 sameVnode 方法更具 tag、key 判断是否为相同元素：
+  - 相同则走 patchVnode()
+  - 不同则创建新的删除旧的
+- patchVnode (oldVnode, vnode)
+  - 如果新旧节点都有 children 则调用 updateChildren
+  - 否则通过对比新旧节点有无 text 和 children 来做相应的增删或更新
+- updateChildren (parentElm, oldCh, newCh)
+
+  通过`双端标记法`
+  对比新老 children 的 start 和 end 是否相等，头头、尾尾、头尾、尾头
+
+  如果四种都未命中则拿新 children 的开始的 key 去老 children 里找：
+
+  - 没有的话直接添加
+  - 有的话对比 tag(sel)是否相等：
+    - 不等则直接添加
+    - 相等的话，调用 patchVnode 后。将找到的 old 节点值为 undefine，然后添加新的节点
+
+## mixin 和 mixins 区别
+
+mixin 用于全局混入，会影响到每个组件实例，通常插件都是这样做初始化的，可以全局混入装好的 ajax 或者一些工具函数
+
+mixins 应该是我们最常使用的扩展组件的方式了。如果多个组件中有相同的业务逻辑，就可以将这些逻辑剥离出来，通过 mixins 混入代码，比如上拉下拉加载数据这种逻辑等等。
+mixins 混入的钩子函数会先于组件内的钩子函数执行，并且在遇到同名选项的时候也会有选择性的进行合并
+
+## v-for 的 key
+
+在虚拟 DOM 算法，在新旧 nodes 对比时辨识 VNode。
+
+如果不使用 key，Vue 会使用一种最大限度减少新增或删除元素并且尽可能地尝试修复/再利用相同类型元素的算法。（就地复用 tag 相同的真实 DOM 元素）。
+
+使用 key, 则直接复用 key 值相同的元素。
+
+带 key 的组件能够触发过渡效果，以及触发组件的声明周期
+
+## Vue.set 原理
+
+1. 如果目标是数组，直接使用数组的 splice 方法触发相应式；
+
+2. 如果目标是对象，会先判读属性是否存在、对象是否是响应式，最终如果要对属性进行响应式处理，则是通过调用 defineReactive 方法进行响应式处理（defineReactive 方法就是 Vue 在初始化对象时，给对象属性采用 Object.defineProperty 动态添加 getter 和 setter 的功能所调用的方法）
 
 ## Proxy 对比
 

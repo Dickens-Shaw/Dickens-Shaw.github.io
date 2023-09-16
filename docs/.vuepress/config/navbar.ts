@@ -31,6 +31,23 @@ export const navbar: NavbarConfig = [
     ]
   },
   {
+    text: '框架',
+    children: [
+      {
+        text: 'MVVM',
+        link: '/frame/common',
+      },
+      {
+        text: 'React',
+        link: '/frame/react',
+      },
+      {
+        text: 'Vue',
+        link: '/frame/vue',
+      },
+    ]
+  },
+  {
     text: '进阶',
     children: [
       {
@@ -52,23 +69,6 @@ export const navbar: NavbarConfig = [
       {
         text: '数据结构&算法',
         link: '/advance/data'
-      },
-    ]
-  },
-  {
-    text: '框架',
-    children: [
-      {
-        text: 'MVVM',
-        link: '/frame/common',
-      },
-      {
-        text: 'React',
-        link: '/frame/react',
-      },
-      {
-        text: 'Vue',
-        link: '/frame/vue',
       },
     ]
   },

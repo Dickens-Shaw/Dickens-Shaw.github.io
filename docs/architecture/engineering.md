@@ -835,7 +835,7 @@ vue-cli-service.ps1
 
 以 vue-cli-service serve 为例
 
-从 package-lock.json 中可知，当我们 npm i 整个新建的 vue 项目的时候，npm 将 bin/vue-cli-service.js 作为 bin 声明了。
+从 package-lock.json 中可知，当我们 npm i 整个新建的 Vue 项目的时候，npm 将 bin/vue-cli-service.js 作为 bin 声明了。
 
 所以在 npm install 时，npm 读到该配置后，就将该文件软链接到 ./node_modules/.bin 目录下，而 npm 还会自动把 node_modules/.bin 加入$PATH，这样就可以直接作为命令运行依赖程序和开发依赖程序，不用全局安装了。
 

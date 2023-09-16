@@ -44,7 +44,7 @@
 - 标准盒模型(`content-box`)：宽度=内容的宽度（content）+ border + padding + margin
 - 低版本 IE 盒(怪异)模型(`border-box`)：宽度=内容宽度（content+border+padding）+ margin
 
-### 4. ⽤ translate 来改变位置⽽不是定位
+### 4. 使⽤ translate 改变位置
 
 translate 是 transform 属性的⼀个值。改变 transform 或 opacity 不会触发浏览器重新布局（reflow）或重绘（repaint），只会触发复合（compositions）。⽽改变绝对定位会触发重新布局，进⽽触发重绘和复合。
 
@@ -62,7 +62,7 @@ transform 使浏览器为元素创建⼀个 GPU 图层，但改变绝对定位�
 - 旋转 （transform）
 - 增加了旋转,缩放,定位,倾斜,动画,多背景
 
-### 6. 物理像素，逻辑像素和像素密度
+### 6. 物理 / 逻辑 / 像素密度
 
 以 iPhone XS 为例，当写 CSS 代码时，针对于单位 px，其宽度为 414px & 896px，也就是说当赋予一个 DIV 元素宽度为 414px，这个 DIV 就会填满手机的宽度；
 
@@ -122,7 +122,7 @@ my-image {
 1. 将具有相同属性的样式抽离出来，整合并通过 class 在页面中进行使用，提高 css 的可维护性。
 2. 样式与内容分离：将 css 代码定义到外部 css 中。
 
-### 8. CSS 预处理器/后处理器
+### 8. CSS 预处理器 / 后处理器
 
 **预处理器**，如：`less`，`sass`，`stylus`，用来预编译`sass`或者`less`，增加了 css 代码的复用性。层级，`mixin`， 变量，循环， 函数等对编写以及开发 UI 组件都极为方便。
 
@@ -504,7 +504,7 @@ Flex 是`FlexibleBox`的缩写，意为"弹性布局"，用来为盒状模型提
 简单来说：
 flex 布局是 CSS3 新增的一种布局方式，可以通过将一个元素的 display 属性值设置为 flex 从而使它成为一个 flex 容器，它的所有子元素都会成为它的项目。一个容器默认有两条轴：一个是水平的主轴，一个是与主轴垂直的交叉轴。可以使用 flex-direction 来指定主轴的方向。可以使用 justify-content 来指定元素在主轴上的排列方式，使用 align-items 来指定元素在交叉轴上的排列方式。还可以使用 flex-wrap 来规定当一行排列不下时的换行方式。对于容器中的项目，可以使用 order 属性来指定项目的排列顺序，还可以使用 flex-grow 来指定当排列空间有剩余的时候，项目的放大比例，还可以使用 flex-shrink 来指定当排列空间不足时，项目的缩小比例。
 
-### 5. flex:1
+### 5. flex: 1
 
 flex 属性是`flex-grow，flex-shrink和flex-basis`的简写，默认值为 0 1 auto。flex:1 表示 flex: 1 1 0%：
 

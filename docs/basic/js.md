@@ -1219,7 +1219,7 @@ function iterate(obj) {
 }
 ```
 
-## 五、闭包/作用域链/上下文
+## 五、闭包 / 作用域链 / 上下文
 
 ### 1. 闭包
 
@@ -1342,7 +1342,7 @@ first();
 - 全局上下文：变量定义，函数声明
 - 函数上下文：变量定义，函数声明，`this`，`arguments`
 
-## 六、this/call/apply/bind
+## 六、this / call / apply / bind
 
 ### 1. 对 this 对象的理解
 

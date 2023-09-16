@@ -31,7 +31,7 @@
 3. 不能通过 new 关键字调用，同样也没有`new.target`值和原型`prototype`
 4. 更适用于那些本来需要匿名函数的地方，并且它不能用作构造函数。
 
-### 4. Set/WekSet
+### 4. Set / WekSet
 
 #### Set
 
@@ -82,7 +82,7 @@ WeakSet 的成员只能是对象，而不能是其他类型的值。
 
 WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet 对该对象的引用
 
-### 5. Map/WeakMap
+### 5. Map / WeakMap
 
 #### Map
 
@@ -382,7 +382,7 @@ console.log(2 ** 10); // 输出1024
 
 ## ES8(2017)
 
-### 1. Async/Await
+### 1. Async / Await
 
 在ES2017（ES8）中引入了 async 函数，使得异步操作变得更加方便。Async/Await 的出现，被很多人认为是js异步操作的最终且最优雅的解决方案。我们可以简单理解`Async/Await = Generator + Promise`
 
@@ -523,7 +523,7 @@ Promise.resolve()
 
 需要每次发送请求，都会有 loading 提示，请求发送完毕，就需要关闭 loading 提示框，不然界面就无法被点击。不管请求成功或是失败，这个 loading 都需要关闭掉，这时把关闭 loading 的代码写在 finally 里再合适不过了。
 
-### 3. Object Rest/Spread 属性
+### 3. Object Rest / Spread
 
 ```js
 const values = [1, 2, 3, 5, 6];
@@ -707,7 +707,7 @@ const a = 1234567890123456789012345678901234567890n;
 const b = BigInt(1234567890123456789012345678901234567890);
 ```
 
-### 2. 空值合并运算符（??）
+### 2. 空值合并运算符(??)
 
 ```js
 let user = {
@@ -723,7 +723,7 @@ let u4 = user.u4 ?? '用户4'  // 用户4
 let u5 = user.u5 ?? '用户5'  // ''
 ```
 
-### 3. 可选链操作符（?.）
+### 3. 可选链操作符(?.)
 
 ```js
 let user = {};
@@ -822,7 +822,7 @@ console.log(str1.replace('o', '哦')); // hell哦 word
 console.log(str1.replaceAll('o', '哦')); // hell哦 w哦rd
 ```
 
-### 2. 数字分隔符 (1_000_000)
+### 2. 数字分隔符(1_000_000)
 
 ```js
 // 让数据更美观易懂，并不会影响该数据的值
@@ -997,7 +997,7 @@ class Car extends Vehicle {
 }
 ```
 
-### 2. Async Await扩展
+### 2. Async / Await扩展
 
 **支持在最外层写await**，在ES13之前，我们的await必须写在async方法里面，否则会报错。
 
