@@ -237,14 +237,14 @@ class Watcher {
   }
 }
 
-function pushTarget (_target) {
-  Dep.target = _target
+function pushTarget(_target) {
+  Dep.target = _target;
 }
 
 updateComponent = () => {
-  vm._update(vm._render())
-}
-new Watcher(vm, updateComponent)
+  vm._update(vm._render());
+};
+new Watcher(vm, updateComponent);
 ```
 
 #### 依赖收集
@@ -354,13 +354,13 @@ Vue 的渲染都是基于这个响应式系统的。在 Vue 的创建过程中�
 - `.self`：只会触发自己范围内的事件，不包含子元素；
 - `.once`：只会触发一次。
 
-### 8. v-if/v-show/v-html 原理
+### 8. v-if / -show / -html 原理
 
 - **v-if：** 调用`addIfCondition`方法，生成 vNode 的时候会忽略对应节点，`render`的时候就不会渲染；
 - **v-show：** 生成 vNode，`render`的时候也会渲染成真实节点，只是在`render`过程中会在节点的属性中修改`show`属性值，也就是常说的`display`；
 - **v-html：** 先移除节点下的所有节点，调用`html`方法，通过`addProp`添加`innerHTML`属性，归根结底还是设置`innerHTML`为 v-html 的值。
 
-### 9 .v-if 和 v-show 区别
+### 9. v-if 和 v-show 区别
 
 - **手段：** v-if 是动态的向 DOM 树内添加或者删除 DOM 元素；v-show 是通过设置 DOM 元素的 display 样式属性控制显隐；
 - **编译过程：** v-if 切换有一个局部编译/卸载的过程，切换过程中合适地销毁和重建内部的事件监听和子组件；v-show 只是简单的基于 css 切换；
@@ -1274,24 +1274,28 @@ mixins 应该是我们最常使用的扩展组件的方式了。如果多个组�
 mixins 混入的钩子函数会先于组件内的钩子函数执行，并且在遇到同名选项的时候也会有选择性的进行合并
 
 ### 19. SSR 服务端渲染
-SSR也就是将Vue在客户端把标签渲染成HTML的工作放在服务端完成，然后再把html直接返回给客户端
 
-SSR的优势：
-- 更好的SEO
+SSR 也就是将 Vue 在客户端把标签渲染成 HTML 的工作放在服务端完成，然后再把 html 直接返回给客户端
+
+SSR 的优势：
+
+- 更好的 SEO
 - 首屏加载速度更快
 
-SSR的缺点：
-- 开发条件会受到限制，服务器端渲染只支持beforeCreate和created两个钩子；
-- 当需要一些外部扩展库时需要特殊处理，服务端渲染应用程序也需要处于Node.js的运行环境；
+SSR 的缺点：
+
+- 开发条件会受到限制，服务器端渲染只支持 beforeCreate 和 created 两个钩子；
+- 当需要一些外部扩展库时需要特殊处理，服务端渲染应用程序也需要处于 Node.js 的运行环境；
 - 更多的服务端负载。
 
 ### 20. 性能优化
 
 1. **编码阶段**
-- 尽量减少data中的数据，data中的数据都会增加getter和setter，会收集对应的watcher
+
+- 尽量减少 data 中的数据，data 中的数据都会增加 getter 和 setter，会收集对应的 watcher
 - v-for 遍历必须为 item 添加唯一 key，且避免同时使用 v-if
-- 如果需要使用v-for给每项元素绑定事件时使用事件代理
-- SPA 页面采用keep-alive缓存组件
+- 如果需要使用 v-for 给每项元素绑定事件时使用事件代理
+- SPA 页面采用 keep-alive 缓存组件
 - v-if 和 v-show 区分使用场景
 - 无状态的组件标记为函数式组件 functional
 - computed 和 watch 区分使用场景
@@ -1304,73 +1308,556 @@ SSR的缺点：
 - 服务端渲染 SSR or 预渲染
 
 2. **SEO**
+
 - 预渲染
-- 服务端渲染SSR
+- 服务端渲染 SSR
 
 3. **打包优化**
+
 - 压缩代码
 - Tree Shaking/Scope Hoisting
-- 使用cdn加载第三方模块
+- 使用 cdn 加载第三方模块
 - 多线程打包 thread-loader/happypack
-- splitChunks抽离公共文件
-- sourceMap优化
+- splitChunks 抽离公共文件
+- sourceMap 优化
 
 4. **用户体验**
+
 - 骨架屏
 - PWA
-- 还可以使用缓存(客户端缓存、服务端缓存)优化、服务端开启gzip压缩等
+- 还可以使用缓存(客户端缓存、服务端缓存)优化、服务端开启 gzip 压缩等
 
-## 单项数据流
+### 21. 单 / 多页应用
 
-所有 prop 都使得其父子 prop 之间形成了一个单向下行绑定：父级 prop 的更新会向下流动到子组件中，但是反过来则不行。这样会防止从子组件意外修改父组件的状态。
-额外的，每次父组件发生变更时，子组件中所有 prop 都将会刷新为最新的值。这意味着你不应该在一个子组件内部改变 prop。如果你这样做了，Vue 会在浏览器控制台中发出警告。子组件想修改时，只能通过 $emit 派发一个自定义事件，父组件接收到后，由父组件修改。
+- SPA 单页面应用（`SinglePage Web Application`），指只有一个主页面的应用，一开始只需要加载一次 js、css 等相关资源。所有内容都包含在主页面，对每一个功能模块组件化。单页应用跳转，就是切换相关组件，仅仅刷新局部资源。
+- MPA 多页面应用 （`MultiPage Application`），指有多个独立页面的应用，每个页面必须重复加载 js、css 等相关资源。多页应用跳转，需要整页资源刷新。
 
-## 生命周期
+| 对比项 / 模式 | SPA                                                           | MPA                                                                |
+| ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 结构          | 一个主页面+许多模块的组件                                     | 徐多完整的页面                                                     |
+| 体验          | 页面切换快，体验佳；当初次加载文件过多时，需要做相关的调优。  | 页面切换慢，网速慢的时候，体验尤其不好                             |
+| 资源文件      | 组件公用的资源只需要加载一次                                  | 每个页面都要自己加载公用的资源                                     |
+| 适用场景      | 对体验度和流畅度有较高要求的应用，不利于 seo(可借助 ssr 优化) | 适用于对 seo 要求较高的应用                                        |
+| 过渡动画      | vue 提供了 transition 的封装组件，容易实现                    | 很难实现                                                           |
+| 内容更新      | 相关组件的切换，即局部更新                                    | 整体 html 的切换，费钱（重复 http 请求）                           |
+| 路由模式      | 可以使用 hash,也可以使用 history                              | 普通链接跳转                                                       |
+| 数据传递      | 因为单页面，使用全局变量就好(vuex)                            | cookie,localStorage 等缓存方案，url 参数，调用接口保存等           |
+| 相关成本      | 前期开发成本较高，后期维护较为容易                            | 前期开发成本低，后期维护就比较麻烦，因为可能一个功能需要改很多地方 |
 
-1. 在 beforeCreate 钩子函数调用的时候，是获取不到 props 或者 data 中的数据的，因为这些数据的初始化都在 initState 中。
+## 二、生命周期
 
-2. 然后会执行 created 钩子函数，在这一步的时候已经可以访问到之前不能访问到的数据，但是这时候组件还没被挂载，所以是看不到的。
+### 1. 完整过程
 
-3. 接下来会先执行 beforeMount 钩子函数，开始创建 VDOM，最后执行 mounted 钩子，并将 VDOM 渲染为真实 DOM 并且渲染数据。组件中如果有子组件的话，会递归挂载子组件，只有当所有子组件全部挂载完毕，才会执行根组件的挂载钩子。
+Vue 实例有⼀个完整的⽣命周期，也就是从开始创建、初始化数据、编译模版、挂载 Dom -> 渲染、更新 -> 渲染、卸载 等⼀系列过程，称这是 Vue 的⽣命周期。
 
-4. 接下来是数据更新时会调用的钩子函数 beforeUpdate 和 updated，这两个钩子函数没什么好说的，就是分别在数据更新前和更新后会调用。
+1. **beforeCreate（创建前）**：数据观测和初始化事件还未开始，此时 data 的响应式追踪、event/watcher 都还没有被设置，也就是说不能访问到 data、computed、watch、methods 上的方法和数据。
+2. **created（创建后）**：实例创建完成，实例上配置的 options 包括 data、computed、watch、methods 等都配置完成，但是此时渲染得节点还未挂载到 DOM，所以不能访问到 `$el` 属性。
+3. **beforeMount（挂载前）**：在挂载开始之前被调用，相关的 render 函数首次被调用。实例已完成以下的配置：编译模板，把 data 里面的数据和模板生成 html。此时还没有挂载 html 到页面上。
+4. **mounted（挂载后）**：在 `el` 被新创建的 `vm.$el` 替换，并挂载到实例上去之后调用。实例已完成以下的配置：用上面编译好的 html 内容替换 `el` 属性指向的 DOM 对象。完成模板中的 html 渲染到 html 页面中。此过程中进行 ajax 交互。
+5. **beforeUpdate（更新前）**：响应式数据更新时调用，此时虽然响应式数据更新了，但是对应的真实 DOM 还没有被渲染。
+6. **updated（更新后）**：在由于数据更改导致的虚拟 DOM 重新渲染和打补丁之后调用。此时 DOM 已经根据响应式数据的变化更新了。调用时，组件 DOM 已经更新，所以可以执行依赖于 DOM 的操作。然而在大多数情况下，应该避免在此期间更改状态，因为这可能会导致更新无限循环。该钩子在服务器端渲染期间不被调用。
+7. **beforeDestroy（销毁前）**：实例销毁之前调用。这一步，实例仍然完全可用，`this` 仍能获取到实例。
+8. **destroyed（销毁后）**：实例销毁后调用，调用后，Vue 实例指示的所有东西都会解绑定，所有的事件监听器会被移除，所有的子实例也会被销毁。该钩子在服务端渲染期间不被调用。
 
-5. 另外还有 keep-alive 独有的生命周期，分别为 activated 和 deactivated 。用 keep-alive 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 deactivated 钩子函数，命中缓存渲染后会执行 actived 钩子函数。
+另外还有 `keep-alive` 独有的生命周期，分别为 `activated` 和 `deactivated` 。用 `keep-alive` 包裹的组件在切换时不会进行销毁，而是缓存到内存中并执行 `deactivated` 钩子函数，命中缓存渲染后会执行 `activated` 钩子函数。
 
-6. 最后就是销毁组件的钩子函数 beforeDestroy 和 destroyed。前者适合移除事件、定时器等等，否则可能会引起内存泄露的问题。然后进行一系列的销毁操作，如果有子组件的话，也会递归销毁子组件，所有子组件都销毁完毕后才会执行根组件的 destroyed 钩子函数。
+### 2. 父子组件执行顺序
 
-## 组件通信
+**加载渲染过程：**
 
-- 父子组件
+1. 父组件 beforeCreate
+2. 父组件 created
+3. 父组件 beforeMount
+4. 子组件 beforeCreate
+5. 子组件 created
+6. 子组件 beforeMount
+7. 子组件 mounted
+8. 父组件 mounted
 
-1. 父组件通过 props 传递数据给子组件，子组件通过 emit 发送事件传递数据给父组件（单项数据流）
-2. ref、$parent / $children 对象来访问组件实例中的方法和数据
-3. .sync 属性是个语法糖
+**更新过程：**
+
+1. 父组件 beforeUpdate
+2. 子组件 beforeUpdate
+3. 子组件 updated
+4. 父组件 updated
+
+**销毁过程：**
+
+1. 父组件 beforeDestroy
+2. 子组件 beforeDestroy
+3. 子组件 destroyed
+4. 父组件 destroyed
+
+### 3. created 和 mounted 区别
+
+- created:在模板渲染成 html 前调用，即通常初始化某些属性值，然后再渲染成视图。
+- mounted:在模板渲染成 html 后调用，通常是初始化页面完成后，再对 html 的 dom 节点进行一些需要的操作。
+
+### 4. 异步请求
+
+我们可以在钩子函数 created、beforeMount、mounted 中进行调用，因为在这三个钩子函数中，data 已经创建，可以将服务端端返回的数据进行赋值。
+
+推荐在 created 钩子函数中调用异步请求，因为在 created 钩子函数中调用异步请求有以下优点：
+
+- 能更快获取到服务端数据，减少页面加载时间，用户体验更好；
+- SSR 不支持 beforeMount 、mounted 钩子函数，放在 created 中有助于一致性。
+
+## 三、组件通信
+
+### 1. props 传递
+
+- 适用场景：父组件传递数据给子组件
+- 子组件设置 props 属性，定义接收父组件传递过来的参数
+- 父组件在使用子组件标签中通过字面量来传递值
 
 ```js
-<!--父组件中-->
-<input :value.sync="value" />
-<!--以上写法等同于-->
-<input :value="value" @update:value="(v) => (value = v)" />
-<!--子组件中-->
-<script>
-this.$emit('update:value', 1)
-</script>
+// Children.vue
+props:{
+    // 字符串形式
+ name:String // 接收的类型参数
+    // 对象形式
+    age:{
+        type:Number, // 接收的类型为数值
+        default:18,  // 默认值为18
+       require:true // age属性必须传递
+    }
+}
+
+// Father.vue
+<Children name="jack" age="18" />
 ```
 
-- 兄弟组件
-  查找父组件中的子组件实现，也就是 this.$parent.$children，在 $children 中可以通过组件 name 查询到需要的组件实例，然后进行通信
+### 2. $emit 触发自定义事件
 
-- 跨层级组件
+- 适用场景：子组件传递数据给父组件
+- 子组件通过$emit触发自定义事件，$emit 第二个参数为传递的数值
+- 父组件绑定监听器获取到子组件传递过来的参数
 
-  1. provide / inject：祖先组件中通过 provider 来提供变量，然后在子孙组件中通过 inject 来注入变量。
-  2. $attrs：包含了父作用域中不被 prop 所识别 (且获取) 的特性绑定 ( class 和 style 除外 )。当一个组件没有声明任何 prop 时，这里会包含所有父作用域的绑定 ( class 和 style 除外 )，并且可以通过 v-bind="$attrs" 传入内部组件。通常配合 inheritAttrs 选项一起使用。
-  3. $listeners：包含了父作用域中的 (不含 .native 修饰器的) v-on 事件监听器。它可以通过 v-on="$listeners" 传入内部组件
+```js
+// Children.vue
+this.$emit('add', good)
 
-- 任意组件
-  Vuex 或者 Event Bus
+// Father.vue
+<Children @add="cartAdd($event)" />
+```
 
-## Diff
+### 3. ref / $refs
+
+- 父组件在使用子组件的时候设置 ref
+- 父组件通过设置子组件 ref 来获取数据
+
+```js
+<Children ref='foo' />;
+
+this.$refs.foo; // 获取子组件实例，通过子组件实例我们就能拿到对应的数据
+```
+
+### 4. EventBus
+
+- 使用场景：兄弟组件传值
+- 创建一个中央事件总线 EventBus
+- 兄弟组件通过$emit触发自定义事件，$emit 第二个参数为传递的数值
+- 另一个兄弟组件通过$on 监听自定义事件
+
+```js
+// Bus.js
+// 创建一个中央时间总线类
+class Bus {
+  constructor() {
+    this.callbacks = {}; // 存放事件的名字
+  }
+  $on(name, fn) {
+    this.callbacks[name] = this.callbacks[name] || [];
+    this.callbacks[name].push(fn);
+  }
+  $emit(name, args) {
+    if (this.callbacks[name]) {
+      this.callbacks[name].forEach((cb) => cb(args));
+    }
+  }
+}
+
+// main.js
+Vue.prototype.$bus = new Bus(); // 将$bus挂载到vue实例的原型上
+// 另一种方式
+Vue.prototype.$bus = new Vue(); // Vue已经实现了Bus的功能
+
+// Children1.vue
+this.$bus.$emit('foo');
+
+// Children2.vue
+this.$bus.$on('foo', this.handle);
+```
+
+### 5. $parent 或 $root
+
+- 通过共同祖辈$parent或者$root 搭建通信桥连
+
+```js
+// Children1.vue
+this.$parent.on('add', this.add);
+
+// Children2.vue
+this.$parent.emit('add');
+```
+
+### 6. $attrs 与$ listeners
+
+- 适用场景：祖先传递数据给子孙
+- 设置批量向下传属性$attrs 和 $listeners
+- 包含了父级作用域中不作为 prop 被识别 (且获取) 的特性绑定 ( class 和 style 除外)。
+- 可以通过 v-bind="$attrs" 传⼊内部组件
+
+```vue
+<!-- child：并未在props中声明foo -->
+<p>{{$attrs.foo}}</p>
+
+<!-- parent -->
+<HelloWorld foo="foo" />
+```
+
+```vue
+<!-- 给Grandson隔代传值，communication/index.vue -->
+<Child2 msg="***" @some-event="onSomeEvent"></Child2>
+
+<!-- Child2做展开 -->
+<Grandson v-bind="$attrs" v-on="$listeners"></Grandson>
+
+<!-- Grandson使⽤ -->
+<div @click="$emit('some-event', 'msg from grandson')">
+  {{msg}}
+</div>
+```
+
+### 7. provide 与 inject
+
+- 在祖先组件定义 provide 属性，返回传递的值
+- 在后代组件通过 inject 接收组件传递过来的值
+
+```js
+// 祖先组件
+provide(){
+    return {
+        foo:'foo'
+    }
+}
+
+// 后代组件
+inject:['foo'] // 获取到祖先组件传递过来的值
+```
+
+### 8. Vuex
+
+- 适用场景: 复杂关系的组件数据传递
+- Vuex 作用相当于一个用来存储共享变量的容器
+- state 用来存放共享变量的地方
+- getter，可以增加一个 getter 派生状态，（相当于 store 中的计算属性），用来获得共享变量的值
+- mutations 用来存放修改 state 的方法。
+- actions 也是用来存放修改 state 的方法，不过 action 是在 mutations 的基础上进行。常用来做一些异步操作
+
+### 9. 总结
+
+- **父子关系**的组件数据传递选择 `props` 与 `$emit` 进行传递，也可选择 `ref`
+- **兄弟关系**的组件数据传递可选择 `EventBus`，其次可以选择 `$parent` 进行传递
+- **祖先与后代**组件数据传递可选择 `$attrs` 与 `$listeners` 或者 `Provide` 与 `Inject`
+- **复杂关系**的组件数据传递可以通过 `vuex` 存放共享的变量
+
+## 四、Vue-router 路由
+
+### 1. 懒加载
+
+**正常路由**
+
+```js
+import List from '@/components/list.vue';
+const router = new VueRouter({
+  routes: [{ path: '/list', component: List }],
+});
+```
+
+1. 箭头函数+import
+
+```js
+const router = new VueRouter({
+  routes: [{ path: '/list', component: () => import('@/components/list.vue') }],
+});
+```
+
+2. 箭头函数+require
+
+```js
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/list',
+      component: (resolve) => require(['@/components/list.vue'], resolve),
+    },
+  ],
+});
+```
+
+3. require.ensure
+
+```js
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/list',
+      component: (resolve) =>
+        require.ensure(
+          [],
+          () => resolve(require('@/components/list.vue')),
+          'list'
+        ),
+    },
+  ],
+});
+```
+
+### 2. 获取页面 hash 变化
+
+```js
+// 监听,当路由发生变化的时候执行
+watch: {
+  $route: {
+    handler: function(val, oldVal){
+      console.log(val);
+    },
+    // 深度观察监听
+    deep: true
+  }
+},
+```
+
+### 3. $route 和 $router 区别
+
+- `$route` 是“**路由信息对象**”，包括 path，params，hash，query，fullPath，matched，name 等路由信息参数
+- `$router` 是“**路由实例**”对象包括了路由的跳转方法，钩子函数等。
+
+### 4. 动态路由
+
+#### params 方式
+
+- 配置路由格式：`/router/:id`
+- 传递的方式：在 path 后面跟上对应的值
+- 传递后形成的路径：`/router/123`
+
+1. 路由定义
+
+```js
+//在APP.vue中
+<router-link :to="'/user/'+userId" replace>用户</router-link>
+
+//在index.js
+{
+   path: '/user/:useId',
+   component: User,
+},
+```
+
+2. 路由跳转
+
+```js
+// 方法1：
+<router-link :to="{ name: 'users', params: { userName: 'AAA'}}">按钮</router-link>
+
+// 方法2：
+this.$router.push({name:'users',params:{userName:'AAA'}})
+
+// 方法3：
+this.$router.push('/user/' + 'AAA')
+```
+
+3. 参数获取
+
+```js
+this.$route.params.userId;
+```
+
+#### query 方式
+
+- 配置路由格式：`/router`，也就是普通配置
+- 传递的方式：对象中使用 query 的 key 作为传递方式
+- 传递后形成的路径：`/route?id=123`
+
+1. 路由定义
+
+```js
+//方式1：直接在router-link 标签上以对象的形式
+<router-link :to="{path:'/profile',query:{name:'BBB',age:28,height:198}}">档案</router-link>
+
+// 方式2：写成按钮以点击事件形式
+<button @click='profileClick'>我的</button>
+
+profileClick(){
+  this.$router.push({
+    path: "/profile",
+    query: {
+        name: "BBB",
+        age: "28",
+        height: 198
+    }
+  });
+}
+```
+
+2. 路由跳转
+
+```js
+// 方法1：
+<router-link :to="{ name: 'users', query: { userName: 'CCC' }}">按钮</router-link>
+
+// 方法2：
+this.$router.push({ name: 'users', query:{ userName:'CCC' }})
+
+// 方法3：
+<router-link :to="{ path: '/users', query: { userName:'CCC' }}">按钮</router-link>
+
+// 方法4：
+this.$router.push({ path: '/users', query:{ userName:'CCC' }})
+
+// 方法5：
+this.$router.push('/users?userName=' + 'CCC')
+```
+
+3. 参数获取
+
+```js
+this.$route.query.userName;
+```
+
+### 5. 导航守卫
+
+1. 全局路由钩子
+
+- **`router.beforeEach`** 全局前置守卫 进入路由之前，可用做判断是否登陆，没有就跳转到登录页面
+  ```js
+  router.beforeEach((to, from, next) => {
+    let ifInfo = Vue.prototype.$common.getSession('userData'); // 判断是否登录的存储信息
+    if (!ifInfo) {
+      // sessionStorage里没有储存user信息
+      if (to.path == '/') {
+        //如果是登录页面路径，就直接next()
+        next();
+      } else {
+        //不然就跳转到登录
+        Message.warning('请重新登录！');
+        window.location.href = Vue.prototype.$loginUrl;
+      }
+    } else {
+      return next();
+    }
+  });
+  ```
+- **`router.beforeResolve`** 全局解析守卫（2.5.0+）在 beforeRouteEnter 调用之后调用
+- **`router.afterEach`** 全局后置钩子 进入路由之后，可用作跳转之后滚动条回到顶部
+  ```js
+  router.afterEach((to, from) => {
+    // 跳转之后滚动条回到顶部
+    window.scrollTo(0, 0);
+  });
+  ```
+
+2. 单个路由独享钩子
+
+- **`beforeEnter`**
+
+```js
+export default [
+  {
+    path: '/',
+    name: 'login',
+    component: login,
+    beforeEnter: (to, from, next) => {
+      console.log('即将进入登录页面');
+      next();
+    },
+  },
+];
+```
+
+3. 组件内钩子
+
+- **`beforeRouteEnter`** 进入组件前触发
+- **`beforeRouteUpdate`** 当前地址改变并且改组件被复用时触发，举例来说，带有动态参数的路径`foo/∶id`，在 `/foo/1` 和 `/foo/2` 之间跳转的时候，由于会渲染同样的 `foo`组件，这个钩子在这种情况下就会被调用
+- **`beforeRouteLeave`** 离开组件被调用
+
+注意，`beforeRouteEnter` 组件内还访问不到 `this`，因为该守卫执行前组件实例还没有被创建，需要传一个回调给 `next` 来访问，例如：
+
+```js
+beforeRouteEnter(to, from, next) {
+    next(target => {
+        if (from.path == '/classProcess') {
+            target.isFromProcess = true
+        }
+    })
+}
+```
+
+### 6. 与 location.href 区别
+- 使用 `location.href=/url` 来跳转，简单方便，但是刷新了页面；
+- 使用 `history.pushState(/url)` ，无刷新页面，静态跳转；
+- 引进 router ，然后使用 `router.push(/url)` 来跳转，使用了 `diff` 算法，实现了按需加载，减少了 dom 的消耗。其实使用 router 跳转和使用 `history.pushState()` 没什么差别的，因为 vue-router 就是用了 `history.pushState()` ，尤其是在history模式下。
+
+## 五、Vuex 状态管理
+
+### 1. 原理
+Vuex 把组件的共享状态抽出来，以一个全局单例模式管理。
+
+![vuex](/images/vuex.png)
+
+主要包括：
+
+- State：定义了应用状态的数据结构，可以在这里设置默认的初始状态。
+- Getter：允许组件从 Store 中获取数据，mapGetters 辅助函数仅仅是将 store 中的 getter 映射到局部计算属性。
+- Mutation：是唯一更改 store 中状态的方法，且必须是同步函数。
+- Action：用于提交 mutation，而不是直接变更状态，可以包含任意异步操作。
+- Module：允许将单一的 Store 拆分为多个 store 且同时保存在单一的状态树中。
+
+Vuex 应用的核心就是 store (仓库)。 store 基本上就是一个容器，它包含着你的应用中的大部分 状态 (state). Vuex 和单纯的全局对象有以下两点不同：
+
+1. Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应的得到高效更新。
+2. 你不能直接修改 store 中的状态。改变 store 中的状态的唯一途径就是显示地提交 (commit) mutation。这样使得我们可以方便地跟踪每一个状态地变化。
+
+Vuex 实现原理是将 state 的数据通过 new Vue() 后，将数据转为响应式的。同时，将 getter 里面定义的数据通过 new Vue 的 computed 实现了计算属性的特点，只有当它的依赖值发生了改变才会被重新计算。
+
+### action 和 mutation 的区别
+
+action 中处理异步操作，mutation 最好不要。（ mutation 处理异步操作页面数据会修改，但是 devtools 里面的值还是原来的并没有修改。出现了数据不一致，无法追踪数据变化。）
+mutation 做原子操作
+action 可以整合多个 mutation
+
+## 六、Vue 3.0
+### Proxy 对比
+
+Proxy 的优势如下:
+
+- Proxy 可以直接监听对象而非属性；
+- Proxy 可以直接监听数组的变化；
+- Proxy 有多达 13 种拦截方法,不限于 apply、ownKeys、deleteProperty、has 等等是 Object.defineProperty 不具备的；
+- Proxy 返回的是一个新对象,我们可以只操作新的对象达到目的,而 Object.defineProperty 只能遍历对象属性直接修改；
+- Proxy 作为新标准将受到浏览器厂商重点持续的性能优化，也就是传说中的新标准的性能红利；
+
+Object.defineProperty 的优势如下:
+
+- 兼容性好，支持 IE9，而 Proxy 的存在浏览器兼容性问题，而且无法用 polyfill 磨平
+
+### Vue-Composition-Api
+
+- 原理：
+  在 Vue 中，之所以 setup 函数只执行一次，后续对于数据的更新也可以驱动视图更新，归根结底在于它的「响应式机制」
+
+- 对比：
+  1. 与 React Hooks 相同级别的逻辑组合功能，但有一些重要的区别。 与 React Hook 不同，setup 函数仅被调用一次，这在性能上比较占优。
+  2. 对调用顺序没什么要求，每次渲染中不会反复调用 Hook 函数，产生的的 GC 压力较小。
+  3. 不必考虑几乎总是需要 useCallback 的问题，以防止传递函数 prop 给子组件的引用变化，导致无必要的重新渲染。
+  4. React Hook 有臭名昭著的闭包陷阱问题，如果用户忘记传递正确的依赖项数组，useEffect 和 useMemo 可能会捕获过时的变量，这不受此问题的影响。 Vue 的自动依赖关系跟踪确保观察者和计算值始终正确无误。
+  5. 不得不提一句，React Hook 里的「依赖」是需要你去手动声明的，而且官方提供了一个 eslint 插件，这个插件虽然大部分时候挺有用的，但是有时候也特别烦人，需要你手动加一行丑陋的注释去关闭它。
+
+
+
+## 七、虚拟 DOM
+### Diff
 
 diff 学习 snabbdom.js
 双端标记学习 cito.js
@@ -1413,7 +1900,7 @@ diff 算法源码执行函数依次是：
   - 不等则直接添加
   - 相等的话，调用 patchVnode 后。将找到的 old 节点值为 undefine，然后添加新的节点
 
-## v-for 的 key
+### v-for 的 key
 
 在虚拟 DOM 算法，在新旧 nodes 对比时辨识 VNode。
 
@@ -1422,60 +1909,3 @@ diff 算法源码执行函数依次是：
 使用 key, 则直接复用 key 值相同的元素。
 
 带 key 的组件能够触发过渡效果，以及触发组件的声明周期
-
-## Vue.set 原理
-
-1. 如果目标是数组，直接使用数组的 splice 方法触发相应式；
-
-2. 如果目标是对象，会先判读属性是否存在、对象是否是响应式，最终如果要对属性进行响应式处理，则是通过调用 defineReactive 方法进行响应式处理（defineReactive 方法就是 Vue 在初始化对象时，给对象属性采用 Object.defineProperty 动态添加 getter 和 setter 的功能所调用的方法）
-
-## Proxy 对比
-
-Proxy 的优势如下:
-
-- Proxy 可以直接监听对象而非属性；
-- Proxy 可以直接监听数组的变化；
-- Proxy 有多达 13 种拦截方法,不限于 apply、ownKeys、deleteProperty、has 等等是 Object.defineProperty 不具备的；
-- Proxy 返回的是一个新对象,我们可以只操作新的对象达到目的,而 Object.defineProperty 只能遍历对象属性直接修改；
-- Proxy 作为新标准将受到浏览器厂商重点持续的性能优化，也就是传说中的新标准的性能红利；
-
-Object.defineProperty 的优势如下:
-
-- 兼容性好，支持 IE9，而 Proxy 的存在浏览器兼容性问题，而且无法用 polyfill 磨平
-
-## Vue-Composition-Api
-
-- 原理：
-  在 Vue 中，之所以 setup 函数只执行一次，后续对于数据的更新也可以驱动视图更新，归根结底在于它的「响应式机制」
-
-- 对比：
-  1. 与 React Hooks 相同级别的逻辑组合功能，但有一些重要的区别。 与 React Hook 不同，setup 函数仅被调用一次，这在性能上比较占优。
-  2. 对调用顺序没什么要求，每次渲染中不会反复调用 Hook 函数，产生的的 GC 压力较小。
-  3. 不必考虑几乎总是需要 useCallback 的问题，以防止传递函数 prop 给子组件的引用变化，导致无必要的重新渲染。
-  4. React Hook 有臭名昭著的闭包陷阱问题，如果用户忘记传递正确的依赖项数组，useEffect 和 useMemo 可能会捕获过时的变量，这不受此问题的影响。 Vue 的自动依赖关系跟踪确保观察者和计算值始终正确无误。
-  5. 不得不提一句，React Hook 里的「依赖」是需要你去手动声明的，而且官方提供了一个 eslint 插件，这个插件虽然大部分时候挺有用的，但是有时候也特别烦人，需要你手动加一行丑陋的注释去关闭它。
-
-## Vuex
-
-Vuex 把组件的共享状态抽出来，以一个全局单例模式管理。
-
-主要包括：
-
-- State：定义了应用状态的数据结构，可以在这里设置默认的初始状态。
-- Getter：允许组件从 Store 中获取数据，mapGetters 辅助函数仅仅是将 store 中的 getter 映射到局部计算属性。
-- Mutation：是唯一更改 store 中状态的方法，且必须是同步函数。
-- Action：用于提交 mutation，而不是直接变更状态，可以包含任意异步操作。
-- Module：允许将单一的 Store 拆分为多个 store 且同时保存在单一的状态树中。
-
-Vuex 应用的核心就是 store (仓库)。 store 基本上就是一个容器，它包含着你的应用中的大部分 状态 (state). Vuex 和单纯的全局对象有以下两点不同：
-
-1. Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应的得到高效更新。
-2. 你不能直接修改 store 中的状态。改变 store 中的状态的唯一途径就是显示地提交 (commit) mutation。这样使得我们可以方便地跟踪每一个状态地变化。
-
-Vuex 实现原理是将 state 的数据通过 new Vue() 后，将数据转为响应式的。同时，将 getter 里面定义的数据通过 new Vue 的 computed 实现了计算属性的特点，只有当它的依赖值发生了改变才会被重新计算。
-
-### action 和 mutation 的区别
-
-action 中处理异步操作，mutation 最好不要。（ mutation 处理异步操作页面数据会修改，但是 devtools 里面的值还是原来的并没有修改。出现了数据不一致，无法追踪数据变化。）
-mutation 做原子操作
-action 可以整合多个 mutation
