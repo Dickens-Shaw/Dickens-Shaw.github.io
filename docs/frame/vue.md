@@ -1920,31 +1920,113 @@ action 函数接受一个与 store 实例具有相同方法和属性的 context 
 
 ## 六、Vue 3.0
 
-### Proxy 对比
+### 1. 更新内容
 
-Proxy 的优势如下:
+#### 监测机制的改变
 
-- Proxy 可以直接监听对象而非属性；
+- 3.0 将带来基于代理 Proxy 的 observer 实现，提供全语言覆盖的反应性跟踪。
+- 消除了 Vue 2 当中基于 Object.defineProperty 的实现所存在的很多限制：
+
+#### 只能监测属性，不能监测对象
+
+- 检测属性的添加和删除；
+- 检测数组索引和长度的变更；
+- 支持 Map、Set、WeakMap 和 WeakSet。
+
+#### 模板
+
+- 作用域插槽，2.x 的机制导致作用域插槽变了，父组件会重新渲染，而 3.0 把作用域插槽改成了函数的方式，这样只会影响子组件的重新渲染，提升了渲染的性能。
+- 对于 render 函数的方面，vue3.0 也会进行一系列更改来方便习惯直接使用 api 来生成 vdom 。
+
+#### 对象式的组件声明方式
+
+- vue2.x 中的组件是通过声明的方式传入一系列 option，和 TypeScript 的结合需要通过一些装饰器的方式来做，虽然能实现功能，但是比较麻烦。
+- 3.0 修改了组件的声明方式，改成了类式的写法，这样使得和 TypeScript 的结合变得很容易
+
+#### diff 算法的优化
+
+- 事件缓存：将事件缓存，可以理解为变成静态的了
+- 添加静态标记：Vue2 是全量 Diff，Vue3 是静态标记 + 非全量 Diff
+- 静态提升：创建静态节点时保存，后续直接复用
+- 使用最长递增子序列优化了对比流程：Vue2 里在 updateChildren() 函数里对比变更，在 Vue3 里这一块的逻辑主要在 patchKeyedChildren() 函数里
+
+#### 其它
+
+- 支持自定义渲染器，从而使得 weex 可以通过自定义渲染器的方式来扩展，而不是直接 fork 源码来改的方式。
+- 支持 Fragment（多个根节点）和 Protal（在 dom 其他部分渲染组建内容）组件，针对一些特殊的场景做了处理。
+- 基于 tree shaking 优化，提供了更多的内置功能。
+
+### 2. Proxy
+
+#### Object.defineProperty 问题
+
+1. 添加或删除对象的属性时，Vue 检测不到。因为添加或删除的对象没有在初始化进行响应式处理，只能通过`Vue.$set`来调用`Object.defineProperty()`处理。
+2. 无法监控到数组下标和长度的变化。
+
+#### Proxy 优势
+
+- Proxy 可以直接代理整个对象而非对象属性，这样只需做一层代理就可以监听同级结构下的所有属性变化，包括新增属性和删除属性;
 - Proxy 可以直接监听数组的变化；
-- Proxy 有多达 13 种拦截方法,不限于 apply、ownKeys、deleteProperty、has 等等是 Object.defineProperty 不具备的；
-- Proxy 返回的是一个新对象,我们可以只操作新的对象达到目的,而 Object.defineProperty 只能遍历对象属性直接修改；
+- Proxy 有多达 13 种拦截方法,不限于 `apply、ownKeys、deleteProperty、has` 等等是 `Object.defineProperty` 不具备的；
+- Proxy 返回的是一个新对象,我们可以只操作新的对象达到目的，而 `Object.defineProperty` 只能遍历对象属性直接修改；
 - Proxy 作为新标准将受到浏览器厂商重点持续的性能优化，也就是传说中的新标准的性能红利；
 
 Object.defineProperty 的优势如下:
 
 - 兼容性好，支持 IE9，而 Proxy 的存在浏览器兼容性问题，而且无法用 polyfill 磨平
 
-### Vue-Composition-Api
+### 3. Vue-Composition-Api
 
-- 原理：
-  在 Vue 中，之所以 setup 函数只执行一次，后续对于数据的更新也可以驱动视图更新，归根结底在于它的「响应式机制」
+在 Vue2 中，代码是 `Options API` 风格的，也就是通过填充 `(option) data、methods、computed` 等属性来完成一个 Vue 组件。这种风格使得 Vue 相对于 React 极为容易上手，同时也造成了几个问题：
 
-- 对比：
-  1. 与 React Hooks 相同级别的逻辑组合功能，但有一些重要的区别。 与 React Hook 不同，setup 函数仅被调用一次，这在性能上比较占优。
-  2. 对调用顺序没什么要求，每次渲染中不会反复调用 Hook 函数，产生的的 GC 压力较小。
-  3. 不必考虑几乎总是需要 useCallback 的问题，以防止传递函数 prop 给子组件的引用变化，导致无必要的重新渲染。
-  4. React Hook 有臭名昭著的闭包陷阱问题，如果用户忘记传递正确的依赖项数组，useEffect 和 useMemo 可能会捕获过时的变量，这不受此问题的影响。 Vue 的自动依赖关系跟踪确保观察者和计算值始终正确无误。
-  5. 不得不提一句，React Hook 里的「依赖」是需要你去手动声明的，而且官方提供了一个 eslint 插件，这个插件虽然大部分时候挺有用的，但是有时候也特别烦人，需要你手动加一行丑陋的注释去关闭它。
+1. 由于 `Options API` 不够灵活的开发方式，使得 Vue 开发缺乏优雅的方法来在组件间共用代码。
+2. Vue 组件过于依赖 this 上下文，Vue 背后的一些小技巧使得 Vue 组件的开发看起来与 JavaScript 的开发原则相悖，比如在 methods 中的 this 竟然指向组件实例来不指向 methods 所在的对象。这也使得 `TypeScript` 在 Vue2 中很不好用。
+
+于是在 Vue3 中，舍弃了 `Options API`，转而投向 `Composition API`。`Composition API`本质上是将 `Options API` 背后的机制暴露给用户直接使用，这样用户就拥有了更多的灵活性，也使得 Vue3 更适合于 `TypeScript` 结合。
+
+```vue
+<template>
+  <button @click="increment">Count: {{ count }}</button>
+</template>
+
+<script>
+// Composition API 将组件属性暴露为函数，因此第一步是导入所需的函数
+import { ref, computed, onMounted } from 'vue';
+
+export default {
+  setup() {
+    // 使用 ref 函数声明了称为 count 的响应属性，对应于Vue2中的data函数
+    const count = ref(0);
+
+    // Vue2中需要在methods option中声明的函数，现在直接声明
+    function increment() {
+      count.value++;
+    }
+    // 对应于Vue2中的mounted声明周期
+    onMounted(() => console.log('component mounted!'));
+
+    return {
+      count,
+      increment,
+    };
+  },
+};
+</script>
+```
+
+#### 与 React Hook 的相比：
+
+从`React Hook`的实现角度看，`React Hook`是根据`useState`调用的顺序来确定下一次重渲染时的 state 是来源于哪个 `useState`，所以出现了以下限制
+
+- 不能在循环、条件、嵌套函数中调用 Hook
+- 必须确保总是在你的 React 函数的顶层调用 Hook
+- `useEffect、useMemo`等函数必须手动确定依赖关系
+
+而 `Composition API` 是基于 Vue 的响应式系统实现的，与 `React Hook` 的相比
+
+- 声明在 setup 函数内，一次组件实例化只调用一次 setup，而 `React Hook` 每次重渲染都需要调用 Hook，使得 React 的 GC 比 Vue 更有压力，性能也相对于 Vue 来说也较慢
+- `Composition API` 的调用不需要顾虑调用顺序，也可以在循环、条件、嵌套函数中使用
+- 响应式系统自动实现了依赖收集，进而组件的部分的性能优化由 Vue 内部自己完成，而 `React Hook` 需要手动传入依赖，而且必须必须保证依赖的顺序，让 `useEffect、useMemo` 等函数正确的捕获依赖变量，否则会由于依赖不正确使得组件性能下降。
 
 ## 七、虚拟 DOM
 
