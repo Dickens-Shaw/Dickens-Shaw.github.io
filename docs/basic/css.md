@@ -7,7 +7,7 @@
 | 选择器         | 格式          | 优先级权重 |
 | -------------- | ------------- | ---------- |
 | id 选择器      | #id           | 100        |
-| 类选择器       | .classname    | 10         |
+| 类选择器       | .className    | 10         |
 | 属性选择器     | a[ref=“eee”]  | 10         |
 | 伪类选择器     | li:last-child | 10         |
 | 标签选择器     | div           | 1          |
@@ -55,7 +55,7 @@ transform 使浏览器为元素创建⼀个 GPU 图层，但改变绝对定位�
 - 新增各种 CSS 选择器 （: not(.input)：所有 class 不是“input”的节点）
 - 圆角 （border-radius:8px）
 - 多列布局 （multi-column layout）
-- 阴影和反射 （Shadoweflect）
+- 阴影和反射 （shadow effect）
 - 文字特效 （text-shadow）
 - 文字渲染 （Text-decoration）
 - 线性渐变 （gradient）
@@ -129,8 +129,6 @@ my-image {
 **后处理器**， 如： `postCss`，通常是在完成的样式表中根据 css 规范处理 css，让其更加有效。目前最常做的是给 css 属性添加浏览器私有前缀，实现跨浏览器兼容性的问题。
 
 css 预处理器为 css 增加一些编程特性，无需考虑浏览器的兼容问题，可以在 CSS 中使用变量，简单的逻辑程序，函数等在编程语言中的一些基本的性能，可以让 css 更加的简洁，增加适应性以及可读性，可维护性等。
-
-其它 css 预处理器语言：`Sass（Scss）, Less, Stylus, Turbine, Swithch css, CSS Cacheer, DT Css`。
 
 使用原因：
 
@@ -245,6 +243,7 @@ window._requestAnimationFrame = (function () {
   );
 })();
 ```
+
 `setTimeout` 执行动画的缺点：它通过设定间隔时间来不断改变图像位置，达到动画效果。但是容易出现卡顿、抖动的现象；原因是：
 
 - `setTimeout` 任务被放入异步队列，只有当主线程任务执行完后才会执行队列中的任务，因此实际执行时间总是比设定时间要晚；
@@ -692,7 +691,7 @@ border: 1px solid #333;
 直接把 1px 改成 1/devicePixelRatio 后的值，这是目前为止最简单的一种方法。这种方法的缺陷在于兼容性不行，IOS 系统需要 8 及以上的版本，安卓系统则直接不兼容。
 
 2. **伪元素先放大后缩小**
-   
+
 这个方法的可行性会更高，兼容性也更好。唯一的缺点是代码会变多。
 
 思路是先放大、后缩小：

@@ -384,22 +384,24 @@ console.log(2 ** 10); // 输出1024
 
 ### 1. Async / Await
 
-在ES2017（ES8）中引入了 async 函数，使得异步操作变得更加方便。Async/Await 的出现，被很多人认为是js异步操作的最终且最优雅的解决方案。我们可以简单理解`Async/Await = Generator + Promise`
+在 ES2017（ES8）中引入了 async 函数，使得异步操作变得更加方便。Async/Await 的出现，被很多人认为是 js 异步操作的最终且最优雅的解决方案。我们可以简单理解`Async/Await = Generator + Promise`
 
-async 用于声明一个 function 是异步的，await 用于等待一个异步方法执行完成，只有当异步完成后才会继续往后执行。await不是必须的并且await 只能出现在 async 函数中。
+async 用于声明一个 function 是异步的，await 用于等待一个异步方法执行完成，只有当异步完成后才会继续往后执行。await 不是必须的并且 await 只能出现在 async 函数中。
+
 ```js
 async function() {
   const result = await getData()
   console.log(result)
 }
 ```
+
 一个函数如果加上 async ，那么该函数就会返回一个 Promise
 
 ```js
 async function async1() {
-  return "1"
+  return '1';
 }
-console.log(async1()) // -> Promise {<resolved>: "1"}
+console.log(async1()); // -> Promise {<resolved>: "1"}
 ```
 
 ### 2. Object 扩展
@@ -872,22 +874,25 @@ a ??= b; // a ?? (a = b);
 
 ### 5. WeakRef
 
-WeakRef允许创建对象的弱引用。弱引用笔者在前面讲weakSet、weakMap的时候说过了，就是在进行垃圾回收的时候不会考虑该对象是否还在WeakRef中使用。
+WeakRef 允许创建对象的弱引用。弱引用笔者在前面讲 weakSet、weakMap 的时候说过了，就是在进行垃圾回收的时候不会考虑该对象是否还在 WeakRef 中使用。
 
-我们必须用 new关键字创建新的 WeakRef，然后使用deref() 读取引用的对象。
+我们必须用 new 关键字创建新的 WeakRef，然后使用 deref() 读取引用的对象。
 
 ```js
-let weakRef = new WeakRef({name: 'randy', age: 27})
+let weakRef = new WeakRef({ name: 'randy', age: 27 });
 
-weakRef.deref() // {name: 'randy', age: 27}
-weakRef.deref().age // 27
+weakRef.deref(); // {name: 'randy', age: 27}
+weakRef.deref().age; // 27
 ```
 
 ## ES13(2022)
 
 ### 1. Class 扩展
+
 #### 类成员声明
-在ES13之前，我们只能在构造函数里面声明类的成员，而不能像其他大多数语言一样在类的最外层作用域里面声明成员.
+
+在 ES13 之前，我们只能在构造函数里面声明类的成员，而不能像其他大多数语言一样在类的最外层作用域里面声明成员.
+
 ```js
 class Car {
   color = 'blue';
@@ -898,15 +903,18 @@ const car = new Car();
 console.log(car.color); // blue
 console.log(car.age); // 2
 ```
+
 #### 私有属性和私有方法
-给类的属性/方法添加一个hashtag(#)前缀，这个属性/方法就变成私有的了。当我们的属性变为私有后，任何外界对其的访问都会出错。
+
+给类的属性/方法添加一个 hashtag(#)前缀，这个属性/方法就变成私有的了。当我们的属性变为私有后，任何外界对其的访问都会出错。
+
 ```js
 class Person {
   #firstName = 'randy';
   #lastName = 'su';
-  
+
   #say() {
-    console.log('say hello')
+    console.log('say hello');
   }
 
   get name() {
@@ -927,9 +935,10 @@ console.log(person.#say);
 ```
 
 #### 静态私有属性和私有方法
-跟私有属性和方法一样，我们只需要给我们的静态属性/方法添加一个hashtag(#)前缀，这个静态属性/方法就变成私有的了。只能在类内部访问啦。
 
-类的静态方法可以使用this关键字访问其他的私有或者公有静态成员，而在类的实例方法中则可以通过this.constructor来访问这些静态属性.
+跟私有属性和方法一样，我们只需要给我们的静态属性/方法添加一个 hashtag(#)前缀，这个静态属性/方法就变成私有的了。只能在类内部访问啦。
+
+类的静态方法可以使用 this 关键字访问其他的私有或者公有静态成员，而在类的实例方法中则可以通过 this.constructor 来访问这些静态属性.
 
 ```js
 class Person {
@@ -959,7 +968,9 @@ console.log(Person.#incrementCount);
 ```
 
 #### 判断是否有私有变量
-通过in操作符来判断对象是否具有某私有属性
+
+通过 in 操作符来判断对象是否具有某私有属性
+
 ```js
 class Car {
   #color;
@@ -972,10 +983,12 @@ class Car {
 const car = new Car();
 console.log(car.hasColor()); // true
 ```
-#### 支持定义静态代码块
-允许在类中通过static关键字定义一系列静态代码块，这些代码块只会在类被创造的时候执行一次。
 
-一个类可以定义任意多的静态代码块，这些代码块会和穿插在它们之间的静态成员变量一起按照定义的顺序在类初始化的时候执行一次。我们还可以使用super关键字来访问父类的属性。
+#### 支持定义静态代码块
+
+允许在类中通过 static 关键字定义一系列静态代码块，这些代码块只会在类被创造的时候执行一次。
+
+一个类可以定义任意多的静态代码块，这些代码块会和穿插在它们之间的静态成员变量一起按照定义的顺序在类初始化的时候执行一次。我们还可以使用 super 关键字来访问父类的属性。
 
 ```js
 class Vehicle {
@@ -997,9 +1010,9 @@ class Car extends Vehicle {
 }
 ```
 
-### 2. Async / Await扩展
+### 2. Async / Await 扩展
 
-**支持在最外层写await**，在ES13之前，我们的await必须写在async方法里面，否则会报错。
+**支持在最外层写 await**，在 ES13 之前，我们的 await 必须写在 async 方法里面，否则会报错。
 
 ```js
 function setTimeoutAsync(timeout) {
@@ -1007,14 +1020,16 @@ function setTimeoutAsync(timeout) {
     setTimeout(() => {
       resolve();
     }, timeout);
-  })
+  });
 }
 
 await setTimeoutAsync(3000);
 ```
 
 ### 3. at 函数
+
 索引元素，支持数组和字符串
+
 ```js
 const arr = ['a', 'b', 'c', 'd'];
 
@@ -1036,7 +1051,9 @@ console.log(str.at(-2)); // d
 ```
 
 ### 4. 正则支持返回结束索引
-可以给正则表达式添加一个d的标记来让它在匹配的时候给我们既返回匹配到的子字符串的起始位置还返回其结束位置:
+
+可以给正则表达式添加一个 d 的标记来让它在匹配的时候给我们既返回匹配到的子字符串的起始位置还返回其结束位置:
+
 ```js
 const str = 'sun and moon';
 const regex = /and/d;
@@ -1054,7 +1071,8 @@ console.log(matchObj);
 ```
 
 ### 5. Object.hasOwn()
-函数接收两个参数，一个是对象，一个是属性，如果这个对象本身就有这个属性的话，这个函数就会返回true，否则就返回false。
+
+函数接收两个参数，一个是对象，一个是属性，如果这个对象本身就有这个属性的话，这个函数就会返回 true，否则就返回 false。
 
 ```js
 const obj = Object.create(null);
@@ -1065,12 +1083,14 @@ console.log(Object.hasOwn(obj, 'color')); // true
 console.log(Object.hasOwn(obj, 'name')); // false
 ```
 
-**和hasOwnProperty()的区别**
-- hasOwnProperty()是Object.prototype的一个方法，所以可以被覆盖，如果覆盖了就达不到我们想要的结果了。
-- 如果我们创建了一个原型为null的对象(Object.create(null))，也会获取不到该方法而报错
+**和 hasOwnProperty()的区别**
+
+- hasOwnProperty()是 Object.prototype 的一个方法，所以可以被覆盖，如果覆盖了就达不到我们想要的结果了。
+- 如果我们创建了一个原型为 null 的对象(Object.create(null))，也会获取不到该方法而报错
 
 ### 6. Error.cause
-Error对象多了一个cause属性来指明错误出现的原因。这个属性可以帮助我们为错误添加更多的上下文信息，从而帮助使用者们更好地定位错误。这个属性是我们在创建error对象时传进去的第二个参数对象的cause属性:
+
+Error 对象多了一个 cause 属性来指明错误出现的原因。这个属性可以帮助我们为错误添加更多的上下文信息，从而帮助使用者们更好地定位错误。这个属性是我们在创建 error 对象时传进去的第二个参数对象的 cause 属性:
 
 ```js
 function userAction() {
@@ -1092,11 +1112,12 @@ try {
 ## ES14(2023)
 
 ### 1. Array 扩展
+
 #### 数组支持倒序查找
 
-在JS中，我们可以使用数组的`find()`函数来在数组中找到第一个满足某个条件的元素。同样地，我们还可以通过`findIndex()`函数来返回这个元素的位置。可是，无论是`find()`还是`findIndex()`，它们都是从数组的头部开始查找元素的，可是在某些情况下，我们可能有从数组后面开始查找某个元素的需要。
+在 JS 中，我们可以使用数组的`find()`函数来在数组中找到第一个满足某个条件的元素。同样地，我们还可以通过`findIndex()`函数来返回这个元素的位置。可是，无论是`find()`还是`findIndex()`，它们都是从数组的头部开始查找元素的，可是在某些情况下，我们可能有从数组后面开始查找某个元素的需要。
 
-ES13出来后，我们终于有办法处理这种情况了，那就是使用新的`findLast()`和`findLastIndex()`函数。这两个函数都会从数组的末端开始寻找某个满足条件的元素。
+ES13 出来后，我们终于有办法处理这种情况了，那就是使用新的`findLast()`和`findLastIndex()`函数。这两个函数都会从数组的末端开始寻找某个满足条件的元素。
 
 ```js
 const letters = [
@@ -1116,75 +1137,77 @@ console.log(foundIndex); // 3
 ```
 
 #### toSorted
-sort方法的复制版本，区别就是sort是修改原数组，而toSorted是返回新数组且不会修改原数组。
+
+sort 方法的复制版本，区别就是 sort 是修改原数组，而 toSorted 是返回新数组且不会修改原数组。
 
 ```js
 // sort方法
 const arr1 = [1, 3, 5, 2, 8];
 const newArr1 = arr1.sort();
-console.log("原数组:", arr1); // [1, 2, 3, 5, 8]
-console.log("新数组:", newArr1);// [1, 2, 3, 5, 8]
+console.log('原数组:', arr1); // [1, 2, 3, 5, 8]
+console.log('新数组:', newArr1); // [1, 2, 3, 5, 8]
 
 // toSorted方法
 const arr2 = [1, 3, 5, 2, 8];
 const newArr2 = arr2.toSorted();
-console.log("原数组:", arr2); // [1, 3, 5, 2, 8]
-console.log("新数组:", newArr2);// [1, 2, 3, 5, 8]
+console.log('原数组:', arr2); // [1, 3, 5, 2, 8]
+console.log('新数组:', newArr2); // [1, 2, 3, 5, 8]
 ```
 
 #### toReversed
 
-reverse方法的复制版本，区别就是reverse是修改原数组，而toReversed是返回新数组且不会修改原数组。
+reverse 方法的复制版本，区别就是 reverse 是修改原数组，而 toReversed 是返回新数组且不会修改原数组。
 
 ```js
 // reverse方法
 const arr1 = [1, 3, 5, 2, 8];
 const newArr1 = arr1.reverse();
-console.log("原数组:", arr1); // [8, 2, 5, 3, 1]
-console.log("新数组:", newArr1);// [8, 2, 5, 3, 1]
+console.log('原数组:', arr1); // [8, 2, 5, 3, 1]
+console.log('新数组:', newArr1); // [8, 2, 5, 3, 1]
 
 // toReversed方法
 const arr2 = [1, 3, 5, 2, 8];
 const newArr2 = arr2.toReversed();
-console.log("原数组:", arr2); // [1, 3, 5, 2, 8]
-console.log("新数组:", newArr2);// [8, 2, 5, 3, 1]
+console.log('原数组:', arr2); // [1, 3, 5, 2, 8]
+console.log('新数组:', newArr2); // [8, 2, 5, 3, 1]
 ```
 
 #### toSpliced
 
-toSpliced与splice区别就很大了。splice是截取原数组的数据，并返回截取出来的数据。toSpliced是对原数组的副本进行操作，然后返回被截取完后的新数组，并不会修改原数组。
+toSpliced 与 splice 区别就很大了。splice 是截取原数组的数据，并返回截取出来的数据。toSpliced 是对原数组的副本进行操作，然后返回被截取完后的新数组，并不会修改原数组。
 
 ```js
 // splice
 const arr1 = [1, 3, 5, 2, 8];
 const newArr1 = arr1.splice(1, 2);
-console.log("原数组:", arr1); // [1, 2, 8]
-console.log("新数组:", newArr1); // [3, 5]
+console.log('原数组:', arr1); // [1, 2, 8]
+console.log('新数组:', newArr1); // [3, 5]
 
 // toSpliced
 const arr2 = [1, 3, 5, 2, 8];
 const newArr2 = arr2.toSpliced(1, 2);
-console.log("原数组:", arr2); // [1, 3, 5, 2, 8]
-console.log("新数组:", newArr2); // [1, 2, 8]
+console.log('原数组:', arr2); // [1, 3, 5, 2, 8]
+console.log('新数组:', newArr2); // [1, 2, 8]
 ```
 
 #### with
-with有点类似我们通过[index]来修改数组，区别就是with不是修改原数组，而是返回整个新数组。
+
+with 有点类似我们通过[index]来修改数组，区别就是 with 不是修改原数组，而是返回整个新数组。
 
 ```js
 const arr = [1, 3, 5, 2, 8];
 
 const newArr = arr.with(1, 10);
-console.log("原数组:", arr);
-console.log("新数组:", newArr);
+console.log('原数组:', arr);
+console.log('新数组:', newArr);
 ```
 
-### 2. WeakMap支持 Symbol 键
+### 2. WeakMap 支持 Symbol 键
+
 ```js
-const weak = new WeakMap();
-const key = Symbol("ref");
-weak.set(key, "randy");
+const weak = new WeakMap();
+const key = Symbol('ref');
+weak.set(key, 'randy');
 
-console.log(weak.get(key)); // randy
+console.log(weak.get(key)); // randy
 ```
-

@@ -6,6 +6,7 @@
 - **Promise** 的方式，使用 Promise 的方式可以将嵌套的回调函数作为链式调用。但是使用这种方法，有时会造成多个 then 的链式调用，可能会造成代码的语义不够明确。
 - **generator** 的方式，它可以在函数的执行过程中，将函数的执行权转移出去，在函数外部还可以将执行权转移回来。当遇到异步函数执行的时候，将函数执行权转移出去，当异步函数执行完毕时再将执行权给转移回来。因此在 generator 内部对于异步操作的方式，可以以同步的顺序来书写。使用这种方式需要考虑的问题是何时将函数的控制权转移回来，因此需要有一个自动执行 generator 的机制，比如说 co 模块等方式来实现 generator 的自动执行。
 - **async** 函数 的方式，async 函数是 generator 和 promise 实现的一个自动执行的语法糖，它内部自带执行器，当函数内部执行到一个 await 语句的时候，如果语句返回一个 promise 对象，那么函数将会等待 promise 对象的状态变为 resolve 后再继续向下执行。因此可以将异步逻辑，转化为同步的顺序来书写，并且这个函数可以自动执行。
+
 ## 二、Promise
 
 Promise 是一个构造函数，接收一个函数作为参数，返回一个 Promise 实例。可以看成一个状态机，Promise 实例有三种状态，分别是`pending、resolved 和 rejected`，分别代表了进行中、已成功和已失败。实例的状态只能由 pending 转变 `resolved` 或者 `rejected` 状态，并且**状态一经改变，就无法再被改变了**。
@@ -14,23 +15,25 @@ Promise 是一个构造函数，接收一个函数作为参数，返回一个 Pr
 
 注意：在构造 Promise 的时候，**构造函数内部的代码是立即执行的**。
 
-**Promise的特点：**
-- 对象的状态不受外界影响。promise对象代表一个异步操作，有三种状态，pending（进行中）、fulfilled（已成功）、rejected（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态，这也是promise这个名字的由来——“**承诺**”；
-- 一旦状态改变就不会再变，任何时候都可以得到这个结果。promise对象的状态改变，只有两种可能：从pending变为fulfilled，从pending变为rejected。这时就称为resolved（已定型）。如果改变已经发生了，你再对promise对象添加回调函数，也会立即得到这个结果。这与事件（event）完全不同，事件的特点是：如果你错过了它，再去监听是得不到结果的。
+**Promise 的特点：**
 
-**Promise的缺点：**
-- 无法取消Promise，一旦新建它就会立即执行，无法中途取消。
-- 如果不设置回调函数，Promise内部抛出的错误，不会反应到外部。
-- 当处于pending状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。
+- 对象的状态不受外界影响。promise 对象代表一个异步操作，有三种状态，pending（进行中）、fulfilled（已成功）、rejected（已失败）。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态，这也是 promise 这个名字的由来——“**承诺**”；
+- 一旦状态改变就不会再变，任何时候都可以得到这个结果。promise 对象的状态改变，只有两种可能：从 pending 变为 fulfilled，从 pending 变为 rejected。这时就称为 resolved（已定型）。如果改变已经发生了，你再对 promise 对象添加回调函数，也会立即得到这个结果。这与事件（event）完全不同，事件的特点是：如果你错过了它，再去监听是得不到结果的。
+
+**Promise 的缺点：**
+
+- 无法取消 Promise，一旦新建它就会立即执行，无法中途取消。
+- 如果不设置回调函数，Promise 内部抛出的错误，不会反应到外部。
+- 当处于 pending 状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。
 
 ### 1. resolve()
 
 ```js
 MyPromise.resolve = function (value) {
   return new MyPromise(function (resolve) {
-    resolve(value)
-  })
-}
+    resolve(value);
+  });
+};
 ```
 
 ### 2. reject()
@@ -38,9 +41,9 @@ MyPromise.resolve = function (value) {
 ```js
 MyPromise.reject = function (error) {
   return new MyPromise(function (resolve, reject) {
-    reject(error)
-  })
-}
+    reject(error);
+  });
+};
 ```
 
 ### 3. then()
@@ -51,29 +54,29 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
     this.resolve = function (value) {
       if (typeof onFulfilled === 'function') {
         try {
-          var x = onFulfilled(value)
-          resolve(x)
+          var x = onFulfilled(value);
+          resolve(x);
         } catch (e) {
-          reject(e)
+          reject(e);
         }
       } else {
-        resolve(value)
+        resolve(value);
       }
-    }
+    };
     this.reject = function (error) {
       if (typeof onRejected === 'function') {
         try {
-          var x = onRejected(error)
-          resolve(x)
+          var x = onRejected(error);
+          resolve(x);
         } catch (e) {
-          reject(e)
+          reject(e);
         }
       } else {
-        reject(error)
+        reject(error);
       }
-    }
-  })
-}
+    };
+  });
+};
 ```
 
 ### 4. all()
@@ -83,24 +86,24 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
 ```js
 MyPromise.all = function (iterable) {
   return new MyPromise(function (resolve, reject) {
-    let count = 0
-    let result = []
+    let count = 0;
+    let result = [];
     for (let i = 0; i < iterable.length; i++) {
       iterable[i].then(
         function (value) {
-          result[i] = value
-          count++
+          result[i] = value;
+          count++;
           if (count === iterable.length) {
-            resolve(result)
+            resolve(result);
           }
         },
         function (error) {
-          reject(error)
+          reject(error);
         }
-      )
+      );
     }
-  })
-}
+  });
+};
 ```
 
 ### 5. race()
@@ -113,17 +116,16 @@ MyPromise.race = function (iterable) {
     for (let i = 0; i < iterable.length; i++) {
       iterable[i].then(
         function (data) {
-          resolve(data)
+          resolve(data);
         },
         function (error) {
-          reject(error)
+          reject(error);
         }
-      )
+      );
     }
-  })
-}
+  });
+};
 ```
-
 
 #### 可用于取消 Promise
 
@@ -132,16 +134,15 @@ MyPromise.race = function (iterable) {
 ```js
 // 通过promise.race的特性，来进行promise的取消
 function stopPromise(stopP) {
-  let proObj = {}
+  let proObj = {};
   let promise = new Promise((resolve, reject) => {
-    proObj.resolve = resolve
-    proObj.reject = reject
-  })
-  proObj.promise = Promise.race([stopP, promise])
-  return proObj
+    proObj.resolve = resolve;
+    proObj.reject = reject;
+  });
+  proObj.promise = Promise.race([stopP, promise]);
+  return proObj;
 }
 ```
-
 
 ### 6. allSettled()
 
@@ -150,59 +151,61 @@ function stopPromise(stopP) {
 ```js
 MyPromise.allSettled = function (iterable) {
   return new MyPromise(function (resolve, reject) {
-    let count = 0
-    let result = []
+    let count = 0;
+    let result = [];
     for (let i = 0; i < iterable.length; i++) {
       iterable[i].then(
         function (value) {
           result[i] = {
             status: 'fulfilled',
             value: value,
-          }
-          count++
+          };
+          count++;
           if (count === iterable.length) {
-            resolve(result)
+            resolve(result);
           }
         },
         function (error) {
           result[i] = {
             status: 'rejected',
             reason: error,
-          }
-          count++
+          };
+          count++;
           if (count === iterable.length) {
-            resolve(result)
+            resolve(result);
           }
         }
-      )
+      );
     }
-  })
-}
+  });
+};
 ```
 
 ### 7. any()
+
 返回一个 promise，只要有一个 promise 成功了，就把这个成功的值返回出去
+
 ```js
 MyPromise.any = function (iterable) {
   return new MyPromise(function (resolve, reject) {
-    let count = 0
-    let errs = []
+    let count = 0;
+    let errs = [];
     for (let i = 0; i < iterable.length; i++) {
       iterable[i].then(
         function (value) {
-          resolve(value)
+          resolve(value);
         },
         function (error) {
-          errs[i] = error
-          count++
+          errs[i] = error;
+          count++;
           if (count === iterable.length) {
-            reject(new AggregateError(errs))
+            reject(new AggregateError(errs));
           }
         }
-      )
+      );
     }
-  })
-}
+  });
+};
 ```
 
 ## 三、Generator
@@ -216,22 +219,21 @@ Generator 实现的核心在于`上下文的保存`，函数并没有真的被�
 // 内部可以通过yield表达式来暂停执行
 // 通过next方法来恢复执行
 function* gen() {
-  let a = 1 + 2
-  yield 2
-  yield 3
+  let a = 1 + 2;
+  yield 2;
+  yield 3;
 }
-let b = gen()
-console.log(b.next()) // { value: 2, done: false }
-console.log(b.next()) // { value: 3, done: false }
-console.log(b.next()) // { value: undefined, done: true }
-
+let b = gen();
+console.log(b.next()); // { value: 2, done: false }
+console.log(b.next()); // { value: 3, done: false }
+console.log(b.next()); // { value: undefined, done: true }
 ```
 
 ## 四、Async / Await
 
 async 和 await 相比直接使用 Promise 来说，优势在于处理 then 的调用链，能够更清晰准确的写出代码。缺点在于滥用 await 可能会导致性能问题，因为 await 会阻塞代码，也许之后的异步代码并不依赖于前者，但仍然需要等待前者完成，导致代码失去了并发性。
 
-错误处理友好，async/await可以⽤成熟的`try/catch`，Promise的错误捕获⾮常冗余 
+错误处理友好，async/await 可以⽤成熟的`try/catch`，Promise 的错误捕获⾮常冗余
 
 - 优点：代码清晰，不用像 Promise 写一大堆 then 链，处理了回调地狱的问题；
 - 缺点：await 将异步代码改造成同步代码，如果多个异步操作没有依赖性而使用 await 会导致性能上的降低。

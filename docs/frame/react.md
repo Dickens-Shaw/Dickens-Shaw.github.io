@@ -1,18 +1,21 @@
 # React
 
+## 一、React 基础
+
 ## Fiber
 
 React Fiber 是一种基于浏览器的单线程调度算法.
 
-React 16 之前 ，reconcilation 算法实际上是递归，想要中断递归是很困难的，React 16 开始使用了循环来代替之前的递归.
+React 16 之前 ，reconciliation 算法实际上是递归，想要中断递归是很困难的，React 16 开始使用了循环来代替之前的递归.
 
-Fiber：一种将 recocilation （递归 diff），拆分成无数个小任务的算法；它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（16ms）内，还有没有足够的时间允许计算。
+Fiber：一种将 reconciliation （递归 diff），拆分成无数个小任务的算法；它随时能够停止，恢复。停止恢复的时机取决于当前的一帧（16ms）内，还有没有足够的时间允许计算。
 
 为了给用户制造一种应用很快的“假象”，不能让一个任务长期霸占着资源。 可以将浏览器的渲染、布局、绘制、资源加载(例如 HTML 解析)、事件响应、脚本执行视作操作系统的“进程”，需要通过某些调度策略合理地分配 CPU 资源，从而提高浏览器的用户响应速率, 同时兼顾任务执行效率。
 
-所以 React 通过Fiber 架构，让这个执行过程变成可被中断。“适时”地让出 CPU 执行权，除了可以让浏览器及时地响应用户的交互，还有其他好处:
-* 分批延时对DOM进行操作，避免一次性操作大量 DOM 节点，可以得到更好的用户体验；
-* 给浏览器一点喘息的机会，它会对代码进行编译优化（JIT）及进行热代码优化，或者对 reflow 进行修正。
+所以 React 通过 Fiber 架构，让这个执行过程变成可被中断。“适时”地让出 CPU 执行权，除了可以让浏览器及时地响应用户的交互，还有其他好处:
+
+- 分批延时对 DOM 进行操作，避免一次性操作大量 DOM 节点，可以得到更好的用户体验；
+- 给浏览器一点喘息的机会，它会对代码进行编译优化（JIT）及进行热代码优化，或者对 reflow 进行修正。
 
 react 在进行组件渲染时，从 setState 开始到渲染完成整个过程是同步的（“一气呵成”）。如果需要渲染的组件比较庞大，js 执行会占据主线程时间较长，会导致页面响应度变差，使得 react 在动画、手势等应用中效果比较差。
 为了解决这个问题，react 团队经过两年的工作，重写了 react 中核心算法——reconciliation。并在 v16 版本中发布了这个新的特性。为了区别之前和之后的 reconciler，通常将之前的 reconciler 称为 stack reconciler，重写后的称为 fiber reconciler，简称为 Fiber。
@@ -24,6 +27,7 @@ Fiber 可以提升复杂 React 应用的可响应性和性能。
 从**编码角度**来看，React 制定了一种名为 Fiber 的数据结构，加上新的算法，使得大量的计算可以被拆解，异步化，浏览器主线程得以释放，保证了渲染的帧率。从而提高响应性。
 
 React 将更新分为了两个时期：
+
 - render/reconciliation：可打断，React 在 workingProgressTree 上复用 current 上的 Fiber 数据结构来一步地（通过 requestIdleCallback）来构建新的 tree，标记处需要更新的节点，放入队列中。
 - commit：不可打断。在第二阶段，React 将其所有的变更一次性更新到 DOM 上。
 
@@ -35,7 +39,7 @@ Fiber 也称协程或者纤程。它和线程并不一样，协程本身是没�
 
 **Fiber 的数据结构**
 
-一个 fiber就是一个 JavaScript对象，包含了元素的信息、该元素的更新操作队列、类型，其数据结构如下
+一个 fiber 就是一个 JavaScript 对象，包含了元素的信息、该元素的更新操作队列、类型，其数据结构如下
 
 ```js
 type Fiber = {
@@ -97,7 +101,7 @@ type Fiber = {
 
   // fiber的版本池，即记录fiber更新过程，便于恢复
   alternate: Fiber | null,
-}
+};
 ```
 
 ## 时间分片
@@ -144,39 +148,39 @@ Fiber 本质上是一个虚拟的堆栈帧，新的调度器会按照优先级�
 V16 生命周期函数用法建议
 
 ```js
-classExampleComponentextendsReact.Component{
+class ExampleComponent extends React.Component {
   //用于初始化state，挂载类组件的时候，先执行构造函数
-  constructor(){}
+  constructor() {}
   //用于替换`componentWillReceiveProps`，该函数会在初始化和`update`时被调用
   //因为该函数是静态函数，所以取不到`this`
   //如果需要对比`prevProps`需要单独在`state`中维护
   //它应返回一个对象来更新 state，如果返回 null 则不更新任何内容。
-  static getDerivedStateFromProps(nextProps,prevState){}
+  static getDerivedStateFromProps(nextProps, prevState) {}
   //判断是否需要更新组件，多用于组件性能优化
   //可以在这里进行性能优化，减少浅层比较
-  shouldComponentUpdate(nextProps,nextState){}
+  shouldComponentUpdate(nextProps, nextState) {}
   //组件挂载后调用
   //可以在该函数中进行请求或者订阅
-  componentDidMount(){}
+  componentDidMount() {}
   //用于获得最新的DOM数据
   //在最近一次渲染中，从之前的DOM拿到一些有用的信息，比如滚动位置等
-  getSnapshotBeforeUpdate(){}
+  getSnapshotBeforeUpdate() {}
   //组件即将销毁
   //可以在此处移除订阅，定时器等等
-  componentWillUnmount(){}
+  componentWillUnmount() {}
   //组件销毁后调用
   //清空数据，取消网络请求等等
-  componentDidUnMount(){}
+  componentDidUnMount() {}
   //组件更新后调用
   //当组件更新后，可以在此处对 DOM 进行操作。
   //如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求。（例如，当 props 未发生变化时，则不会执行网络请求）
-  componentDidUpdate(){}
+  componentDidUpdate() {}
   //渲染组件函数
-  render(){}
+  render() {}
   //以下函数不建议使用
-  UNSAFE_componentWillMount(){}
-  UNSAFE_componentWillUpdate(nextProps,nextState){}
-  UNSAFE_componentWillReceiveProps(nextProps){}
+  UNSAFE_componentWillMount() {}
+  UNSAFE_componentWillUpdate(nextProps, nextState) {}
+  UNSAFE_componentWillReceiveProps(nextProps) {}
 }
 ```
 
@@ -184,7 +188,7 @@ classExampleComponentextendsReact.Component{
 
 JSX 上写的事件并没有绑定在对应的真实 DOM 上，而是通过事件代理的方式，将所有的事件都统一绑定在了 document 上。这样的方式不仅减少了内存消耗，还能在组件挂载销毁时统一订阅和移除事件
 
-除此之外，冒泡到 document 上的事件也不是原生的浏览器事件，而是由 react 自己实现的合成事件（SyntheticEvent）。因此如果不想要是事件冒泡的话应该调用`event.preventDefault()`方法，而不是调用`event.stopProppagation()`方法。
+除此之外，冒泡到 document 上的事件也不是原生的浏览器事件，而是由 react 自己实现的合成事件（SyntheticEvent）。因此如果不想要是事件冒泡的话应该调用`event.preventDefault()`方法，而不是调用`event.stopPropagation()`方法。
 
 _注：React17 之后可以使用`e.stopPropagation()`阻止事件冒泡_
 
@@ -262,7 +266,7 @@ diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然�
 
 ### 两个方向
 
-1. 减少重新 render 的次数。因为在 React 里最重(花时间最长)的一块就是 reconction(简单的可以理解为 diff)，如果不 render，就不会 reconction。（React.memo 和 useCallback ）
+1. 减少重新 render 的次数。因为在 React 里最重(花时间最长)的一块就是 reconciliation(简单的可以理解为 diff)，如果不 render，就不会 reconciliation。（React.memo 和 useCallback ）
 2. 减少计算的量。主要是减少重复计算，对于函数式组件来说，每次 render 都会重新从头开始执行函数调用。（useMemo ）
    在使用类组件的时候，使用的 React 优化 API 主要是：shouldComponentUpdate 和 PureComponent，这两个 API 所提供的解决思路都是为了减少重新 render 的次数，主要是减少父组件更新而子组件也更新的情况，虽然也可以在 state 更新的时候阻止当前组件渲染，如果要这么做的话，证明你这个属性不适合作为 state，而应该作为静态属性或者放在 class 外面作为一个简单的变量 。
 
@@ -432,15 +436,15 @@ class DataProvider extends React.Components {
 <DataProvider render={(data) => <h1>Hello {data.name}</h1>} />;
 ```
 
-
-**优点**：数据共享、代码复用，将组件内的state作为props传递给调用者，将渲染逻辑交给调用者。
+**优点**：数据共享、代码复用，将组件内的 state 作为 props 传递给调用者，将渲染逻辑交给调用者。
 
 **缺点**：无法在 return 语句外访问数据、嵌套写法不够优雅
 
 ## Hooks
 
-**官方解释∶**
->Hook是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。通过自定义hook，可以复用代码逻辑。
+**官方解释 ∶**
+
+> Hook 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。通过自定义 hook，可以复用代码逻辑。
 
 - 原理：
   由于每次渲染都会不断的执行并产生闭包，那么从性能上和 GC 压力上都会稍逊于 Vue3。它的关键字是「每次渲染都重新执行」
@@ -620,13 +624,13 @@ React.Children.map(children, (child) => {
 
 ## PureComponent
 
-PureComponent表示一个纯组件，可以用来优化React程序，减少render函数执行的次数，从而提高组件的性能。
+PureComponent 表示一个纯组件，可以用来优化 React 程序，减少 render 函数执行的次数，从而提高组件的性能。
 
-在React中，当prop或者state发生变化时，可以通过在shouldComponentUpdate生命周期函数中执行return false来阻止页面的更新，从而减少不必要的render执行。React.PureComponent会自动执行 shouldComponentUpdate。
+在 React 中，当 prop 或者 state 发生变化时，可以通过在 shouldComponentUpdate 生命周期函数中执行 return false 来阻止页面的更新，从而减少不必要的 render 执行。React.PureComponent 会自动执行 shouldComponentUpdate。
 
-不过，pureComponent中的 shouldComponentUpdate() 进行的是**浅比较**，也就是说如果是引用数据类型的数据，只会比较不是同一个地址，而不会比较这个地址里面的数据是否一致。浅比较会忽略属性和或状态突变情况，其实也就是数据引用指针没有变化，而数据发生改变的时候render是不会执行的。如果需要重新渲染那么就需要重新开辟空间引用数据。PureComponent一般会用在一些纯展示组件上。
+不过，pureComponent 中的 shouldComponentUpdate() 进行的是**浅比较**，也就是说如果是引用数据类型的数据，只会比较不是同一个地址，而不会比较这个地址里面的数据是否一致。浅比较会忽略属性和或状态突变情况，其实也就是数据引用指针没有变化，而数据发生改变的时候 render 是不会执行的。如果需要重新渲染那么就需要重新开辟空间引用数据。PureComponent 一般会用在一些纯展示组件上。
 
-使用pureComponent的**好处**：当组件更新时，如果组件的props或者state都没有改变，render函数就不会触发。省去虚拟DOM的生成和对比过程，达到提升性能的目的。这是因为react自动做了一层浅比较。
+使用 pureComponent 的**好处**：当组件更新时，如果组件的 props 或者 state 都没有改变，render 函数就不会触发。省去虚拟 DOM 的生成和对比过程，达到提升性能的目的。这是因为 react 自动做了一层浅比较。
 
 ## Key
 

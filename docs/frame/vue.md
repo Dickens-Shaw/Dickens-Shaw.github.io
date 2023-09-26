@@ -330,7 +330,7 @@ Vue 的渲染都是基于这个响应式系统的。在 Vue 的创建过程中�
 使用场景：
 
 - 需要格式化数据的情况，比如需要处理时间、价格等数据格式的输出 / 显示。
-- 比如后端返回一个 年月日的日期字符串，前端需要展示为 多少天前 的数据格式，此时就可以用 fliters 过滤器来处理数据。
+- 比如后端返回一个 年月日的日期字符串，前端需要展示为 多少天前 的数据格式，此时就可以用 filters 过滤器来处理数据。
 
 过滤器是一个函数，它会把表达式中的值始终当作函数的第一个参数。过滤器用在插值表达式 {{ }} 和 v-bind 表达式 中，然后放在操作符“ | ”后面进行指示。
 
@@ -607,7 +607,7 @@ function initLifecycle(vm: Component) {
 }
 ```
 
-- 判断当前 keepAlive 和 componentInstance 是否存在来判断是否要执行组件 prepatch 还是执行创建 componentlnstance
+- 判断当前 keepAlive 和 componentInstance 是否存在来判断是否要执行组件 prepatch 还是执行创建 componentInstance
 
 ```js
 // core/vdom/create-component
@@ -635,7 +635,7 @@ prepatch 操作就不会在执行组件的 mounted 和 created 生命周期函�
 **LRU （least recently used）缓存策略**
 
 LRU 缓存策略 ∶ 从内存中找出最久未使用的数据并置换新的数据。
-LRU（Least rencently used）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是"**如果数据最近被访问过，那么将来被访问的几率也更高**"。 最常见的实现是使用一个链表保存缓存数据，详细算法实现如下 ∶
+LRU（Least recently used）算法根据数据的历史访问记录来进行淘汰数据，其核心思想是"**如果数据最近被访问过，那么将来被访问的几率也更高**"。 最常见的实现是使用一个链表保存缓存数据，详细算法实现如下 ∶
 
 - 新数据插入到链表头部
 - 每当缓存命中（即缓存数据被访问），则将数据移到链表头部
@@ -645,7 +645,7 @@ LRU（Least rencently used）算法根据数据的历史访问记录来进行淘
 
 可以让我们在下次 DOM 更新循环结束之后执行延迟回调，用于获得更新后的 DOM
 
-在 Vue 2.4 之前都是使用的 microtasks，但是 microtasks 的优先级过高，在某些情况下可能会出现比事件冒泡更快的情况，但如果都使用 macrotasks 又可能会出现渲染的性能问题。所以在新版本中，会默认使用 microtasks，但在特殊情况下会使用 macrotasks，比如 v-on。
+在 Vue 2.4 之前都是使用的 microTasks，但是 microTasks 的优先级过高，在某些情况下可能会出现比事件冒泡更快的情况，但如果都使用 macroTasks 又可能会出现渲染的性能问题。所以在新版本中，会默认使用 microTasks，但在特殊情况下会使用 macroTasks，比如 v-on。
 
 **核心：** 是利用了如 Promise 、MutationObserver、setImmediate、setTimeout 的原生 JavaScript 方法来模拟对应的微/宏任务的实现
 
@@ -1188,13 +1188,13 @@ directives: {
       let timer;
       let prevTime;
       return function (...args) {
-        let currTime = Date.now();
+        let currentTime = Date.now();
         let context = this;
-        if (!prevTime) prevTime = currTime;
+        if (!prevTime) prevTime = currentTime;
         clearTimeout(timer);
 
-        if (currTime - prevTime > delay) {
-          prevTime = currTime;
+        if (currentTime - prevTime > delay) {
+          prevTime = currentTime;
           fn.apply(context, args);
           clearTimeout(timer);
           return;
@@ -1315,9 +1315,9 @@ SSR 的缺点：
 3. **打包优化**
 
 - 压缩代码
-- Tree Shaking/Scope Hoisting
+- Tree Shaking / Scope Hoisting
 - 使用 cdn 加载第三方模块
-- 多线程打包 thread-loader/happypack
+- 多线程打包 thread-loader / HappyPack
 - splitChunks 抽离公共文件
 - sourceMap 优化
 
@@ -1952,7 +1952,7 @@ action 函数接受一个与 store 实例具有相同方法和属性的 context 
 
 #### 其它
 
-- 支持自定义渲染器，从而使得 weex 可以通过自定义渲染器的方式来扩展，而不是直接 fork 源码来改的方式。
+- 支持自定义渲染器，从而使得 Weex 可以通过自定义渲染器的方式来扩展，而不是直接 fork 源码来改的方式。
 - 支持 Fragment（多个根节点）和 Protal（在 dom 其他部分渲染组建内容）组件，针对一些特殊的场景做了处理。
 - 基于 tree shaking 优化，提供了更多的内置功能。
 
