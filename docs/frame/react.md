@@ -253,8 +253,6 @@ class DataProvider extends React.Components {
 |  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发                                                                                                                                   |
 |   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发                                                                                                                                                                          |
 
-
-
 ### 8. 受控 / 非受控组件
 
 处理表单数据：
@@ -287,8 +285,7 @@ forceUpdate 就是重新 render，使用场景：
 
 只要在组件中定义其中一个及以上的生命周期方法（static getDerivedStateFromError()或 componentDidCatch()），那么这个组件就变成了异常捕获边界。当异常被抛出时使用 static getDerivedStateFromError()来渲染一个备用 UI，使用 componentDidCatch()来打印异常信息。
 
-
-### 12. Refs 
+### 12. Refs
 
 > React 中引用的简写。它是一个有助于存储对特定的 React 元素或组件的引用的属性，它将由组件渲染配置函数返回。用于对 render() 返回的特定元素或组件的引用。
 
@@ -298,11 +295,13 @@ forceUpdate 就是重新 render，使用场景：
   - 与第三方 DOM 库集成
 
 ### 13. Portals 插槽
+
 > Portal 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的优秀的方案
 
-Portals 是React 16提供的官方解决方案，使得组件可以脱离父组件层级挂载在DOM树的任何位置。通俗来讲，就是我们 render 一个组件，但这个组件的 DOM 结构并不在本组件内。
+Portals 是 React 16 提供的官方解决方案，使得组件可以脱离父组件层级挂载在 DOM 树的任何位置。通俗来讲，就是我们 render 一个组件，但这个组件的 DOM 结构并不在本组件内。
 
-Portals语法如下：
+Portals 语法如下：
+
 ```js
 ReactDOM.createPortal(child, container);
 ```
@@ -310,7 +309,8 @@ ReactDOM.createPortal(child, container);
 - 第一个参数 child 是可渲染的 React 子项，比如元素，字符串或者片段等;
 - 第二个参数 container 是一个 DOM 元素。
 
-一般情况下，组件的render函数返回的元素会被挂载在它的父级组件上：
+一般情况下，组件的 render 函数返回的元素会被挂载在它的父级组件上：
+
 ```js
 import DemoComponent from './DemoComponent';
 render() {
@@ -323,7 +323,8 @@ render() {
 }
 ```
 
-然而，有些元素需要被挂载在更高层级的位置。最典型的应用场景：当父组件具有overflow: hidden或者z-index的样式设置时，组件有可能被其他元素遮挡，这时就可以考虑要不要使用Portal使组件的挂载脱离父组件。例如：对话框，模态窗。
+然而，有些元素需要被挂载在更高层级的位置。最典型的应用场景：当父组件具有 overflow: hidden 或者 z-index 的样式设置时，组件有可能被其他元素遮挡，这时就可以考虑要不要使用 Portal 使组件的挂载脱离父组件。例如：对话框，模态窗。
+
 ```js
 import DemoComponent from './DemoComponent';
 render() {
@@ -334,6 +335,38 @@ render() {
   );
 }
 ```
+
+### 14. Context
+
+在 React 中，数据传递一般使用 props 传递数据，维持单向数据流，这样可以让组件之间的关系变得简单且可预测，但是单项数据流在某些场景中并不适用。单纯一对的父子组件传递并无问题，但要是组件之间层层依赖深入，props 就需要层层传递显然，这样做太繁琐了。
+
+Context 提供了一种在组件之间共享此类值的方式，而不必显式地通过组件树的逐层传递 props。
+
+可以把 context 当做是特定一个组件树内共享的 store，用来做数据传递。简单说就是，**当你不想在组件树中通过逐层传递 props 或者 state 的方式来传递数据时，可以使用 Context 来实现跨层级的组件数据传递**。
+
+JS 的代码块在执行期间，会创建一个相应的作用域链，这个作用域链记录着运行时 JS 代码块执行期间所能访问的活动对象，包括变量和函数，JS 程序通过作用域链访问到代码块内部或者外部的变量和函数。
+
+假如以 JS 的作用域链作为类比，React 组件提供的 Context 对象其实就好比一个提供给子组件访问的作用域，而 Context 对象的属性可以看成作用域上的活动对象。由于组件 的 Context 由其父节点链上所有组件通 过 `getChildContext()` 返回的 Context 对象组合而成，所以，组件通过 Context 是可以访问到其父组件链上所有节点组件提供的 Context 的属性。
+
+#### 不足：
+
+- Context 目前还处于实验阶段，可能会在后面的发行版本中有很大的变化，事实上这种情况已经发生了，所以为了避免给今后升级带来大的影响和麻烦，不建议在 app 中使用 context。
+- 尽管不建议在 app 中使用 context，但是独有组件而言，由于影响范围小于 app，如果可以做到高内聚，不破坏组件树之间的依赖关系，可以考虑使用 context
+- 对于组件之间的数据通信或者状态管理，有效使用 props 或者 state 解决，然后再考虑使用第三方的成熟库进行解决，以上的方法都不是最佳的方案的时候，在考虑 context。
+- context 的更新需要通过 setState()触发，但是这并不是很可靠的，Context 支持跨组件的访问，但是如果中间的子组件通过一些方法不影响更新，比如 shouldComponentUpdate() 返回 false 那么不能保证 Context 的更新一定可以使用 Context 的子组件，因此，Context 的可靠性需要关注
+
+### 15. 类组件和函数组件区别
+#### 相同点：
+组件是 React 可复用的最小代码片段，它们会返回要在页面中渲染的 React 元素。也正因为组件是 React 的最小编码单位，所以无论是函数组件还是类组件，在使用方式和最终呈现效果上都是完全一致的。
+
+我们甚至可以将一个类组件改写成函数组件，或者把函数组件改写成一个类组件（虽然并不推荐这种重构行为）。从使用者的角度而言，很难从使用体验上区分两者，而且在现代浏览器中，闭包和类的性能只在极端场景下才会有明显的差别。所以，基本可认为两者作为组件是完全一致的。
+
+#### 不同点：
+- 它们在开发时的心智模型上却存在巨大的差异。类组件是基于面向对象编程的，它主打的是继承、生命周期等核心概念；而函数组件内核是函数式编程，主打的是 immutable、没有副作用、引用透明等特点。
+- 之前，在使用场景上，如果存在需要使用生命周期的组件，那么主推类组件；设计模式上，如果需要使用继承，那么主推类组件。但现在由于 React Hooks 的推出，生命周期概念的淡出，函数组件可以完全取代类组件。其次继承并不是组件最佳的设计模式，官方更推崇“组合优于继承”的设计概念，所以类组件在这方面的优势也在淡出。
+- 性能优化上，类组件主要依靠 shouldComponentUpdate 阻断渲染来提升性能，而函数组件依靠 React.memo 缓存渲染结果来提升性能。
+- 从上手程度而言，类组件更容易上手，从未来趋势上看，由于React Hooks 的推出，函数组件成了社区未来主推的方案。
+- 类组件在未来时间切片与并发模式中，由于生命周期带来的复杂度，并不易于优化。而函数组件本身轻量简单，且在 Hooks 的基础上提供了比原先更细粒度的逻辑组织与复用，更能适应 React 的未来发展。
 
 ## 二、数据管理
 
@@ -507,21 +540,19 @@ class ExampleComponent extends React.Component {
 - Slot
 
 ### 2. 兄弟组件
+
 通过共同的父组件来管理状态和事件函数
 
 ### 3. 跨层级组件
+
 使用 **Context API**：React.createContext(),使用 Provider 和 Customer 模式,在顶层的 Provider 中传入 value，在子孙级的 Consumer 中获取该值
 
 ### 4. 任意组件
+
 Redux、 Mobx、flux 或者 Event Bus
 
-### 5. Context
-
-context 提供了一种数据传输方式，它使得数据可以直接通过组件树传递而不需要在每一个层级上手动地传递 props。
-在典型的 React 应用中，数据是通过 props 自上而下（父组件传递给子组件）传递的，但是对于同时被许多组件所需要的某些 props（如个人偏好，UI 主题）来说，使用这种方式传递数据简直就是受刑。Context 提供了不需要显式地在组件树上每个层级传递 prop 而是直接在组件之间传递的方法。
-
-
 ## 五、路由
+
 ### 1. react-router 实现思想
 
 1. 基于 history 库来实现上述不同的客户端路由实现思想，并且能够保存历史记录等，磨平浏览器差异，上层无感知
@@ -620,7 +651,6 @@ dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了
 - connect 方法：一个函数，绑定 State 到 View
 - dispatch 方法：一个函数，发送 Action 到 State
 
-
 ## 七、Hooks
 
 ## 八、虚拟 DOM
@@ -665,7 +695,7 @@ diff 算法，会对比新老虚拟 DOM，记录下他们之间的变化，然�
 
 - 减少重新 render 的次数。因为在 React 里最重(花时间最长)的一块就是 reconciliation(简单的可以理解为 diff)，如果不 render，就不会 reconciliation。（React.memo 和 useCallback ）
 - 减少计算的量。主要是减少重复计算，对于函数式组件来说，每次 render 都会重新从头开始执行函数调用。（useMemo ）
-   
+
 在使用类组件的时候，使用的 React 优化 API 主要是：shouldComponentUpdate 和 PureComponent，这两个 API 所提供的解决思路都是为了减少重新 render 的次数，主要是减少父组件更新而子组件也更新的情况，虽然也可以在 state 更新的时候阻止当前组件渲染，如果要这么做的话，证明你这个属性不适合作为 state，而应该作为静态属性或者放在 class 外面作为一个简单的变量 。
 
 ### 2. shouldComponentUpdate
@@ -691,7 +721,6 @@ React.memo() 是一个高阶组件 (HOC)，它接收一个组件 A 作为参数�
 ### 5. useMemo()
 
 useMemo() 是一个 React Hook，我们可以使用它在组件中包装函数。 我们可以使用它来确保该函数中的值仅在其依赖项之一发生变化时才重新计算
-
 
 ### 6. Immutable
 
