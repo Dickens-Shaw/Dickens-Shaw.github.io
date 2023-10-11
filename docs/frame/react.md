@@ -208,65 +208,20 @@ class DataProvider extends React.Components {
 
 **缺点**：无法在 return 语句外访问数据、嵌套写法不够优雅
 
-### 7. Hooks
-
-**官方解释 ∶**
-
-> Hook 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。通过自定义 hook，可以复用代码逻辑。
-
-- 原理：
-  由于每次渲染都会不断的执行并产生闭包，那么从性能上和 GC 压力上都会稍逊于 Vue3。它的关键字是「每次渲染都重新执行」
-
-- 优点：
-
-  - 简洁: React Hooks 解决了 HOC 和 Render Props 因共享数据而出现嵌套地狱问题，更加简洁
-  - 解耦: React Hooks 可以更方便地把 UI 和状态分离,做到更彻底的解耦
-  - 组合: Hooks 中可以引用另外的 Hooks 形成新的 Hooks,组合变化万千
-  - 函数友好: React Hooks 为函数组件而生,从而解决了类组件的几大问题:
-    1. this 指向容易错误
-    2. 分割在不同声明周期中的逻辑使得代码难以理解和维护
-    3. 代码复用成本高（高阶组件容易使代码量剧增）
-    4. 暴露给模板的属性具有明确的来源，且函数返回的值可以任意命名，因此不会发生名称空间冲突。
-    5. 没有创建仅用于逻辑重用的不必要的组件实例
-
-- 缺陷：
-
-  1. 额外的学习成本（Functional Component 与 Class Component 之间的困惑）
-  2. 写法上有限制（只能在组件顶层使，且不能出现在条件、循环中），并且写法限制增加了重构成本
-  3. 破坏了 PureComponent、React.memo 浅比较的性能优化效果（为了取最新的 props 和 state，每次 render()都要重新创建事件处函数）
-  4. 在闭包场景可能会引用到旧的 state、props 值
-  5. 内部实现上不直观（依赖一份可变的全局状态，不再那么“纯”）
-  6. React.memo 并不能完全替代 shouldComponentUpdate（因为拿不到 state change，只针对 props change）
-
-- 对原有 React 的 API 封装的钩子函数
-
-|        钩子名        | 作用                                                                                                                                                                                                                        |
-| :------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|       useState       | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了                                                                 |
-|      useEffect       | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化                                                                                                                   |
-|      useContext      | 定义一个全局的对象,类似 context                                                                                                                                                                                             |
-|      useReducer      | 可以增强函数提供类似 Redux 的功能                                                                                                                                                                                           |
-|     useCallback      | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
-|       useMemo        | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值                                                                                                                                                       |
-|        useRef        | 获取 ref 属性对应的 dom                                                                                                                                                                                                     |
-| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值                                                                                                                                                                                       |
-|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发                                                                                                                                   |
-|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发                                                                                                                                                                          |
-
-### 8. 受控 / 非受控组件
+### 7. 受控 / 非受控组件
 
 处理表单数据：
 
 - 受控组件：组件的状态通过 React 的状态值 state 或者 props 控制
 - 不受控组件：组件不被 React 的状态值控制,通过 dom 的特性或者 React 的 ref 来控制
 
-### 9. React.lazy
+### 8. React.lazy
 
 对于最初 React.lazy() 所返回的 LazyComponent 对象，其 \_status 默认是 -1，所以首次渲染时，会进入 readLazyComponentType 函数中的 default 的逻辑，这里才会真正异步执行 import(url)操作，由于并未等待，随后会检查模块是否 Resolved，如果已经 Resolved 了（已经加载完毕）则直接返回 moduleObject.default（动态加载的模块的默认导出），否则将通过 throw 将 thenable 抛出到上层
 
 React 捕获到异常之后，会判断异常是不是一个 thenable，如果是则会找到 SuspenseComponent ，如果 thenable 处于 pending 状态，则会将其 children 都渲染成 fallback 的值，一旦 thenable 被 resolve 则 SuspenseComponent 的子组件会重新渲染一次
 
-### 10. forceUpdate()
+### 9. forceUpdate()
 
 如果你的 render() 方法依赖于一些其他数据，你可以告诉 React 组件需要通过调用 forceUpdate() 重新渲染。
 
@@ -277,7 +232,7 @@ forceUpdate 就是重新 render，使用场景：
 1. 有些变量不在 state 上，但是你又想达到这个变量更新的时候，刷新 render；
 2. state 里的某个变量层次太深，更新的时候没有自动触发 render
 
-### 11. 异常捕获边界
+### 10. 异常捕获边界
 
 在部分 UI 中出现的 JavaScript 异常是不应该导致整个应用的崩溃的。为了解决这个问题，React16 引进了一个新的概念“异常捕获边界(Error Boundaries)“。
 
@@ -285,7 +240,7 @@ forceUpdate 就是重新 render，使用场景：
 
 只要在组件中定义其中一个及以上的生命周期方法（static getDerivedStateFromError()或 componentDidCatch()），那么这个组件就变成了异常捕获边界。当异常被抛出时使用 static getDerivedStateFromError()来渲染一个备用 UI，使用 componentDidCatch()来打印异常信息。
 
-### 12. Refs
+### 11. Refs
 
 > React 中引用的简写。它是一个有助于存储对特定的 React 元素或组件的引用的属性，它将由组件渲染配置函数返回。用于对 render() 返回的特定元素或组件的引用。
 
@@ -294,7 +249,7 @@ forceUpdate 就是重新 render，使用场景：
   - 触发式动画
   - 与第三方 DOM 库集成
 
-### 13. Portals 插槽
+### 12. Portals 插槽
 
 > Portal 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的优秀的方案
 
@@ -336,7 +291,7 @@ render() {
 }
 ```
 
-### 14. Context
+### 13. Context
 
 在 React 中，数据传递一般使用 props 传递数据，维持单向数据流，这样可以让组件之间的关系变得简单且可预测，但是单项数据流在某些场景中并不适用。单纯一对的父子组件传递并无问题，但要是组件之间层层依赖深入，props 就需要层层传递显然，这样做太繁琐了。
 
@@ -355,78 +310,130 @@ JS 的代码块在执行期间，会创建一个相应的作用域链，这个�
 - 对于组件之间的数据通信或者状态管理，有效使用 props 或者 state 解决，然后再考虑使用第三方的成熟库进行解决，以上的方法都不是最佳的方案的时候，在考虑 context。
 - context 的更新需要通过 setState()触发，但是这并不是很可靠的，Context 支持跨组件的访问，但是如果中间的子组件通过一些方法不影响更新，比如 shouldComponentUpdate() 返回 false 那么不能保证 Context 的更新一定可以使用 Context 的子组件，因此，Context 的可靠性需要关注
 
-### 15. 类组件和函数组件区别
+### 14. 类组件和函数组件区别
+
 #### 相同点：
+
 组件是 React 可复用的最小代码片段，它们会返回要在页面中渲染的 React 元素。也正因为组件是 React 的最小编码单位，所以无论是函数组件还是类组件，在使用方式和最终呈现效果上都是完全一致的。
 
 我们甚至可以将一个类组件改写成函数组件，或者把函数组件改写成一个类组件（虽然并不推荐这种重构行为）。从使用者的角度而言，很难从使用体验上区分两者，而且在现代浏览器中，闭包和类的性能只在极端场景下才会有明显的差别。所以，基本可认为两者作为组件是完全一致的。
 
 #### 不同点：
+
 - 它们在开发时的心智模型上却存在巨大的差异。类组件是基于面向对象编程的，它主打的是继承、生命周期等核心概念；而函数组件内核是函数式编程，主打的是 immutable、没有副作用、引用透明等特点。
 - 之前，在使用场景上，如果存在需要使用生命周期的组件，那么主推类组件；设计模式上，如果需要使用继承，那么主推类组件。但现在由于 React Hooks 的推出，生命周期概念的淡出，函数组件可以完全取代类组件。其次继承并不是组件最佳的设计模式，官方更推崇“组合优于继承”的设计概念，所以类组件在这方面的优势也在淡出。
 - 性能优化上，类组件主要依靠 shouldComponentUpdate 阻断渲染来提升性能，而函数组件依靠 React.memo 缓存渲染结果来提升性能。
-- 从上手程度而言，类组件更容易上手，从未来趋势上看，由于React Hooks 的推出，函数组件成了社区未来主推的方案。
+- 从上手程度而言，类组件更容易上手，从未来趋势上看，由于 React Hooks 的推出，函数组件成了社区未来主推的方案。
 - 类组件在未来时间切片与并发模式中，由于生命周期带来的复杂度，并不易于优化。而函数组件本身轻量简单，且在 Hooks 的基础上提供了比原先更细粒度的逻辑组织与复用，更能适应 React 的未来发展。
 
 ## 二、数据管理
 
-### 1. props 和 state
+### 1. setState 原理
 
-| 条件                 | State | Props |
-| -------------------- | :---: | :---: |
-| 从父组件中接收初始值 |  Yes  |  Yes  |
-| 父组件可以改变值     |  No   |  Yes  |
-| 在组件中设置默认值   |  Yes  |  Yes  |
-| 在组件的内部变化     |  Yes  |  No   |
-| 设置子组件的初始值   |  Yes  |  Yes  |
-| 在子组件的内部更改   |  No   |  Yes  |
+![setState](/images/setState.png)
 
-- props:
-  React 中属性的简写。它们是只读组件，必须保持纯，即不可变。它们总是在整个应用中从父组件传递到子组件。子组件永远不能将 prop 送回父组件。这有助于维护单向数据流，通常用于呈现动态生成的数据
+#### 执行过程:
 
-- state:
-  React 组件的核心，是数据的来源，必须尽可能简单。基本上状态是确定组件呈现和行为的对象。与 props 不同，它们是可变的，并创建动态和交互式组件。可以通过 this.state() 访问它们
+1. 首先调用了 `setState` 入口函数，入口函数在这里就是充当一个分发器的角色，根据入参的不同，将其分发到不同的功能函数中去；
 
-### 2. setState
+```js
+ReactComponent.prototype.setState = function (partialState, callback) {
+  this.updater.enqueueSetState(this, partialState);
+  if (callback) {
+    this.updater.enqueueCallback(this, callback, 'setState');
+  }
+};
+```
 
-- 原理
+2. `enqueueSetState` 方法将新的 `state` 放进组件的状态队列里，并调用 `enqueueUpdate` 来处理将要更新的实例对象；
 
-  1. 首先调用了 setState 入口函数，入口函数在这里就是充当一个分发器的角色，根据入参的不同，将其分发到不同的功能函数中去；
-  2. enqueueSetState 方法将新的 state 放进组件的状态队列里，并调用 enqueueUpdate 来处理将要更新的实例对象；
-  3. 在 enqueueUpdate 方法中引出了一个关键的对象——batchingStrategy，该对象所具备的 isBatchingUpdates 属性直接决定了当下是要走更新流程，还是应该排队等待；如果轮到执行，就调用 batchedUpdates（合并更新） 方法来直接发起更新流程。由此可以推测，batchingStrategy 或许正是 React 内部专门用于管控批量更新的对象。
+```js
+enqueueSetState: function (publicInstance, partialState) {
+  // 根据 this 拿到对应的组件实例
+  var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'setState');
+  // 这个 queue 对应的就是一个组件实例的 state 数组
+  var queue = internalInstance._pendingStateQueue || (internalInstance._pendingStateQueue = []);
+  queue.push(partialState);
+  //  enqueueUpdate 用来处理当前的组件实例
+  enqueueUpdate(internalInstance);
+}
+```
 
-- 调用后发生了什么
-  1. React 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程（Reconciliation）。
-  2. 经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个 UI 界面。
-  3. 在 React 得到元素树之后，React 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。
-  4. 在差异计算算法中，React 能够相对精确地知道哪些位置发生了改变以及应该如何改变，这就保证了按需更新，而不是全部重新渲染。
+3. 在 `enqueueUpdate` 方法中引出了一个关键的对象—— `batchingStrategy`，该对象所具备的 `isBatchingUpdates` 属性直接决定了当下是要走更新流程，还是应该排队等待；如果轮到执行，就调用 `batchedUpdates`（合并更新） 方法来直接发起更新流程。由此可以推测，`batchingStrategy` 或许正是 React 内部专门用于管控批量更新的对象。
+
+```js
+function enqueueUpdate(component) {
+  ensureInjected();
+  // 注意这一句是问题的关键，isBatchingUpdates标识着当前是否处于批量创建/更新组件的阶段
+  if (!batchingStrategy.isBatchingUpdates) {
+    // 若当前没有处于批量创建/更新组件的阶段，则立即更新组件
+    batchingStrategy.batchedUpdates(enqueueUpdate, component);
+    return;
+  }
+  // 否则，先把组件塞入 dirtyComponents 队列里，让它“再等等”
+  dirtyComponents.push(component);
+  if (component._updateBatchNumber == null) {
+    component._updateBatchNumber = updateBatchNumber + 1;
+  }
+}
+```
+
+### 2. setState 调用之后
+
+React 会将传入的参数对象与组件当前的状态合并，然后触发所谓的调和过程（Reconciliation）。经过调和过程，React 会以相对高效的方式根据新的状态构建 React 元素树并且着手重新渲染整个 UI 界面。
+
+在 React 得到元素树之后，React 会自动计算出新的树与老树的节点差异，然后根据差异对界面进行最小化重渲染。在差异计算算法中，React 能够相对精确地知道哪些位置发生了改变以及应该如何改变，这就保证了按需更新，而不是全部重新渲染。
 
 如果在短时间内频繁 setState。React 会将 state 的改变压入栈中，在合适的时机，批量更新 state 和视图，达到提高性能的效果。
 
-- 同步还是异步
+### 3. 同步还是异步
 
-  1. setState 只在合成事件和钩子函数中是“异步”的，在原生事件和 setTimeout 中都是同步的。
-  2. setState 的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的 callback 拿到更新后的结果。
-     setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和 setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState，setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
+假如所有 setState 是同步的，意味着每执行一次 setState 时（有可能一个同步代码中，多次 setState），都重新`vnode diff + dom`修改，这对性能来说是极为不好的。如果是异步，则可以把一个同步代码中的多个 setState 合并成一次组件更新。所以默认是异步的，但是在一些情况下是同步的。
 
-- 批量更新
-  调用 setState 时，组件的 state 并不会立即改变， setState 只是把要修改的 state 放入一个队列， React 会优化真正的执行时机，并出于性能原因，会将 React 事件处理程序中的多次 React 事件处理程序中的多次 setState 的状态修改合并成一次状态修改。 最终更新只产生一次组件及其子组件的重新渲染，这对于大型应用程序中的性能提升至关重要。
+setState 并不是单纯同步/异步的，它的表现会因调用场景的不同而不同。在源码中，通过 `isBatchingUpdates` 来判断 setState 是先存进 state 队列还是直接更新，如果值为 true 则执行异步操作，为 false 则直接更新。
 
-- 怎么进行合并更新
+- **异步**：在 React 可以控制的地方，就为 true，比如在 React 生命周期事件和合成事件中，都会走合并操作，延迟更新的策略。
+- **同步**：在 React 无法控制的地方，比如原生事件，具体就是在 `addEventListener 、setTimeout、setInterval` 等事件中，就只能同步更新。
+
+一般认为，做异步设计是为了性能优化、减少渲染次数：
+
+- setState 设计为异步，可以显著的提升性能。如果每次调用 setState 都进行一次更新，那么意味着 render 函数会被频繁调用，界面重新渲染，这样效率是很低的；最好的办法应该是获取到多个更新，之后进行批量更新；
+- 如果同步更新了 state，但是还没有执行 render 函数，那么 state 和 props 不能保持同步。state 和 props 不能保持一致性，会在开发中产生很多的问题；
+- setState 的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，当然可以通过第二个参数 `setState(partialState, callback)` 中的 callback 拿到更新后的结果。
+  setState 的批量更新优化也是建立在“异步”（合成事件、钩子函数）之上的，在原生事件和 setTimeout 中不会批量更新，在“异步”中如果对同一个值进行多次 setState，setState 的批量更新策略会对其进行覆盖，取最后一次的执行，如果是同时 setState 多个不同的值，在更新时会对其进行合并批量更新。
+
+### 4. 批量更新
+
+调用 setState 时，组件的 state 并不会立即改变， setState 只是把要修改的 state 放入一个队列， React 会优化真正的执行时机，并出于性能原因，会将 React 事件处理程序中的多次 React 事件处理程序中的多次 setState 的状态修改合并成一次状态修改。 最终更新只产生一次组件及其子组件的重新渲染，这对于大型应用程序中的性能提升至关重要。
+
+```js
+this.setState({
+  count: this.state.count + 1    ===>    入队，[count+1的任务]
+});
+this.setState({
+  count: this.state.count + 1    ===>    入队，[count+1的任务，count+1的任务]
+});
+                                          ↓
+                                         合并 state，[count+1的任务]
+                                          ↓
+                                         执行 count+1的任务
+```
+
+#### 怎么进行合并更新
 
 这里 react 用到了事务机制。
 
-React 中的 Batch Update 是通过「Transaction」实现的。在 React 源码关于 Transaction 的部分， Transaction 的作用：
+React 中的 `Batch Update` 是通过 **「Transaction」** 实现的。在 React 源码关于 Transaction 的部分， Transaction 的作用：
 
 用大白话说就是在实际的 useState/setState 前后各加了段逻辑给包了起来。只要是在同一个事务中的 setState 会进行合并（注意，useState 不会进行 state 的合并）处理。
 
-- 为什么 setTimeout 不能进行事务操作
+#### 为什么 setTimeout 不能进行事务操作
 
 由于 react 的事件委托机制，调用 onClick 执行的事件，是处于 react 的控制范围的。
 
-而 setTimeout 已经超出了 react 的控制范围，react 无法对 setTimeout 的代码前后加上事务逻辑（除非 react 重写 setTimeout）。
+而 `setTimeout` 已经超出了 react 的控制范围，react 无法对 `setTimeout` 的代码前后加上事务逻辑（除非 react 重写 `setTimeout`）。
 
-所以当遇到 setTimeout/setInterval/Promise.then(fn)/fetch 回调/xhr 网络回调时，react 都是无法控制的。
+所以当遇到 `setTimeout/setInterval/Promise.then(fn)/fetch 回调/xhr 网络回调` 时，react 都是无法控制的。
 
 相关 react 源码如下：
 
@@ -443,14 +450,24 @@ if (executionContext === NoContext) {
 
 > executionContext 代表了目前 react 所处的阶段，而 NoContext 你可以理解为是 react 已经没活干了的状态。而 flushSyncCallbackQueue 里面就会去同步调用我们的 this.setState ，也就是说会同步更新我们的 state 。所以，我们知道了，当 executionContext 为 NoContext 的时候，我们的 setState 就是同步的
 
-- 第二个参数
-  该函数会在 setState 函数调用完成并且组件开始重渲染的时候被调用，我们可以用该函数来监听渲染是否完成
+### 5. 第二个参数
 
-### 3. replaceState
+setState 的第二个参数是一个可选的回调函数。这个回调函数将在组件重新渲染后执行。等价于在 `componentDidUpdate` 生命周期内执行。通常建议使用 `componentDidUpdate` 来代替此方式。在这个回调函数中你可以拿到更新后 state 的值：
 
-setState 是修改其中的部分状态，相当于 Object.assign，只是覆盖，不会减少原来的状态。而 replaceState 是完全替换原来的状态，相当于赋值，将原来的 state 替换为另一个对象，如果新状态属性减少，那么 state 中就没有这个状态了
+```js
+this.setState({
+    key1: newState1,
+    key2: newState2,
+    ...
+}, callback) // 第二个参数是 state 更新完成后的回调函数，我们可以用来监听渲染是否完成
+```
 
-### 4. Dirty component
+### 6. replaceState
+
+- `setState` 是修改其中的部分状态，相当于 `Object.assign`，只是覆盖，不会减少原来的状态。
+- `replaceState` 是完全替换原来的状态，相当于赋值，将原来的 state 替换为另一个对象，如果新状态属性减少，那么 state 中就没有这个状态了
+
+### 7. DirtyComponent
 
 React 的更新流程（批处理更新）是围绕待更新组件（React 称为 dirtyComponent）来实现，dirtyComponent 即 ReactCompositeComponent 实例。
 
@@ -462,42 +479,37 @@ React 的更新流程（批处理更新）是围绕待更新组件（React 称�
 4. 执行回调（生命周期函数、setState 传入的回调方法）
 5. 若在 3、4 间产生了新的 dirtyComponent，重复 3、4 步，直至 dirtyComponents 清空，完成了一次完整的批处理更新
 
+### 8. props 和 state 区别
+
+#### props
+
+props 是一个从外部传进组件的参数，主要作为就是从父组件向子组件传递数据，它具有可读性和不变性，只能通过外部组件主动传入新的 props 来重新渲染子组件，否则子组件的 props 以及展现形式不会改变。
+
+汲取了纯函数的思想，保证的相同的输入，页面显示的内容是一样的，并且不会产生副作用。
+
+#### state
+
+state 的主要作用是用于组件保存、控制以及修改自己的状态，它只能在 constructor 中初始化，它算是组件的私有属性，不可通过外部访问和修改，只能通过组件内部的 this.setState 来修改，修改 state 属性会导致组件的重新渲染。
+
+#### 区别
+
+- props 是传递给组件的（类似于函数的形参），而 state 是在组件内被组件自己管理的（类似于在一个函数内声明的变量）。
+- props 是不可修改的，所有 React 组件都必须像纯函数一样保护它们的 props 不被更改。
+- state 是在组件中创建的，一般在 constructor 中初始化 state。state 是多变的、可以修改，每次 setState 都异步更新的。
+
 ## 三、生命周期
 
-在 V16 版本中引入了 Fiber 机制。这个机制一定程度上的影响了部分生命周期的调用，并且也引入了新的 2 个 API 来解决问题。
-
-在之前的版本中，如果你拥有一个很复杂的复合组件，然后改动了最上层组件的 state，那么调用栈可能会很长
-
-调用栈过长，再加上中间进行了复杂的操作，就可能导致长时间阻塞主线程，带来不好的用户体验。Fiber 就是为了解决该问题而生。
-Fiber 本质上是一个虚拟的堆栈帧，新的调度器会按照优先级自由调度这些帧，从而将之前的同步渲染改成了异步渲染，在不影响体验的情况下去分段计算更新。
-对于如何区别优先级，React 有自己的一套逻辑。对于动画这种实时性很高的东西，也就是 16 ms 必须渲染一次保证不卡顿的情况下，React 会每 16 ms（以内） 暂停一下更新，返回来继续渲染动画。
-
-对于异步渲染，现在渲染有两个阶段：reconciliation 和 commit 。前者过程是可以打断的，后者不能暂停，会一直更新界面直到完成。
-
-- Reconciliation 阶段
-
-  - componentWillMount（UNSAFE）
-  - componentWillReceiveProps（UNSAFE）
-  - shouldComponentUpdate
-  - componentWillUpdate（UNSAFE）
-
-- Commit 阶段
-
-  - componentDidMount
-  - componentDidUpdate
-  - componentWillUnmount
-
-因为 reconciliation 阶段是可以被打断的，所以 reconciliation 阶段会执行的生命周期函数就可能会出现调用多次的情况，从而引起 Bug。所以对于 reconciliation 阶段调用的几个函数，除了 shouldComponentUpdate 以外，其他都应该避免去使用，并且 V16 中也引入了新的 API 来解决这个问题。
-
-- getDerivedStateFromProps 用于替换 componentWillReceiveProps ，该函数会在初始化和 update 时被调用
-- getSnapshotBeforeUpdate 用于替换 componentWillUpdate ，该函数会在 update 后 DOM 更新前被调用，用于读取最新的 DOM 数据。
-
-V16 生命周期函数用法建议
+**V16 生命周期函数用法建议**
 
 ```js
 class ExampleComponent extends React.Component {
   //用于初始化state，挂载类组件的时候，先执行构造函数
-  constructor() {}
+  constructor(props) {
+    super(props);
+    // 不要在构造函数中调用 setState，可以直接给 state 设置初始值
+    this.state = { counter: 0 }
+    this.handleClick = this.handleClick.bind(this)
+  }
   //用于替换`componentWillReceiveProps`，该函数会在初始化和`update`时被调用
   //因为该函数是静态函数，所以取不到`this`
   //如果需要对比`prevProps`需要单独在`state`中维护
@@ -511,7 +523,7 @@ class ExampleComponent extends React.Component {
   componentDidMount() {}
   //用于获得最新的DOM数据
   //在最近一次渲染中，从之前的DOM拿到一些有用的信息，比如滚动位置等
-  getSnapshotBeforeUpdate() {}
+  getSnapshotBeforeUpdate(prevProps, prevState) {}
   //组件即将销毁
   //可以在此处移除订阅，定时器等等
   componentWillUnmount() {}
@@ -521,7 +533,9 @@ class ExampleComponent extends React.Component {
   //组件更新后调用
   //当组件更新后，可以在此处对 DOM 进行操作。
   //如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求。（例如，当 props 未发生变化时，则不会执行网络请求）
-  componentDidUpdate() {}
+  // snapshot是getSnapshotBeforeUpdate()生命周期的返回值
+  componentDidUpdate(prevProps, prevState, snapshot){}
+  
   //渲染组件函数
   render() {}
   //以下函数不建议使用
@@ -530,6 +544,104 @@ class ExampleComponent extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {}
 }
 ```
+
+React 通常将组件生命周期分为三个阶段：
+
+- 装载阶段（Mount），组件第一次在 DOM 树中被渲染的过程；
+- 更新过程（Update），组件状态发生变化，重新更新渲染的过程；
+- 卸载过程（Unmount），组件从 DOM 树中被移除的过程；
+
+![生命周期](/images/lifecycle.png)
+
+React16 自上而下地对生命周期做了另一种维度的解读：
+- Render 阶段：用于计算一些必要的状态信息。这个阶段可能会被 React 暂停，这一点和 React16 引入的 Fiber 架构（我们后面会重点讲解）是有关的；
+- Pre-commit阶段：所谓“commit”，这里指的是“更新真正的 DOM 节点”这个动作。所谓 Pre-commit，就是说我在这个阶段其实还并没有去更新真实的 DOM，不过 DOM 信息已经是可以读取的了；
+- Commit 阶段：在这一步，React 会完成真实 DOM 的更新工作。Commit 阶段，我们可以拿到真实 DOM（包括 refs）。
+### 1. 组件挂载阶段
+
+挂载阶段组件被创建，然后组件实例插入到 DOM 中，完成组件的第一次渲染，该过程只会发生一次，在此阶段会依次调用以下这些方法：
+
+- constructor
+- getDerivedStateFromProps
+- render
+- componentDidMount
+
+#### constructor
+
+组件的构造函数，第一个被执行，若没有显式定义它，会有一个默认的构造函数，但是若显式定义了构造函数，我们必须在构造函数中执行 `super(props)`，否则无法在构造函数中拿到 this。
+
+如果不初始化 state 或不进行方法绑定，则不需要为 React 组件实现构造函数 Constructor。
+
+constructor 中通常只做两件事：
+
+- 初始化组件的 state
+- 给事件处理方法绑定 this
+
+```js
+
+```
+
+#### getDerivedStateFromProps
+
+这是个静态方法，所以不能在这个函数里使用 this，有两个参数 props 和 state，分别指接收到的新参数和当前组件的 state 对象，这个函数会返回一个对象用来更新当前的 state 对象，如果不需要更新可以返回 null。
+
+该函数会在装载时，接收到新的 props 或者调用了 `setState` 和 `forceUpdate` 时被调用。如当接收到新的属性想修改 state ，就可以使用。
+
+#### render
+
+render 是 React 中最核心的方法，一个组件中必须要有这个方法，它会根据状态 `state` 和属性 `props` 渲染组件。这个函数只做一件事，就是返回需要渲染的内容，所以不要在这个函数内做其他业务逻辑，通常调用该方法会返回以下类型中一个：
+
+- React 元素：这里包括原生的 DOM 以及 React 组件；
+- 数组和 Fragment（片段）：可以返回多个元素；
+- Portals（插槽）：可以将子元素渲染到不同的 DOM 子树种；
+- 字符串和数字：被渲染成 DOM 中的 text 节点；
+- 布尔值或 null：不渲染任何内容。
+
+#### componentDidMount
+
+`componentDidMount()` 会在组件挂载后（插入 DOM 树中）立即调。该阶段通常进行以下操作：
+
+- 执行依赖于 DOM 的操作；
+- 发送网络请求；（官方建议）
+- 添加订阅消息（会在 componentWillUnmount 取消订阅）；
+
+如果在 `componentDidMount` 中调用 setState ，就会触发一次额外的渲染，多调用了一次 render 函数，由于它是在浏览器刷新屏幕前执行的，所以用户对此是没有感知的，但是我应当避免这样使用，这样会带来一定的性能问题，尽量是在 constructor 中初始化 state 对象。
+
+### 2. 更新阶段
+
+当组件的 props 改变了，或组件内部调用了 `setState/forceUpdate`，会触发更新重新渲染，这个过程可能会发生多次。这个阶段会依次调用下面这些方法：
+
+- getDerivedStateFromProps
+- shouldComponentUpdate
+- render
+- getSnapshotBeforeUpdate
+- componentDidUpdate
+
+#### shouldComponentUpdate
+
+这个生命周期函数是用来提升速度的，它是在重新渲染组件开始前触发的，默认返回 true，可以比较 this.props 和 nextProps ，this.state 和 nextState 值是否变化，来确认返回 true 或者 false。当返回 false 时，组件的更新过程停止，后续的 `render、componentDidUpdate` 也不会被调用。
+
+注意：添加 shouldComponentUpdate 方法时，不建议使用**深度相等检查**（如使用 `JSON.stringify()`），因为深比较效率很低，可能会比重新渲染组件效率还低。而且该方法维护比较困难，建议使用该方法会产生明显的性能提升时使用。
+
+#### getSnapshotBeforeUpdate
+
+这个方法在 render `之后，componentDidUpdate` 之前调用，有两个参数 prevProps 和 prevState，表示更新之前的 props 和 state，这个函数必须要和 `componentDidUpdate` 一起使用，并且要有一个返回值，默认是 null，这个返回值作为第三个参数传给 `componentDidUpdate`。
+#### componentDidUpdate
+`componentDidUpdate()` 会在更新后会被立即调用，首次渲染不会执行此方法。 该阶段通常进行以下操作：
+- 当组件更新后，对 DOM 进行操作； 
+- 如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求；（例如，当 props 未发生变化时，则不会执行网络请求）。 
+
+### 3. 组件卸载阶段
+卸载阶段只有一个生命周期函数，`componentWillUnmount()` 会在组件卸载及销毁之前直接调用。在此方法中执行必要的清理操作：
+- 清除 timer，取消网络请求或清除
+
+- 取消在 `componentDidMount()` 中创建的订阅等；
+这个生命周期在一个组件被卸载和销毁之前被调用，因此你不应该再这个方法中使用 setState，因为组件一旦被卸载，就不会再装载，也就不会重新渲染
+
+### 4. 错误处理阶段
+`componentDidCatch(error, info)`，此生命周期在后代组件抛出错误后被调用。 它接收两个参数∶
+- error：抛出的错误。
+- info：带有 componentStack key 的对象，其中包含有关组件引发错误的栈信息
 
 ## 四、组件通信
 
@@ -652,6 +764,49 @@ dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了
 - dispatch 方法：一个函数，发送 Action 到 State
 
 ## 七、Hooks
+
+**官方解释 ∶**
+
+> Hook 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。通过自定义 hook，可以复用代码逻辑。
+
+- 原理：
+  由于每次渲染都会不断的执行并产生闭包，那么从性能上和 GC 压力上都会稍逊于 Vue3。它的关键字是「每次渲染都重新执行」
+
+- 优点：
+
+  - 简洁: React Hooks 解决了 HOC 和 Render Props 因共享数据而出现嵌套地狱问题，更加简洁
+  - 解耦: React Hooks 可以更方便地把 UI 和状态分离,做到更彻底的解耦
+  - 组合: Hooks 中可以引用另外的 Hooks 形成新的 Hooks,组合变化万千
+  - 函数友好: React Hooks 为函数组件而生,从而解决了类组件的几大问题:
+    1. this 指向容易错误
+    2. 分割在不同声明周期中的逻辑使得代码难以理解和维护
+    3. 代码复用成本高（高阶组件容易使代码量剧增）
+    4. 暴露给模板的属性具有明确的来源，且函数返回的值可以任意命名，因此不会发生名称空间冲突。
+    5. 没有创建仅用于逻辑重用的不必要的组件实例
+
+- 缺陷：
+
+  1. 额外的学习成本（Functional Component 与 Class Component 之间的困惑）
+  2. 写法上有限制（只能在组件顶层使，且不能出现在条件、循环中），并且写法限制增加了重构成本
+  3. 破坏了 PureComponent、React.memo 浅比较的性能优化效果（为了取最新的 props 和 state，每次 render()都要重新创建事件处函数）
+  4. 在闭包场景可能会引用到旧的 state、props 值
+  5. 内部实现上不直观（依赖一份可变的全局状态，不再那么“纯”）
+  6. React.memo 并不能完全替代 shouldComponentUpdate（因为拿不到 state change，只针对 props change）
+
+- 对原有 React 的 API 封装的钩子函数
+
+|        钩子名        | 作用                                                                                                                                                                                                                        |
+| :------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       useState       | 初始化和设置状态，返回的是 array 而不是 object 的原因就是为了降低使用的复杂度，返回数组的话可以直接根据顺序解构，而返回对象的话要想使用多次就需要定义别名了                                                                 |
+|      useEffect       | componentDidMount，componentDidUpdate 和 componentWillUnmount 和结合体,所以可以监听 useState 定义值的变化                                                                                                                   |
+|      useContext      | 定义一个全局的对象,类似 context                                                                                                                                                                                             |
+|      useReducer      | 可以增强函数提供类似 Redux 的功能                                                                                                                                                                                           |
+|     useCallback      | 记忆作用,共有两个参数，第一个参数为一个匿名函数，就是我们想要创建的函数体。第二参数为一个数组，里面的每一项是用来判断是否需要重新创建函数体的变量，如果传入的变量值保持不变，返回记忆结果。如果任何一项改变，则返回新的结果 |
+|       useMemo        | 作用和传入参数与 useCallback 一致,useCallback 返回函数,useMemo 返回值                                                                                                                                                       |
+|        useRef        | 获取 ref 属性对应的 dom                                                                                                                                                                                                     |
+| useImperativeMethods | 自定义使用 ref 时公开给父组件的实例值                                                                                                                                                                                       |
+|  useMutationEffect   | 作用与 useEffect 相同，但在更新兄弟组件之前，它在 React 执行其 DOM 改变的同一阶段同步触发                                                                                                                                   |
+|   useLayoutEffect    | 作用与 useEffect 相同，但在所有 DOM 改变后同步触发                                                                                                                                                                          |
 
 ## 八、虚拟 DOM
 
@@ -806,6 +961,34 @@ React 将更新分为了两个时期：
 Fiber 也称协程或者纤程。它和线程并不一样，协程本身是没有并发或者并行能力的（需要配合线程），它只是一种控制流程的让出机制。让出 CPU 的执行权，让 CPU 能在这段时间执行其他的操作。渲染的过程可以被中断，可以将控制权交回浏览器，让位给高优先级的任务，浏览器空闲后再恢复渲染。
 
 将渲染分割成多个事务，更新的时候根据事务优先级来调度执行顺序。之前的更新是直接从父节点递归子节点压栈，执行，弹栈，没有优先级，也不能控制顺序；Fiber 为了实现调度功能，重构了栈，即虚拟栈(virtual stack)，这样栈的执行顺序就能定制了，调度、暂停、终止、复用事务都成为可能。
+
+在 V16 版本中引入了 Fiber 机制。这个机制一定程度上的影响了部分生命周期的调用，并且也引入了新的 2 个 API 来解决问题。
+
+在之前的版本中，如果你拥有一个很复杂的复合组件，然后改动了最上层组件的 state，那么调用栈可能会很长
+
+调用栈过长，再加上中间进行了复杂的操作，就可能导致长时间阻塞主线程，带来不好的用户体验。Fiber 就是为了解决该问题而生。
+Fiber 本质上是一个虚拟的堆栈帧，新的调度器会按照优先级自由调度这些帧，从而将之前的同步渲染改成了异步渲染，在不影响体验的情况下去分段计算更新。
+对于如何区别优先级，React 有自己的一套逻辑。对于动画这种实时性很高的东西，也就是 16 ms 必须渲染一次保证不卡顿的情况下，React 会每 16 ms（以内） 暂停一下更新，返回来继续渲染动画。
+
+对于异步渲染，现在渲染有两个阶段：reconciliation 和 commit 。前者过程是可以打断的，后者不能暂停，会一直更新界面直到完成。
+
+- Reconciliation 阶段
+
+  - componentWillMount（UNSAFE）
+  - componentWillReceiveProps（UNSAFE）
+  - shouldComponentUpdate
+  - componentWillUpdate（UNSAFE）
+
+- Commit 阶段
+
+  - componentDidMount
+  - componentDidUpdate
+  - componentWillUnmount
+
+因为 reconciliation 阶段是可以被打断的，所以 reconciliation 阶段会执行的生命周期函数就可能会出现调用多次的情况，从而引起 Bug。所以对于 reconciliation 阶段调用的几个函数，除了 shouldComponentUpdate 以外，其他都应该避免去使用，并且 V16 中也引入了新的 API 来解决这个问题。
+
+- getDerivedStateFromProps 用于替换 componentWillReceiveProps ，该函数会在初始化和 update 时被调用
+- getSnapshotBeforeUpdate 用于替换 componentWillUpdate ，该函数会在 update 后 DOM 更新前被调用，用于读取最新的 DOM 数据。
 
 **Fiber 的数据结构**
 
