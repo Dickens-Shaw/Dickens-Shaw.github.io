@@ -499,7 +499,7 @@ state 的主要作用是用于组件保存、控制以及修改自己的状态�
 
 ## 三、生命周期
 
-**V16 生命周期函数用法建议**
+**V16.4 之后的生命周期函数**
 
 ```js
 class ExampleComponent extends React.Component {
@@ -507,8 +507,8 @@ class ExampleComponent extends React.Component {
   constructor(props) {
     super(props);
     // 不要在构造函数中调用 setState，可以直接给 state 设置初始值
-    this.state = { counter: 0 }
-    this.handleClick = this.handleClick.bind(this)
+    this.state = { counter: 0 };
+    this.handleClick = this.handleClick.bind(this);
   }
   //用于替换`componentWillReceiveProps`，该函数会在初始化和`update`时被调用
   //因为该函数是静态函数，所以取不到`this`
@@ -534,8 +534,8 @@ class ExampleComponent extends React.Component {
   //当组件更新后，可以在此处对 DOM 进行操作。
   //如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求。（例如，当 props 未发生变化时，则不会执行网络请求）
   // snapshot是getSnapshotBeforeUpdate()生命周期的返回值
-  componentDidUpdate(prevProps, prevState, snapshot){}
-  
+  componentDidUpdate(prevProps, prevState, snapshot) {}
+
   //渲染组件函数
   render() {}
   //以下函数不建议使用
@@ -554,10 +554,12 @@ React 通常将组件生命周期分为三个阶段：
 ![生命周期](/images/lifecycle.png)
 
 React16 自上而下地对生命周期做了另一种维度的解读：
+
 - Render 阶段：用于计算一些必要的状态信息。这个阶段可能会被 React 暂停，这一点和 React16 引入的 Fiber 架构（我们后面会重点讲解）是有关的；
-- Pre-commit阶段：所谓“commit”，这里指的是“更新真正的 DOM 节点”这个动作。所谓 Pre-commit，就是说我在这个阶段其实还并没有去更新真实的 DOM，不过 DOM 信息已经是可以读取的了；
+- Pre-commit 阶段：所谓“commit”，这里指的是“更新真正的 DOM 节点”这个动作。所谓 Pre-commit，就是说我在这个阶段其实还并没有去更新真实的 DOM，不过 DOM 信息已经是可以读取的了；
 - Commit 阶段：在这一步，React 会完成真实 DOM 的更新工作。Commit 阶段，我们可以拿到真实 DOM（包括 refs）。
-### 1. 组件挂载阶段
+
+### 1. 挂载(创建)阶段
 
 挂载阶段组件被创建，然后组件实例插入到 DOM 中，完成组件的第一次渲染，该过程只会发生一次，在此阶段会依次调用以下这些方法：
 
@@ -576,10 +578,6 @@ constructor 中通常只做两件事：
 
 - 初始化组件的 state
 - 给事件处理方法绑定 this
-
-```js
-
-```
 
 #### getDerivedStateFromProps
 
@@ -607,7 +605,7 @@ render 是 React 中最核心的方法，一个组件中必须要有这个方法
 
 如果在 `componentDidMount` 中调用 setState ，就会触发一次额外的渲染，多调用了一次 render 函数，由于它是在浏览器刷新屏幕前执行的，所以用户对此是没有感知的，但是我应当避免这样使用，这样会带来一定的性能问题，尽量是在 constructor 中初始化 state 对象。
 
-### 2. 组件更新阶段
+### 2. 更新阶段
 
 当组件的 props 改变了，或组件内部调用了 `setState/forceUpdate`，会触发更新重新渲染，这个过程可能会发生多次。这个阶段会依次调用下面这些方法：
 
@@ -626,37 +624,71 @@ render 是 React 中最核心的方法，一个组件中必须要有这个方法
 #### getSnapshotBeforeUpdate
 
 这个方法在 render `之后，componentDidUpdate` 之前调用，有两个参数 prevProps 和 prevState，表示更新之前的 props 和 state，这个函数必须要和 `componentDidUpdate` 一起使用，并且要有一个返回值，默认是 null，这个返回值作为第三个参数传给 `componentDidUpdate`。
-#### componentDidUpdate
-`componentDidUpdate()` 会在更新后会被立即调用，首次渲染不会执行此方法。 该阶段通常进行以下操作：
-- 当组件更新后，对 DOM 进行操作； 
-- 如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求；（例如，当 props 未发生变化时，则不会执行网络请求）。 
 
-### 3. 组件卸载阶段
+#### componentDidUpdate
+
+`componentDidUpdate()` 会在更新后会被立即调用，首次渲染不会执行此方法。 该阶段通常进行以下操作：
+
+- 当组件更新后，对 DOM 进行操作；
+- 如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求；（例如，当 props 未发生变化时，则不会执行网络请求）。
+
+### 3. 卸载阶段
+
 卸载阶段只有一个生命周期函数，`componentWillUnmount()` 会在组件卸载及销毁之前直接调用。在此方法中执行必要的清理操作：
+
 - 清除 timer，取消网络请求或清除
 
 - 取消在 `componentDidMount()` 中创建的订阅等；
-这个生命周期在一个组件被卸载和销毁之前被调用，因此你不应该再这个方法中使用 setState，因为组件一旦被卸载，就不会再装载，也就不会重新渲染
+  这个生命周期在一个组件被卸载和销毁之前被调用，因此你不应该再这个方法中使用 setState，因为组件一旦被卸载，就不会再装载，也就不会重新渲染
 
 ### 4. 错误处理阶段
-`componentDidCatch(error, info)`，此生命周期在后代组件抛出错误后被调用。 它接收两个参数∶
+
+`componentDidCatch(error, info)`，此生命周期在后代组件抛出错误后被调用。 它接收两个参数 ∶
+
 - error：抛出的错误。
 - info：带有 componentStack key 的对象，其中包含有关组件引发错误的栈信息
 
 ### 5. 废弃的函数
-被废弃的三个函数都是在render之前，因为fiber的出现，很可能因为高优先级任务的出现而打断现有任务导致它们会被执行多次。
+
+被废弃的三个函数都是在 render 之前，因为 fiber 的出现，很可能因为高优先级任务的出现而打断现有任务导致它们会被执行多次。
 
 #### componentWillMount
-首先这个函数的功能完全可以使用componentDidMount和 constructor来代替，异步获取的数据的情况上面已经说明了，而如果抛去异步获取数据，其余的即是初始化而已，这些功能都可以在constructor中执行，除此之外，如果在 willMount 中订阅事件，但在服务端这并不会执行 willUnMount事件，也就是说服务端会导致内存泄漏所以componentWilIMount完全可以不使用，但使用者有时候难免因为各 种各样的情况在 componentWilMount中做一些操作，那么React为了约束开发者，干脆就抛掉了这个API 
+
+首先这个函数的功能完全可以使用 componentDidMount 和 constructor 来代替，异步获取的数据的情况上面已经说明了，而如果抛去异步获取数据，其余的即是初始化而已，这些功能都可以在 constructor 中执行，除此之外，如果在 willMount 中订阅事件，但在服务端这并不会执行 willUnMount 事件，也就是说服务端会导致内存泄漏所以 componentWilIMount 完全可以不使用，但使用者有时候难免因为各 种各样的情况在 componentWilMount 中做一些操作，那么 React 为了约束开发者，干脆就抛掉了这个 API
+
 #### componentWillReceiveProps
-在老版本的 React 中，如果组件自身的某个 state 跟其 props 密切相关的话，一直都没有一种很优雅的处理方式去更新 state，而是需要在 componentWilReceiveProps 中判断前后两个 props 是否相同，如果不同再将新的 props更新到相应的 state 上去。这样做一来会破坏 state 数据的单一数据源，导致组件状态变得不可预测，另一方面也会增加组件的重绘次数。类似的业务需求也有很多，如一个可以横向滑动的列表，当前高亮的 Tab 显然隶属于列表自身的时，根据传入的某个值，直接定位到某个 Tab。为了解决这些问题，React引入了第一个新的生命周期：getDerivedStateFromProps。它有以下的优点∶
-- getDerivedStateFromProps是静态方法，在这里不能使用this，也就是一个纯函数，开发者不能写出副作用的代码
-- 开发者只能通过prevState而不是prevProps来做对比，保证了state和props之间的简单关系以及不需要处理第一次渲染时prevProps为空的情况
-- 基于第一点，将状态变化（setState）和昂贵操作（tabChange）区分开，更加便于 render 和 commit 阶段操作或者说优化。 
+
+在老版本的 React 中，如果组件自身的某个 state 跟其 props 密切相关的话，一直都没有一种很优雅的处理方式去更新 state，而是需要在 componentWilReceiveProps 中判断前后两个 props 是否相同，如果不同再将新的 props 更新到相应的 state 上去。这样做一来会破坏 state 数据的单一数据源，导致组件状态变得不可预测，另一方面也会增加组件的重绘次数。类似的业务需求也有很多，如一个可以横向滑动的列表，当前高亮的 Tab 显然隶属于列表自身的时，根据传入的某个值，直接定位到某个 Tab。为了解决这些问题，React 引入了第一个新的生命周期：getDerivedStateFromProps。它有以下的优点 ∶
+
+- getDerivedStateFromProps 是静态方法，在这里不能使用 this，也就是一个纯函数，开发者不能写出副作用的代码
+- 开发者只能通过 prevState 而不是 prevProps 来做对比，保证了 state 和 props 之间的简单关系以及不需要处理第一次渲染时 prevProps 为空的情况
+- 基于第一点，将状态变化（setState）和昂贵操作（tabChange）区分开，更加便于 render 和 commit 阶段操作或者说优化。
+
 #### componentWillUpdate
+
 与 componentWillReceiveProps 类似，许多开发者也会在 componentWillUpdate 中根据 props 的变化去触发一些回调 。 但不论是 componentWilReceiveProps 还 是 componentWilUpdate，都有可能在一次更新中被调用多次，也就是说写在这里的回调函数也有可能会被调用多次，这显然是不可取的。与 componentDidMount 类 似， componentDidUpdate 也不存在这样的问题，一次更新中 componentDidUpdate 只会被调用一次，所以将原先写在 componentWillUpdate 中 的 回 调 迁 移 至 componentDidUpdate 就可以解决这个问题。
 
-另外一种情况则是需要获取DOM元素状态，但是由于在fiber中，render可打断，可能在wilMount中获取到的元素状态很可能与实际需要的不同，这个通常可以使用第二个新增的生命函数的解决 getSnapshotBeforeUpdate(prevProps, prevState)
+另外一种情况则是需要获取 DOM 元素状态，但是由于在 fiber 中，render 可打断，可能在 wilMount 中获取到的元素状态很可能与实际需要的不同，这个通常可以使用第二个新增的生命函数的解决 getSnapshotBeforeUpdate(prevProps, prevState)
+
+### 6. 发起网络请求
+
+对于异步请求，最好放在 componentDidMount 中去操作，对于同步的状态改变，可以放在 componentWillMount 中，一般用的比较少。
+
+如果认为在 componentWillMount 里发起请求能提早获得结果，这种想法其实是错误的，通常 componentWillMount 比 componentDidMount 早不了多少微秒，网络上任何一点延迟，这一点差异都可忽略不计。
+
+**react 的生命周期**：constructor() -> componentWillMount() -> render() -> componentDidMount()
+
+上面这些方法的调用是有次序的，由上而下依次调用。
+
+- constructor 被调用是在组件准备要挂载的最开始，此时组件尚未挂载到网页上。
+- componentWillMount 方法的调用在 constructor 之后，在 render 之前，在这方法里的代码调用 setState 方法不会触发重新 render，所以它一般不会用来作加载数据之用。
+- componentDidMount 方法中的代码，是在组件已经完全挂载到网页上才会调用被执行，所以可以保证数据的加载。此外，在这方法中调用 setState 方法，会触发重新渲染。所以，官方设计这个方法就是用来加载外部数据用的，或处理其他的副作用代码。与组件上的数据无关的加载，也可以在 constructor 里做，但 constructor 是做组件 state 初绐化工作，并不是做加载数据这工作的，constructor 里也不能 setState，还有加载的时间太长或者出错，页面就无法加载出来。所以有副作用的代码都会集中在 componentDidMount 方法里。
+
+**总结**：
+
+- 跟服务器端渲染（同构）有关系，如果在 componentWillMount 里面获取数据，fetch data 会执行两次，一次在服务器端一次在客户端。在 componentDidMount 中可以解决这个问题，componentWillMount 同样也会 render 两次。
+- 在 componentWillMount 中 fetch data，数据一定在 render 后才能到达，如果忘记了设置初始状态，用户体验不好。
+- react16.0 以后，componentWillMount 可能会被执行多次。
 
 ## 四、组件通信
 
@@ -673,6 +705,40 @@ render 是 React 中最核心的方法，一个组件中必须要有这个方法
 ### 3. 跨层级组件
 
 使用 **Context API**：React.createContext(),使用 Provider 和 Customer 模式,在顶层的 Provider 中传入 value，在子孙级的 Consumer 中获取该值
+
+```js
+// context方式实现跨级组件通信
+// Context 设计目的是为了共享那些对于一个组件树而言是“全局”的数据
+const BatteryContext = createContext();
+//  子组件的子组件
+class GrandChild extends Component {
+  render() {
+    return (
+      <BatteryContext.Consumer>
+        {(color) => <h1>我是红色的:{color}</h1>}
+      </BatteryContext.Consumer>
+    );
+  }
+}
+//  子组件
+const Child = () => {
+  return <GrandChild />;
+};
+// 父组件
+class Parent extends Component {
+  state = {
+    color: 'red',
+  };
+  render() {
+    const { color } = this.state;
+    return (
+      <BatteryContext.Provider value={color}>
+        <Child />
+      </BatteryContext.Provider>
+    );
+  }
+}
+```
 
 ### 4. 任意组件
 
