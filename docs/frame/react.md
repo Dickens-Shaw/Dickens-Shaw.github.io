@@ -694,15 +694,70 @@ render 是 React 中最核心的方法，一个组件中必须要有这个方法
 
 ### 1. 父子组件
 
-- 父组件通过 props 传递数据给子组件，子组件通过调用父组件传来的函数传递数据给父组件
+- 父组件通过 props 传递数据给子组件
+  ```js
+  // 子组件: Child
+  const Child = (props) => {
+    return <p>{props.name}</p>;
+  };
+  // 父组件 Parent
+  const Parent = () => {
+    return <Child name='react'></Child>;
+  };
+  ```
+- 子组件通过调用父组件传来的函数传递数据给父组件
+  ```js
+  // 子组件: Child
+  const Child = (props) => {
+    const cb = (msg) => {
+      return () => {
+        props.callback(msg);
+      };
+    };
+    return <button onClick={cb('你好!')}>你好</button>;
+  };
+  // 父组件 Parent
+  class Parent extends Component {
+    callback(msg) {
+      console.log(msg);
+    }
+    render() {
+      return <Child callback={this.callback.bind(this)}></Child>;
+    }
+  }
+  ```
 - ref 获取子组件实例、props 传 onRef（this）实例给子组件
+  ```js
+  // 子组件: Child
+  const Child = (props) => {
+    return <p>我是子组件</p>;
+  };
+  // 父组件 Parent
+  const Parent = () => {
+    const child = useRef(null);
+    useEffect(() => {
+      console.log(child);
+    }, []);
+    return <Child onRef={child}></Child>;
+  };
+  ```
 - Slot
+  ```js
+  // 子组件: Child
+  const Child = (props) => {
+    return <div>{props.children}</div>;
+  };
+  // 父组件 Parent
+  const Parent = () => {
+    return (
+      <Child>
+        <p>我是子组件</p>
+      </Child>
+    );
+  };
+  ```
 
-### 2. 兄弟组件
-
-通过共同的父组件来管理状态和事件函数
-
-### 3. 跨层级组件
+### 2. 跨层级组件
 
 使用 **Context API**：React.createContext(),使用 Provider 和 Customer 模式,在顶层的 Provider 中传入 value，在子孙级的 Consumer 中获取该值
 
@@ -740,14 +795,26 @@ class Parent extends Component {
 }
 ```
 
+### 3. 兄弟组件
+
+通过共同的父组件来管理状态和事件函数
+
 ### 4. 任意组件
 
-Redux、 Mobx、flux 或者 Event Bus
+Redux、 Mobx、Flux 或者 Event Bus
 
 ## 五、路由
 
 ### 1. react-router 实现思想
 
+#### 前端路由实现：
+- 基于 hash 的路由：通过监听 `onhashchange` 事件，感知 hash 的变化
+  - 改变 hash 可以直接通过 location.hash=xxx
+- 基于 H5 history 路由：
+  - 改变 url 可以通过 `history.pushState` 和 `replaceState` 等，会将URL压入堆栈，同时能够应用 `history.go()` 等 API
+  - 监听 url 的变化可以通过自定义事件触发实现
+
+#### react-router 实现：
 1. 基于 history 库来实现上述不同的客户端路由实现思想，并且能够保存历史记录等，磨平浏览器差异，上层无感知
 2. 通过维护的列表，在每次 URL 发生变化的回收，通过配置的 路由路径，匹配到对应的 Component，并且 render
 
