@@ -808,15 +808,188 @@ Redux、 Mobx、Flux 或者 Event Bus
 ### 1. react-router 实现思想
 
 #### 前端路由实现：
+
 - 基于 hash 的路由：通过监听 `onhashchange` 事件，感知 hash 的变化
   - 改变 hash 可以直接通过 location.hash=xxx
 - 基于 H5 history 路由：
-  - 改变 url 可以通过 `history.pushState` 和 `replaceState` 等，会将URL压入堆栈，同时能够应用 `history.go()` 等 API
+  - 改变 url 可以通过 `history.pushState` 和 `replaceState` 等，会将 URL 压入堆栈，同时能够应用 `history.go()` 等 API
   - 监听 url 的变化可以通过自定义事件触发实现
 
 #### react-router 实现：
+
 1. 基于 history 库来实现上述不同的客户端路由实现思想，并且能够保存历史记录等，磨平浏览器差异，上层无感知
 2. 通过维护的列表，在每次 URL 发生变化的回收，通过配置的 路由路径，匹配到对应的 Component，并且 render
+
+### 2. 路由切换配置
+
+#### 使用 `<Route>` 组件
+
+路由匹配是通过比较 `<Route>` 的 path 属性和当前地址的 pathname 来实现的。当一个 `<Route>` 匹配成功时，它将渲染其内容，当它不匹配时就会渲染 null。没有路径的 `<Route>` 将始终被匹配。
+
+```jsx
+// when location = { pathname: '/about' }
+<Route path='/about' component={About}/> // renders <About/>
+<Route path='/contact' component={Contact}/> // renders null
+<Route component={Always}/> // renders <Always/>
+```
+
+#### 结合使用 `<Switch> `组件和 `<Route>` 组件
+
+`<Switch>` 用于将 `<Route>` 分组。
+
+```jsx
+<Switch>
+  <Route exact path='/' component={Home} />
+  <Route path='/about' component={About} />
+  <Route path='/contact' component={Contact} />
+</Switch>
+```
+
+`<Switch>` 不是分组 `<Route>` 所必须的，但他通常很有用。 一个 `<Switch>` 会遍历其所有的子 `<Route>` 元素，并仅渲染与当前地址匹配的第一个子 `<Route>` 或 `<Redirect>`。
+
+#### 使用 `<Link>、 <NavLink>、<Redirect>` 组件
+
+##### Link
+
+`<Link>` 组件来在你的应用程序中创建链接。无论你在何处渲染一个 `<Link>` ，都会在应用程序的 HTML 中渲染锚（`<a>`）。
+
+```jsx
+<Link to='/'>Home</Link>
+// <a href='/'>Home</a>
+```
+
+##### NavLink
+
+`<NavLink>` 是一种特殊类型的 `<Link>` 当它的 to 属性与当前地址匹配时，可以将其定义为"活跃的"。
+
+```jsx
+// location = { pathname: '/react' }
+<NavLink to='/react' activeClassName='hurray'>
+  React
+</NavLink>
+// <a href='/react' className='hurray'>React</a>
+```
+
+##### Redirect
+
+当我们想强制导航时，可以渲染一个`<Redirect>`实现路由的重定向，当一个`<Redirect>`渲染时，它将使用它的 to 属性进行定向。
+
+```jsx
+<Switch>
+  <Redirect from='/users/:id' to='/users/profile/:id' />
+  <Route path='/users/profile/:id' component={Profile} />
+</Switch>
+```
+
+- 属性 from: string：需要匹配的将要被重定向路径。
+- 属性 to: string：重定向的 URL 字符串
+- 属性 to: object：重定向的 location 对象
+- 属性 push: bool：若为真，重定向操作将会把新地址加入到访问历史记录里面，并且无法回退到前面的页面。
+
+### 3. Link 和 a 标签的区别
+
+`<Link>`是 react-router 里实现路由跳转的链接，一般配合`<Route>` 使用，react-router 接管了其默认的链接跳转行为，区别于传统的页面跳转，`<Link>` 的“跳转”行为只会触发相匹配的`<Route>`对应的页面内容更新，而不会刷新整个页面。
+
+`<Link>`做了 3 件事情:
+
+- 有 onclick 那就执行 onclick
+- click 的时候阻止 a 标签默认事件
+- 根据跳转 href(即是 to)，用 history (web 前端路由两种方式之一，history & hash)跳转，此时只是链接变了，并没有刷新页面而`<a>`标签就是普通的超链接了，用于从当前页面跳转到 href 指向的另一 个页面(非锚点情况)。
+
+#### a 标签默认事件禁掉之后做了什么才实现了跳转?
+
+```js
+let domArr = document.getElementsByTagName('a')
+[...domArr].forEach(item=>{
+    item.addEventListener('click',function () {
+        location.href = this.href
+    })
+})
+```
+
+### 4. 获取 URL 参数和历史对象
+
+#### 获取 URL 的参数
+
+- **get 传值**
+  路由配置还是普通的配置，如：`'admin'`，传参方式如：`'admin?id='1111''`。通过 `this.props.location.search` 获取 url 获取到一个字符串`'?id='1111'`
+  可以用 `url，qs，queryString`，浏览器提供的 `api URLSearchParams` 对象或者自己封装的方法去解析出 id 的值。
+- **动态路由传值**
+  路由需要配置成动态路由：如 `path='/admin/:id'`，传参方式，如`'admin/111'`。通过 `this.props.match.params.id` 取得 url 中的动态路由 id 部分的值，除此之外还可以通过 `useParams（Hooks）`来获取
+- **通过 query 或 state 传值**
+  传参方式如：在 `Link` 组件的 to 属性中可以传递对象`{pathname:'/admin',query:'111',state:'111'}`;。通过 `this.props.location.state` 或 `this.props.location.query`来获取即可，传递的参数可以是对象、数组等，但是存在缺点就是只要刷新页面，参数就会丢失。
+
+#### 获取历史对象
+
+- 如果 React >= 16.8 时可以使用 React Router 中提供的 Hooks
+  ```js
+  import { useHistory } from 'react-router-dom';
+  let history = useHistory();
+  ```
+- 使用 this.props.history 获取历史对象
+  ```js
+  let history = this.props.history;
+  ```
+
+### 5. 路由模式
+
+支持使用 browser（对应 `BrowserRouter`） 和 hash（对应 `HashRouter`）两种路由规则， react-router-dom 提供了 `BrowserRouter` 和 `HashRouter` 两个组件来实现应用的 UI 和 URL 同步。
+
+#### BrowserRouter
+
+URL 格式：[http://xxx.com/path](http://xxx.com/path)
+
+使用 HTML5 提供的 history API（`pushState、replaceState 和 popstate` 事件）来保持 UI 和 URL 的同步。由此可以看出，**BrowserRouter 是使用 HTML 5 的 history API 来控制路由跳转的**：
+
+```jsx
+<BrowserRouter
+  basename={string}
+  forceRefresh={bool}
+  getUserConfirmation={func}
+  keyLength={number}
+/>
+```
+
+**属性**：
+
+- basename 所有路由的基准 URL。basename 的正确格式是前面有一个前导斜杠，但不能有尾部斜杠；
+  ```jsx
+  <BrowserRouter basename="/calendar">
+    <Link to="/today" />
+  </BrowserRouter>
+  // 等同于
+  <a href="/calendar/today" />
+  ```
+- forceRefresh 如果为 true，在导航的过程中整个页面将会刷新。一般情况下，只有在不支持 HTML5 history API 的浏览器中使用此功能；
+- getUserConfirmation 用于确认导航的函数，默认使用 window.confirm。例如，当从 /a 导航至 /b 时，会使用默认的 confirm 函数弹出一个提示，用户点击确定后才进行导航，否则不做任何处理；
+  ```js
+  // 这是默认的确认函数
+  const getConfirmation = (message, callback) => {
+    const allowTransition = window.confirm(message);
+    callback(allowTransition);
+  };
+  <BrowserRouter getUserConfirmation={getConfirmation} />;
+  // 需要配合<Prompt> 一起使用
+  ```
+- KeyLength 用来设置 Location.Key 的长度。
+
+#### HashRouter
+
+URL 格式：[http://xxx.com/#/path](http://xxx.com/#/path)
+
+使用 URL 的 hash 部分（即 window.location.hash）来保持 UI 和 URL 的同步。由此可以看出，**HashRouter 是通过 URL 的 hash 属性来控制路由跳转的**：
+
+```jsx
+<HashRouter basename={string} getUserConfirmation={func} hashType={string} />
+```
+
+**属性**：
+
+- basename, getUserConfirmation 和 `BrowserRouter` 功能一样；
+- hashType window.location.hash 使用的 hash 类型，有如下几种：
+  - slash - 后面跟一个斜杠，例如 #/ 和 #/sunshine/lollipops；
+  - noslash - 后面没有斜杠，例如 # 和 #sunshine/lollipops；
+  - hashbang - Google 风格的 ajax crawlable，例如 #!/ 和 #!/sunshine/lollipops。
 
 ## 六、状态管理
 
