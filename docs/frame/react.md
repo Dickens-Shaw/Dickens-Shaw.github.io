@@ -995,7 +995,7 @@ URL 格式：[http://xxx.com/#/path](http://xxx.com/#/path)
 
 把组件之间需要共享的状态抽取出来，遵循特定的约定，统一来管理，让状态的变化可以预测
 
-### 1. Redux
+### 1. Redux 概念原理
 
 Redux 是 React 的一个状态管理库，是遵循 Flux 模式的一种实现。 Redux 简化了 React 中的单向数据流。 Redux 将状态管理完全从 React 中抽象出来。
 
@@ -1005,16 +1005,40 @@ Redux 提供了一个叫 store 的统一仓储库，组件通过 dispatch 将 st
 
 #### 核心概念：
 
-- Store：保存数据的地方，你可以把它看成一个容器，整个应用只能有一个 Store。
-- State：Store 对象包含所有数据，如果想得到某个时点的数据，就要对 Store 生成快照，这种时点的数据集合，就叫做 State。
-- Action：State 的变化，会导致 View 的变化。但是，用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。
-- Action Creator：View 要发送多少种消息，就会有多少种 Action。如果都手写，会很麻烦，所以我们定义一个函数来生成 Action，这个函数就叫 Action Creator。
-- Reducer：Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 State 的计算过程就叫做 Reducer。Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。
-- dispatch：是 View 发出 Action 的唯一方法。
+- **Store**：保存数据的地方，你可以把它看成一个容器，整个应用只能有一个 Store。
+
+  管理 action 和 reducer 及其关系的对象，主要提供以下功能 ∶
+
+  - 维护应用状态并支持访问状态(getState());
+  - 支持监听 action 的分发，更新状态(dispatch(action));
+  - 支持订阅 store 的变更(subscribe(listener));
+
+- **State**：Store 对象包含所有数据，如果想得到某个时点的数据，就要对 Store 生成快照，这种时点的数据集合，就叫做 State。
+
+- **Action**：State 的变化，会导致 View 的变化。但是，用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。
+
+  一个 JavaScript 对象，描述动作相关信息，主要包含 type 属性和 payload 属性 ∶
+
+  - type∶ action 类型;
+  - payload∶ 负载数据;
+
+- **Action Creator**：View 要发送多少种消息，就会有多少种 Action。如果都手写，会很麻烦，所以我们定义一个函数来生成 Action，这个函数就叫 Action Creator。
+- **Reducer**：Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 State 的计算过程就叫做 Reducer。Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。
+
+  定义应用状态如何响应不同动作（action），如何更新状态;
+
+- **dispatch**：是 View 发出 Action 的唯一方法。
+- **connect**：将 React 组件与 Redux 的 store 连接起来，从而使得组件可以获取 store 中的状态，并且在状态更新的时候得到通知。
+  - 获取 state
+    connect 通过 context 获取 Provider 中的 store，通过 `store.getState()` 获取整个 store tree 上所有 state
+  - 包装原组件
+    将 state 和 action 通过 props 的方式传入到原组件内部 `wrapWithConnect` 返回—个 `ReactComponent` 对 象 Connect，Connect 重 新 render 外部传入的原组件 WrappedComponent ，并把 connect 中传入的 `mapStateToProps，mapDispatchToProps` 与组件上原有的 props 合并后，通过属性的方式传给 `WrappedComponent`
+  - 监听 store tree 变化
+    connect 缓存了 store tree 中 state 的状态，通过当前 state 状态 和变更前 state 状态进行比较，从而确定是否调用 `this.setState()` 方法触发 Connect 及其子组件的重新渲染
 
 #### 原理
 
-Redux 源码主要分为以下几个模块文件
+Redux 源码主要分为以下几个模块文件：
 
 - compose.js 提供从右到左进行函数式编程
 - createStore.js 提供作为生成唯一 store 的函数
@@ -1097,15 +1121,90 @@ export default function createStore(reducer, initialState, middleFunc) {
 - 然后，Store 自动调用 Reducer，并且传入两个参数：当前 State 和收到的 Action，Reducer 会返回新的 State
 - State 一旦有变化，Store 就会调用监听函数，来更新 View。
 
-以 store 为核心，可以把它看成数据存储中心，但是他要更改数据的时候不能直接修改，数据修改更新的角色由Reducers来担任，store只做存储，中间人，当Reducers的更新完成以后会通过store的订阅来通知react component，组件把新的状态重新获取渲染，组件中也能主动发送action，创建action后这个动作是不会执行的，所以要dispatch这个action，让store通过reducers去做更新React Component 就是react的每个组件。
+以 store 为核心，可以把它看成数据存储中心，但是他要更改数据的时候不能直接修改，数据修改更新的角色由 Reducers 来担任，store 只做存储，中间人，当 Reducers 的更新完成以后会通过 store 的订阅来通知 react component，组件把新的状态重新获取渲染，组件中也能主动发送 action，创建 action 后这个动作是不会执行的，所以要 dispatch 这个 action，让 store 通过 reducers 去做更新 React Component 就是 react 的每个组件。
 
 ### 2. Redux 异步请求
 
 #### redux 异步中间件
 
-redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个 middleware 接受 2 个参数， Store 的 getState 函数和 dispatch 函数，分别获得 store 和 action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
+redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源码中每个 middleware 接受 2 个参数， Store 的 getState 函数和 dispatch 函数，代表着 Redux Store 上的两个同名函数，分别获得 store 和 action，最终返回一个函数。该函数会被传入 next 的下一个 middleware 的 dispatch 方法，并返回一个接收 action 的新函数，这个函数可以直接调用 next（action），或者在其他需要的时刻调用，甚至根本不去调用它
+
+柯里化函数两端参数一个是 middlewares，一个是 store.dispatch
+
+Redux 的中间件提供的是位于 action 被发起之后，到达 reducer 之前的扩展点，换而言之，原本 view -→> action -> reducer -> store 的数据流加上中间件后变成了 view -> action -> middleware -> reducer -> store ，在这一环节可以做一些"副作用"的操作，如异步请求、打印日志等。
+
+**applyMiddleware 源码：**
+
+```js
+export default function applyMiddleware(...middlewares) {
+  return (createStore) =>
+    (...args) => {
+      // 利用传入的createStore和reducer和创建一个store
+      const store = createStore(...args);
+      let dispatch = () => {
+        throw new Error();
+      };
+      const middlewareAPI = {
+        getState: store.getState,
+        dispatch: (...args) => dispatch(...args),
+      };
+      // 让每个 middleware 带着 middlewareAPI 这个参数分别执行一遍
+      const chain = middlewares.map((middleware) => middleware(middlewareAPI));
+      // 接着 compose 将 chain 中的所有匿名函数，组装成一个新的函数，即新的 dispatch
+      dispatch = compose(...chain)(store.dispatch);
+      return {
+        ...store,
+        dispatch,
+      };
+    };
+}
+```
 
 #### redux-thunk
+
+```js
+/**
+ * 配置中间件，在store的创建中配置
+ */
+import {createStore, applyMiddleware, compose} from 'redux';
+import reducer from './reducer';
+import thunk from 'redux-thunk'
+
+// 设置调试工具
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose;
+// 设置中间件
+const enhancer = composeEnhancers(
+  applyMiddleware(thunk)
+);
+
+const store = createStore(reducer, enhancer);
+
+export default store;
+
+/**
+ * 添加一个返回函数的actionCreator，将异步请求逻辑放在里面
+ * 发送get请求，并生成相应action，更新store的函数
+ * @param url {string} 请求地址
+ * @param func {function} 真正需要生成的action对应的actionCreator
+ * @return {function}
+*/
+// dispatch为自动接收的store.dispatch函数
+export const getHttpAction = (url, func) => (dispatch) => {
+    axios.get(url).then(function(res){
+        const action = func(res.data)
+        dispatch(action)
+    })
+}
+
+/**
+ * 生成action，并发送action
+ */
+componentDidMount(){
+    var action = getHttpAction('/getData', getInitTodoItemAction)
+    // 发送函数类型的action时，该action的函数体会自动执行
+    store.dispatch(action)
+}
+```
 
 - 优点：
 
@@ -1122,6 +1221,63 @@ redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源
   既可以 dispatch action 对象，也可以 dispatch 一个函数。函数的第一个参数为 dispatch 函数，在函数内部我们可以处理一些副作用，完成后再调用 dispatch 函数就又回到了纯函数的流
 
 #### redux-saga
+
+```js
+/**
+ * 配置中间件
+ */
+import {createStore, applyMiddleware, compose} from 'redux';
+import reducer from './reducer';
+import createSagaMiddleware from 'redux-saga'
+import TodoListSaga from './sagas'
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({}) : compose;
+const sagaMiddleware = createSagaMiddleware()
+
+const enhancer = composeEnhancers(
+  applyMiddleware(sagaMiddleware)
+);
+
+const store = createStore(reducer, enhancer);
+sagaMiddleware.run(TodoListSaga)
+
+export default store;
+
+/**
+ * 将异步请求放在sagas.js中
+ */
+import {takeEvery, put} from 'redux-saga/effects'
+import {initTodoList} from './actionCreator'
+import {GET_INIT_ITEM} from './actionTypes'
+import axios from 'axios'
+
+function* func(){
+    try{
+        // 可以获取异步返回数据
+        const res = yield axios.get('/getData')
+        const action = initTodoList(res.data)
+        // 将action发送到reducer
+        yield put(action)
+    }catch(e){
+        console.log('网络请求失败')
+    }
+}
+
+function* mySaga(){
+    // 自动捕获GET_INIT_ITEM类型的action，并执行func
+    yield takeEvery(GET_INIT_ITEM, func)
+}
+
+export default mySaga
+
+/**
+ * 发送action
+ */
+componentDidMount(){
+  const action = getInitTodoItemAction()
+  store.dispatch(action)
+}
+```
 
 - 优点：
 
@@ -1142,17 +1298,119 @@ redux 中间件本质就是一个函数柯里化。redux applyMiddleware Api 源
 - 处理副作用：redux-saga 会用它的生成器函数执器来替我们完成在生成器函数内部定义的"一系列操作"
 
 - 处理并发：
+
   - takeEvery：可以让多个 saga 任务并行被 fork 执行
+
+    ```js
+    import { fork, take } from 'redux-saga/effects';
+
+    const takeEvery = (pattern, saga, ...args) =>
+      fork(function* () {
+        while (true) {
+          const action = yield take(pattern);
+          yield fork(saga, ...args.concat(action));
+        }
+      });
+    ```
+
   - takeLatest：takeLatest 不允许多个 saga 任务并行地执行。一旦接收到新的发起的 action，它就会取消前面所有 fork 过的任务（如果这些任务还在执行的话）。在处理 AJAX 请求的时候，如果只希望获取最后那个请求的响应， takeLatest 就会非常有用。
 
-### Flux
+    ```js
+    import { cancel, fork, take } from 'redux-saga/effects';
+
+    const takeLatest = (pattern, saga, ...args) =>
+      fork(function* () {
+        let lastTask;
+        while (true) {
+          const action = yield take(pattern);
+          if (lastTask) {
+            yield cancel(lastTask); // 如果任务已经结束，则 cancel 为空操作
+          }
+          lastTask = yield fork(saga, ...args.concat(action));
+        }
+      });
+    ```
+
+### 3. Redux 属性传递
+
+react-redux 数据传输 ∶ `view-->action-->reducer-->store-->view`。看下点击事件的数据是如何通过 redux 传到 view 上：
+
+- view 上的 `AddClick` 事件通过 `mapDispatchToProps` 把数据传到 action ---> click:()=>dispatch(ADD)
+- action 的 ADD 传到 reducer 上
+- reducer 传到 store 上 `const store = createStore(reducer)`;
+- store 再通过 mapStateToProps 映射穿到 view 上 text:State.text
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider, connect } from 'react-redux';
+class App extends React.Component {
+  render() {
+    let { text, click, clickR } = this.props;
+    return (
+      <div>
+        <div>数据:已有人{text}</div>
+        <div onClick={click}>加人</div>
+        <div onClick={clickR}>减人</div>
+      </div>
+    );
+  }
+}
+const initialState = {
+  text: 5,
+};
+const reducer = function (state, action) {
+  switch (action.type) {
+    case 'ADD':
+      return { text: state.text + 1 };
+    case 'REMOVE':
+      return { text: state.text - 1 };
+    default:
+      return initialState;
+  }
+};
+
+let ADD = {
+  type: 'ADD',
+};
+let Remove = {
+  type: 'REMOVE',
+};
+
+const store = createStore(reducer);
+
+let mapStateToProps = function (state) {
+  return {
+    text: state.text,
+  };
+};
+
+let mapDispatchToProps = function (dispatch) {
+  return {
+    click: () => dispatch(ADD),
+    clickR: () => dispatch(Remove),
+  };
+};
+
+const App1 = connect(mapStateToProps, mapDispatchToProps)(App);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App1></App1>
+  </Provider>,
+  document.getElementById('root')
+);
+```
+
+### 4. Flux
 
 是一种强制单向数据流的架构模式。它控制派生数据，并使用具有所有数据权限的中心 store 实现多个组件之间的通信。整个应用中的数据更新必须只能在此处进行。 Flux 为应用提供稳定性并减少运行时的错误。
 
 1. 核心模块:Store,Reduce,Store,Container;
 2. 有多个 store;
 
-### Dva
+### 5. Dva
 
 dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了简化开发体验，dva 还额外内置了 react-router 和 fetch，所以也可以理解为一个轻量级的应用框架
 
@@ -1163,15 +1421,27 @@ dva 首先是一个基于 redux 和 redux-saga 的数据流方案，然后为了
 - Action：一个对象，描述事件
 - connect 方法：一个函数，绑定 State 到 View
 - dispatch 方法：一个函数，发送 Action 到 State
--
 
-### Mobx
+### 6. Mobx
 
 透明函数响应式编程的状态管理库，它使得状态管理简单可伸缩
 
-1. 核心模块:Action,Reducer,Derivation;
+1. 核心模块:
+
+- Action:定义改变状态的动作函数，包括如何变更状态;
+- Reducer:集中管理模块状态（State）和动作(action)
+- Derivation(衍生):从应用状态中派生而出，且没有任何其他影响的数据
+
 2. 有多个 store;
 3. 设计更多偏向于面向对象编程和响应式编程，通常将状态包装成可观察对象，一旦状态对象变更，就能自动获得更新
+
+#### 与 Redux 对比：
+
+- redux 将数据保存在单一的 store 中，mobx 将数据保存在分散的多个 store 中
+- redux 使用 plain object 保存数据，需要手动处理变化后的操作;mobx 适用 observable 保存数据，数据变化后自动处理响应的操作
+- redux 使用不可变状态，这意味着状态是只读的，不能直接去修改它，而是应该返回一个新的状态，同时使用纯函数;mobx 中的状态是可变的，可以直接对其进行修改
+- mobx 相对来说比较简单，在其中有很多的抽象，mobx 更多的使用面向对象的编程思维;redux 会比较复杂，因为其中的函数式编程思想掌握起来不是那么容易，同时需要借助一系列的中间件来处理异步和副作用
+- mobx 中有更多的抽象和封装，调试会比较困难，同时结果也难以预测;而 redux 提供能够进行时间回溯的开发工具，同时其纯函数以及更少的抽象，让调试变得更加的容易
 
 ## 七、Hooks
 
