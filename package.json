@@ -1,15 +1,16 @@
 {
   "name": "vuepress",
+  "type": "module",
+  "private": true,
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@vuepress/plugin-docsearch": "@latest",
-    "vuepress": "@latest"
+    "vitepress": "^1.0.0-rc.40",
+    "vue": "^3.3.4"
   },
   "scripts": {
-    "dev": "vuepress dev docs",
-    "build": "vuepress build docs",
+    "dev": "vitepress dev docs --port=8732",
+    "build": "vitepress build docs",
     "deploy": "sh deploy.sh"
   }
 }

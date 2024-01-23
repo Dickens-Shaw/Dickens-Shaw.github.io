@@ -14,4 +14,4 @@ jobs:
         TARGET_REPO: Dickens-Shaw/documents
         TARGET_BRANCH: gh-pages
         BUILD_SCRIPT: git config --global --add safe.directory "*" && yarn && yarn build
-        BUILD_DIR: docs/.vuepress/dist 
+        BUILD_DIR: dist 
