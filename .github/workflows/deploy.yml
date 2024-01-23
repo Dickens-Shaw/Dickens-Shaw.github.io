@@ -7,12 +7,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-          persist-credentials: false
-
-    - name: Setup Nodejs and npm
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
+        persist-credentials: false
 
     - name: Install Yarn
       run: |
@@ -20,16 +15,16 @@ jobs:
         export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
     
     - name: Setup Nodejs with yarn caching
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'yarn'
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: 'yarn'
     
     - name: Build
       run: yarn && yarn build
 
     - name: Copy files
-        run: cp README.md ./dist/
+      run: cp README.md ./dist/
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
