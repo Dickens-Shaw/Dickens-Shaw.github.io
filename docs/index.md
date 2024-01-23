@@ -5,7 +5,7 @@ layoutClass: 'm-home-layout'
 
 hero:
   name: 文档
-  text: 前端2
+  text: 前端3
   tagline: 💪
   # image:
   #   src: /logo.jpeg
