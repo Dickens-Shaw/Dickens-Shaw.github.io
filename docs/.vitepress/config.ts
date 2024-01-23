@@ -18,7 +18,7 @@ export default defineConfig({
       level: 'deep',
       label: '本页目录',
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/maomao1996' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/Dickens-Shaw' }],
 
     footer: {
       message: '随意',

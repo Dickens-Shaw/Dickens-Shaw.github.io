@@ -9,17 +9,20 @@ jobs:
       with:
           persist-credentials: false
 
-    - name: Install yarn
-        uses: yarn/action-setup@v2.2.4
-        with:
-          version: 7
+    - name: Setup Nodejs and npm
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Setup yarn
+        run: npm install -g yarn
     
-    - name: Set node version to 20
+    - name: Setup Nodejs with yarn caching
         uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'yarn'
-
+    
     - name: Build
       run: yarn && yarn build
 
