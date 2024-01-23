@@ -1,0 +1,35 @@
+name: Build and Deploy
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+          persist-credentials: false
+
+    - name: Install yarn
+        uses: yarn/action-setup@v2.2.4
+        with:
+          version: 7
+    
+    - name: Set node version to 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+    - name: Build
+      run: yarn && yarn build
+
+    - name: Copy files
+        run: cp README.md ./dist/
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+        REPOSITORY_NAME: Dickens-Shaw/documents
+        BRANCH: gh-pages
+        FOLDER: dist 
