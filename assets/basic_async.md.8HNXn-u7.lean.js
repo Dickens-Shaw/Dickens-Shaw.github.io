@@ -1,0 +1,1 @@
+import{_ as s,c as i,o as a,V as n}from"./chunks/framework.3r87iXRe.js";const o=JSON.parse('{"title":"异步编程","description":"","frontmatter":{},"headers":[],"relativePath":"basic/async.md","filePath":"basic/async.md"}'),h={name:"basic/async.md"},l=n("",43),k=[l];function p(t,e,E,r,d,g){return a(),i("div",null,k)}const c=s(h,[["render",p]]);export{o as __pageData,c as default};
