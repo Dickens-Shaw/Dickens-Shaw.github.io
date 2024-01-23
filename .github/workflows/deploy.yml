@@ -9,15 +9,15 @@ jobs:
       with:
         persist-credentials: false
 
-    - name: Install Yarn
-      run: |
-        curl -o- -L https://yarnpkg.com/install.sh | bash
-        export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+    - name: Install yarn
+      uses: yarn/action-setup@v2.2.4
+      with:
+        version: 7
     
-    - name: Setup Nodejs with yarn caching
+    - name: Set node version to 20
       uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 20
         cache: 'yarn'
     
     - name: Build
@@ -30,6 +30,6 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
         ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
-        REPOSITORY_NAME: Dickens-Shaw/documents
+        REPOSITORY_NAME: Dickens-Shaw/Dickens-Shaw.github.io
         BRANCH: gh-pages
         FOLDER: dist 
