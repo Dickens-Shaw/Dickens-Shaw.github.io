@@ -7,9 +7,9 @@ hero:
   name: 文档
   text: 前端
   tagline: 💪
-  # image:
-  #   src: /logo.jpeg
-  #   alt: Shaw
+  image:
+    src: /logo.jpeg
+    alt: Shaw
   actions:
     - text: Start
       link: /basic/html
@@ -33,3 +33,9 @@ features:
     linkText: 前端架构
 footer: Shaw always work hard
 ---
+
+<style>
+  .VPImage{
+    border-radius: 50%;
+  }
+</style>
