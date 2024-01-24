@@ -21,15 +21,15 @@ features:
     linkText: 前端基础
   - title: 进阶
     details: 浏览器/网络/TS/设计模式/数据结构&算法
-    link: /advanced/browser
+    link: /advance/browser
     linkText: 前端进阶
   - title: 框架
     details: MVVM/React/Vue
-    link: /framework/react
+    link: /frame/react
     linkText: 前端框架
   - title: 架构
     details: 项目优化/工程化/微前端/大前端/低代码
-    link: /architecture/optimization
+    link: /architecture/optimize
     linkText: 前端架构
 footer: Shaw always work hard
 ---

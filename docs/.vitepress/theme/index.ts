@@ -2,7 +2,7 @@ import { h, watch } from 'vue'
 import { useData, EnhanceAppContext } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 
-import './styles/index.less'
+import './styles/index.scss'
 
 if (typeof window !== 'undefined') {
   /* 注销 PWA 服务 */
