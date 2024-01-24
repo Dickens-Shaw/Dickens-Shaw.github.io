@@ -5,7 +5,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "devDependencies": {
-    "vitepress": "^1.0.0-rc.40",
+    "sass": "^1.63.6",
+    "vitepress": "1.0.0-alpha.60",
     "vue": "^3.3.4"
   },
   "scripts": {
