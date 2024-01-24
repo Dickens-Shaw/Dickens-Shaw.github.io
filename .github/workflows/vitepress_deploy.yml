@@ -38,9 +38,8 @@ jobs:
       run: cp README.md ./dist/
 
     - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@releases/v3
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
-        ACCESS_TOKEN: ${{ secrets.METRICS_TOKEN }}
-        REPOSITORY_NAME: Dickens-Shaw/Dickens-Shaw.github.io
-        BRANCH: gh-pages
-        FOLDER: dist 
+        token: ${{ secrets.METRICS_TOKEN }}
+        repository-name: Dickens-Shaw/Dickens-Shaw.github.io
+        folder: dist 
