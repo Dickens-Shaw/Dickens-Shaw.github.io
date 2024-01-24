@@ -50,8 +50,6 @@ export default {
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
 
-    app.provide('DEV', process.env.NODE_ENV === 'development')
-
     if (typeof window !== 'undefined') {
       watch(
         () => router.route.data.relativePath,
