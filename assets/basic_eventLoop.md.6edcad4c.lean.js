@@ -1,0 +1,1 @@
+import{_ as s,o as l,c as a,Q as n}from"./chunks/framework.058c99df.js";const A=JSON.parse('{"title":"事件循环","description":"","frontmatter":{},"headers":[],"relativePath":"basic/eventLoop.md"}'),o={name:"basic/eventLoop.md"},p=n("",28),e=[p];function t(c,r,i,y,D,F){return l(),a("div",null,e)}const E=s(o,[["render",t]]);export{A as __pageData,E as default};

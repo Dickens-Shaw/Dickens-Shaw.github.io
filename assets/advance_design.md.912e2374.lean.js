@@ -1,0 +1,1 @@
+import{_ as s,o as l,c as a,Q as n}from"./chunks/framework.058c99df.js";const p="/images/observer.png",E=JSON.parse('{"title":"设计模式","description":"","frontmatter":{},"headers":[],"relativePath":"advance/design.md"}'),o={name:"advance/design.md"},e=n("",99),t=[e];function c(r,y,F,D,i,B){return l(),a("div",null,t)}const u=s(o,[["render",c]]);export{E as __pageData,u as default};
