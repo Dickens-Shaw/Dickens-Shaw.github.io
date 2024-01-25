@@ -44,6 +44,10 @@ footer: Shaw always work hard
     &:visited{
       color: var(--vp-c-brand);
 
+      .title{
+        color: var(--vp-c-brand);
+      }
+
       &:hover{
         border: 1px solid var(--vp-c-brand);
       }

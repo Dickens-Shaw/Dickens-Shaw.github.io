@@ -483,7 +483,6 @@ JavaScript 既会阻塞 HTML 的解析，也会阻塞 CSS 的解析。因此我�
 
 #### 4）减少重绘和回流
 
-
 ### 3. 回流 reflow
 
 当元素的尺寸或者位置发生了变化，就需要重新计算渲染树
@@ -566,24 +565,26 @@ cookie，localStorage，sessionStorage，indexDB
 
 ### 1. 同源策略
 
-同源策略是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，浏览器很容易受到 XSS、CSRF 等攻击。所谓同源是指"协议+域名+端口"三者相同，即便两个不同的域名指向同一个 ip 地址，也非同源。
+同源策略是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，浏览器很容易受到 XSS、CSRF 等攻击。所谓同源是指"**协议+域名+端口**"三者相同，即便两个不同的域名指向同一个 ip 地址，也非同源。
 
 - 同源策略限制内容有：
 
   - Cookie、LocalStorage、IndexedDB 等存储性内容
   - DOM 节点
-  - AJAX 请求发送后，结果被浏览器拦截了
+  - AJAX 无法发送跨域请求
 
 - 但是有三个标签是允许跨域加载资源：
   - `<img src=XXX>`
   - `<link href=XXX>`
   - `<script src=XXX>`
 
+同源政策的目的主要是为了保证用户的信息安全，它只是对 js 脚本的一种限制，并不是对浏览器的限制，对于一般的 img、或者 script 脚本请求都不会有跨域的限制，这是因为这些操作都不会通过响应结果来进行可能出现安全问题的操作。
+
 ### 2. JSONP
 
 > 利用 `<script>` 标签没有跨域限制的漏洞。通过 `<script>` 标签指向一个需要访问的地址并提供一个回调函数来接收数据
 
-特点：使用简单且兼容性不错，但是只限于 get 请求
+特点：使用简单且兼容性不错，但是只限于 get 请求，且容易遭受 XSS 攻击。
 
 ```js
 function jsonp(url, callback, success) {
@@ -604,6 +605,10 @@ jsonp('https://api.github.com/users/octocat', 'callback', function (data) {
 
 ### 3. CORS
 
+::: tip 下面是 MDN 对于 CORS 的定义
+跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器 让运行在一个 Origin (domain)上的 Web 应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
+:::
+
 CORS 需要浏览器和后端同时支持。IE 8 和 9 需要通过 XDomainRequest 来实现。
 
 浏览器会自动进行 CORS 通信，实现 CORS 通信的关键是后端。只要后端实现了 CORS，就实现了跨域。
@@ -612,22 +617,89 @@ CORS 需要浏览器和后端同时支持。IE 8 和 9 需要通过 XDomainReque
 
 虽然设置 CORS 和前端没什么关系，但是通过这种方式解决跨域问题的话，会在发送请求时出现两种情况，分别为简单请求和复杂请求。
 
-- 简单请求：
-  以 Ajax 为例，当满足以下条件时，会触发简单请求
+#### 1）简单请求
 
-  - 使用下列方法之一：
-    GET
-    HEAD
-    POST
+以 Ajax 为例，当满足以下条件时，会触发简单请求
+
+- 使用下列方法之一：
+  - GET
+  - HEAD
+  - POST
+- HTTP 的头信息不超出以下几种字段：
+  - Accept
+  - Accept-Language
+  - Content-Language
+  - Last-Event-ID
   - Content-Type 的值仅限于下列三者之一：
-    text/plain
-    multipart/form-data
-    application/x-www-form-urlencoded
-  - 请求中的任意 XMLHttpRequestUpload 对象均没有注册任何事件监听器； XMLHttpRequestUpload 对象可以使用 XMLHttpRequest.upload 属性访问。
+    - text/plain
+    - multipart/form-data
+    - application/x-www-form-urlencoded
+- 请求中的任意 XMLHttpRequestUpload 对象均没有注册任何事件监听器； XMLHttpRequestUpload 对象可以使用 XMLHttpRequest.upload 属性访问。
 
-- 复杂请求：
-  那么很显然，不符合以上条件的请求就肯定是复杂请求了。
-  对于复杂请求来说，首先会发起一个预检请求，该请求是 option 方法的，通过该请求来知道服务端是否允许跨域请求。
+**简单请求过程**：
+对于简单请求，浏览器会直接发出 CORS 请求，它会在请求的头信息中增加一个 Origin 字段，该字段用来说明本次请求来自哪个源（协议+端口+域名），服务器会根据这个值来决定是否同意这次请求。如果 Origin 指定的域名在许可范围之内，服务器返回的响应就会多出以下信息头：
+
+```http
+Access-Control-Allow-Origin: http://api.***.com;  // 和 Origin 一致
+Access-Control-Allow-Credentials: true;           // 表示是否允许发送Cookie
+Access-Control-Expose-Headers: ***;               // 指定返回其他字段的值
+Content-Type: text/html; charset=utf-8;           // 表示文档类型
+```
+
+如果 Origin 指定的域名不在许可范围之内，服务器会返回一个正常的 HTTP 回应，浏览器发现没有上面的 Access-Control-Allow-Origin 头部信息，就知道出错了。这个错误无法通过状态码识别，因为返回的状态码可能是 200。
+
+#### 2）复杂请求
+
+对于复杂请求来说，首先会在正式通信之前进行一次 HTTP 查询请求，称为预检请求。
+
+浏览器会询问服务器，当前所在的网页是否在服务器允许访问的范围内，以及可以使用哪些 HTTP 请求方式和头信息字段，只有得到肯定的回复，才会进行正式的 HTTP 请求，否则就会报错。
+
+预检请求使用的**请求方法是 OPTIONS**，表示这个请求是来询问的。他的头信息中的关键字段是 Origin，表示请求来自哪个源。除此之外，头信息中还包括两个字段：
+
+- **Access-Control-Request-Method**：该字段是必须的，用来列出浏览器的 CORS 请求会用到哪些 HTTP 方法。
+- **Access-Control-Request-Headers**： 该字段是一个逗号分隔的字符串，指定浏览器 CORS 请求会额外发送的头信息字段。
+
+服务器在收到浏览器的预检请求之后，会根据头信息的三个字段来进行判断，如果返回的头信息在中有 Access-Control-Allow-Origin 这个字段就是允许跨域请求，如果没有，就是不同意这个预检请求，就会报错。
+
+服务器回应的 CORS 的字段如下：
+
+```http
+Access-Control-Allow-Origin: http://api.***.com   // 允许跨域的源地址
+Access-Control-Allow-Methods: GET, POST, PUT      // 服务器支持的所有跨域请求的方法
+Access-Control-Allow-Headers: X-Custom-Header     // 服务器支持的所有头信息字段
+Access-Control-Allow-Credentials: true            // 表示是否允许发送Cookie
+Access-Control-Max-Age: 1728000                   // 用来指定本次预检请求的有效期，单位为秒
+```
+
+只要服务器通过了预检请求，在以后每次的 CORS 请求都会自带一个 Origin 头信息字段。服务器的回应，也都会有一个 Access-Control-Allow-Origin 头信息字段。
+
+**在非简单请求中，至少需要设置以下字段**：
+
+```js
+'Access-Control-Allow-Origin';
+'Access-Control-Allow-Methods';
+'Access-Control-Allow-Headers';
+```
+
+**减少 OPTIONS 请求次数**：
+
+OPTIONS 请求次数过多就会损耗页面加载的性能，降低用户体验度。所以尽量要减少 OPTIONS 请求次数，可以后端在请求的返回头部添加：Access-Control-Max-Age：number。它表示预检请求的返回结果可以被缓存多久，单位是秒。该字段只对完全一样的 URL 的缓存设置生效，所以设置了缓存时间，在这个时间范围内，再次发送请求就不需要进行预检请求了。
+
+**CORS 中 Cookie 相关问题**：
+在 CORS 请求中，如果想要传递 Cookie，就要满足以下三个条件：
+
+- **Access-Control-Allow-Credentials 设置为 `true`**
+- **Access-Control-Allow-Origin 设置为非 `*`**
+- **在请求中设置 `withCredentials`**
+
+  默认情况下在跨域请求，浏览器是不带 cookie 的。但是我们可以通过设置 withCredentials 来进行传递 cookie.
+  ```js
+  // 原生 xml 的设置方式
+  var xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+  // axios 设置方式
+  axios.defaults.withCredentials = true;
+  ```
 
 ### 4. Nginx 和 nodejs 中间件代理原理相同
 
@@ -678,7 +750,6 @@ WebSocket 的出现就解决了半双工通信的弊端。它最大的特点是�
   - 协议标识符是 ws（如果加密，则为 wss），服务器网址就是 URL
   - 与 HTTP 协议有着良好的兼容性。默认端口也是 80 和 443，并且握手阶段采用 HTTP 协议，因此握手时不容易屏蔽，能通过各种 HTTP 代理服务器。
 
-
 ## 八、浏览器事件
 
 ### 1. 事件触发
@@ -698,7 +769,6 @@ WebSocket 的出现就解决了半双工通信的弊端。它最大的特点是�
 **事件委托** 本质上是利用了浏览器事件冒泡的机制。因为事件在冒泡过程中会上传到父节点，并且父节点可以通过事件对象获取到 目标节点，因此可以把子节点的监听函数定义在父节点上，由父节点的监听函数统一处理多个子元素的事件，这种方式称为**事件代理**。
 
 使用事件代理我们可以不必要为每一个子元素都绑定一个监听事件，这样**减少了内存上的消耗**。并且使用事件代理我们还可以实现**事件的动态绑定**，比如说新增了一个子节点，我们并不需要单独地为它添加一个监听事件，它所发生的事件会交给父元素中的监听函数来处理。
-
 
 ## 九、新 API
 
