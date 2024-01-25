@@ -16,12 +16,12 @@ export default defineConfig({
     /* 右侧大纲配置 */
     outline: {
       level: 'deep',
-      label: '本页目录',
+      label: '大纲',
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/Dickens-Shaw' }],
 
     footer: {
-      message: '随意',
+      message: '💪',
       copyright: 'Copyright',
     },
 

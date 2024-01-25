@@ -5,7 +5,7 @@ layoutClass: 'm-home-layout'
 
 hero:
   name: 文档
-  text: 前端
+  text: Frontend
   tagline: 💪
   image:
     src: /logo.jpeg
@@ -34,8 +34,19 @@ features:
 footer: Shaw always work hard
 ---
 
-<style>
+<style lang="scss">
   .VPImage{
     border-radius: 50%;
+  }
+
+  .VPFeature.link{
+    &:link,
+    &:visited{
+      color: var(--vp-c-brand);
+
+      &:hover{
+        border: 1px solid var(--vp-c-brand);
+      }
+    }
   }
 </style>
