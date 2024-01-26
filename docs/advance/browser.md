@@ -109,8 +109,6 @@ CSRF 攻击的本质是利用 cookie 会在同源请求中携带发送给服务�
    - 302 跳转的⽅式: 通过监控⽹络出⼝的流量，分析判断哪些内容是可以进⾏劫持处理的,再对劫持的内存发起 302 跳转的回复，引导⽤户获取内容
 2. **HTTP 劫持**: (访问⾕歌但是⼀直有贪玩蓝⽉的⼴告),由于 http 明⽂传输,运营商会修改你的 http 响应内容(即加⼴告)
 
-### 5. 常见前端
-
 ## 二、进程与线程
 
 ### 1. 进程与线程的概念
@@ -155,7 +153,21 @@ CSRF 攻击的本质是利用 cookie 会在同源请求中携带发送给服务�
 - 调度：进程切换比线程切换的开销要大。线程是 CPU 调度的基本单位，线程的切换不会引起进程切换，但某个进程中的线程切换到另一个进程中的线程时，会引起进程切换。
 - 系统开销：由于创建或撤销进程时，系统都要为之分配或回收资源，如内存、I/O 等，其开销远大于创建或撤销线程时的开销。同理，在进行进程切换时，涉及当前执行进程 CPU 环境还有各种各样状态的保存及新调度进程状态的设置，而线程切换时只需保存和设置少量寄存器内容，开销较小。
 
-### 3. 浏览器渲染进程的线程有哪些
+### 3. JS 单线程模型
+
+::: info 单线程模型
+是指 JS 脚本只在一个线程上运行。JS 同时只能执行一个任务，其他任务都必须等待。
+:::
+
+但是 JS 脚本只在一个线程上执行，不代表 JS 引擎只有一个线程。事实上，JS 引擎有多个线程，是一种主线程运行脚本，其他线程后台配合的模式
+
+**原因**：
+
+JavaScript 的单线程，与它的用途有关。作为浏览器脚本语言，JavaScript 的主要用途是与用户互动，以及操作 DOM。这决定了它只能是单线程，否则会带来很复杂的同步问题。比如，假定 JavaScript 同时有两个线程，一个线程在某个 DOM 节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？
+
+为了利用多核 CPU 的计算能力，HTML5 提出 Web Worker 标准，允许 JavaScript 脚本创建多个线程，但是子线程完全受主线程控制，且不得操作 DOM。所以，这个新标准并没有改变 JavaScript 单线程的本质。
+
+### 4. 浏览器渲染进程的线程有哪些
 
 ![渲染进程的线程](/images/thread.png)
 
@@ -188,7 +200,7 @@ JS 引擎线程也称为 JS 内核，负责处理 Javascript 脚本程序，解�
 - XMLHttpRequest 连接后通过浏览器新开一个线程请求；
 - 检测到状态变更时，如果设置有回调函数，异步线程就产生状态变更事件，将回调函数放入事件队列中，等待 JS 引擎空闲后执行；
 
-### 4. 进程通信方式
+### 5. 进程通信方式
 
 #### 1）管道
 
@@ -225,7 +237,7 @@ JS 引擎线程也称为 JS 内核，负责处理 Javascript 脚本程序，解�
 
 上面我们说的共享内存、管道、信号量、消息队列，他们都是多个进程在一台主机之间的通信，那两个相隔几千里的进程能够进行通信吗？答是必须的，这个时候 Socket 这家伙就派上用场了，例如我们平时通过浏览器发起一个 http 请求，然后服务器给你返回对应的数据，这种就是采用 Socket 的通信方式了。
 
-### 5. 如何实现浏览器内多个标签页之间的通信
+### 6. 如何实现浏览器内多个标签页之间的通信
 
 实现多个标签页之间的通信，本质上都是通过中介者模式来实现的。因为标签页之间没有办法直接通信，因此我们可以找一个中介者，让标签页和中介者进行通信，然后让这个中介者来进行消息的转发。通信方法如下：
 
@@ -234,7 +246,7 @@ JS 引擎线程也称为 JS 内核，负责处理 Javascript 脚本程序，解�
 - 使用 **localStorage** 的方式，我们可以在一个标签页对 localStorage 的变化事件进行监听，然后当另一个标签页修改数据的时候，我们就可以通过这个监听事件来获取到数据。这个时候 localStorage 对象就是充当的中介者的角色。
 - 使用 **postMessage** 方法，如果我们能够获得对应标签页的引用，就可以使用 postMessage 方法，进行通信。
 
-### 6. 对 Service Worker 的理解
+### 7. 对 Service Worker 的理解
 
 Service Worker 是运行在浏览器背后的独立线程，一般可以用来实现缓存功能。使用 Service Worker 的话，传输协议必须为 HTTPS。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。
 
@@ -603,9 +615,98 @@ jsonp('https://api.github.com/users/octocat', 'callback', function (data) {
 });
 ```
 
-### 3. CORS
+### 3. postMessage + iframe
 
-::: tip 下面是 MDN 对于 CORS 的定义
+postMessage 是 HTML5 XMLHttpRequest Level 2 中的 API，且是为数不多可以跨域操作的 window 属性之一，它可用于解决以下方面的问题：
+
+- 页面和其打开的新窗口的数据传递
+- 多窗口之间消息传递
+- 页面与嵌套的 iframe 消息传递
+- 上面三个场景的跨域数据传递
+
+用法：postMessage(data,origin)方法接受两个参数：
+
+- **data**： html5 规范支持任意基本类型或可复制的对象，但部分浏览器只支持字符串，所以传参时最好用 JSON.stringify()序列化。
+- **origin**： 协议+主机+端口号，也可以设置为"\*"，表示可以传递给任意窗口，如果要指定和当前窗口同源的话设置为"/"。
+
+这种方式通常用于获取嵌入页面中的第三方页面数据。一个页面发送消息，另一个页面判断来源并接收消息
+
+```js
+// 主页面
+<iframe id='iframe' src='http://www.child.com'></iframe>;
+
+var iframe = document.getElementById('iframe');
+iframe.onload = function () {
+  var data = {
+    name: '***',
+  };
+  // 向 child 传送跨域数据
+  iframe.contentWindow.postMessage(
+    JSON.stringify(data),
+    'http://www.child.com'
+  );
+};
+
+// 接受 child 返回数据
+window.addEventListener(
+  'message',
+  function (e) {
+    alert('data from child ---> ' + e.data);
+  },
+  false
+);
+```
+
+```js
+// 子页面
+// 接收 parent 的数据
+window.addEventListener(
+  'message',
+  function (e) {
+    alert('data from parent ---> ' + e.data);
+    var data = JSON.parse(e.data);
+    if (data) {
+      data.number = 666;
+      var newData = JSON.stringify(data);
+
+      // 处理后再发回 parent
+      window.parent.postMessage(newData, 'http://www.parent.com');
+    }
+  },
+  false
+);
+```
+
+### 4. document.domain + iframe
+
+::: warning
+document.domain 已经废弃，不再推荐使用该特性
+:::
+
+该方式只能用于二级域名相同的情况下，比如 a.test.com 和 b.test.com 适用于该方式。
+
+只需要给页面添加 document.domain = 'test.com' 表示二级域名都相同就可以实现跨域
+
+```js
+// 主页面
+<iframe id="iframe" src="http://child.domain.com"></iframe>
+<script>
+    document.domain = 'domain.com';
+    var user = 'admin';
+</script>
+```
+
+```js
+// 子页面
+<script>
+  document.domain = 'domain.com'; // 获取父窗口中变量 console.log('get js data
+  from parent ---> ' + window.parent.user);
+</script>
+```
+
+### 5. CORS
+
+::: info 下面是 MDN 对于 CORS 的定义
 跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器 让运行在一个 Origin (domain)上的 Web 应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
 :::
 
@@ -693,6 +794,7 @@ OPTIONS 请求次数过多就会损耗页面加载的性能，降低用户体验
 - **在请求中设置 `withCredentials`**
 
   默认情况下在跨域请求，浏览器是不带 cookie 的。但是我们可以通过设置 withCredentials 来进行传递 cookie.
+
   ```js
   // 原生 xml 的设置方式
   var xhr = new XMLHttpRequest();
@@ -701,7 +803,7 @@ OPTIONS 请求次数过多就会损耗页面加载的性能，降低用户体验
   axios.defaults.withCredentials = true;
   ```
 
-### 4. Nginx 和 nodejs 中间件代理原理相同
+### 6. nginx 和 nodejs 中间件代理
 
 实现原理：**同源策略是浏览器需要遵循的标准，而如果是服务器向服务器请求就无需遵循同源策略**。 代理服务器，需要做以下几个步骤：
 
@@ -710,49 +812,114 @@ OPTIONS 请求次数过多就会损耗页面加载的性能，降低用户体验
 - 拿到服务器响应数据。
 - 将响应转发给客户端。
 
-### 5. document.domain
+#### 1）nginx 反向代理：
 
-该方式只能用于二级域名相同的情况下，比如 a.test.com 和 b.test.com 适用于该方式。
+思路：通过 Nginx 配置一个代理服务器域名与 domain1 相同，端口不同做跳板机，反向代理访问 domain2 接口，并且可以顺便修改 cookie 中 domain 信息，方便当前域 cookie 写入，实现跨域访问。
 
-只需要给页面添加 document.domain = 'test.com' 表示二级域名都相同就可以实现跨域
-
-### 6. postMessage
-
-这种方式通常用于获取嵌入页面中的第三方页面数据。一个页面发送消息，另一个页面判断来源并接收消息
-
-```js
-// 发送消息端
-window.parent.postMessage('message', 'http://test.com');
-// 接收消息端
-var mc = new MessageChannel();
-mc.addEventListener('message', (event) => {
-  var origin = event.origin || event.originalEvent.origin;
-  if (origin === 'http://test.com') {
-    console.log('验证通过');
-  }
-});
+```nginx
+#proxy服务器
+server {
+    listen  81;
+    server_name  www.domain1.com;
+    location / {
+        # 反向代理
+        proxy_pass  http://www.domain2.com:8080;
+        # 修改cookie里域名
+        proxy_cookie_domain  www.domain2.com www.domain1.com;
+        index  index.html index.htm;
+        # 当用webpack-dev-server等中间件代理接口访问 nginx 时，此时无浏览器参与，故没有同源限制，下面的跨域配置可不启用
+        # 当前端只跨域不带cookie时，可为 *
+        add_header  Access-Control-Allow-Origin http://www.domain1.com;
+        add_header  Access-Control-Allow-Credentials true;
+    }
+}
 ```
 
-### 7. webSocket
+#### 2）nodejs 中间件代理
+
+思路：通过启一个代理服务器，实现数据的转发，也可以通过设置 cookieDomainRewrite 参数修改响应头中 cookie 中域名，实现当前域的 cookie 写入，方便接口登录认证。
+
+```js
+var express = require('express');
+var proxy = require('http-proxy-middleware');
+var app = express();
+app.use(
+  '/',
+  proxy({
+    // 代理跨域目标接口
+    target: 'http://www.domain2.com:8080',
+    changeOrigin: true,
+    // 修改响应头信息，实现跨域并允许带cookie
+    onProxyRes: function (proxyRes, req, res) {
+      res.header('Access-Control-Allow-Origin', 'http://www.domain1.com');
+      res.header('Access-Control-Allow-Credentials', 'true');
+    },
+    // 修改响应信息中的cookie域名
+    cookieDomainRewrite: 'www.domain1.com', // 可以为false，表示不修改
+  })
+);
+app.listen(3000);
+console.log('Proxy server is listen at port 3000...');
+```
+
+### 7. WebSocket
 
 WebSocket 是 HTML5 提供的一种浏览器与服务器进行**全双工通讯**的网络技术，属于应用层协议。它基于 TCP 传输协议，并复用 HTTP 的握手通道。浏览器和服务器只需要完成一次握手，两者之间就直接可以创建持久性的连接， 并进行双向数据传输。
 
 WebSocket 的出现就解决了半双工通信的弊端。它最大的特点是：**服务器可以向客户端主动推动消息，客户端也可以主动向服务器推送消息**。
 
-- 原理：客户端向 WebSocket 服务器通知（notify）一个带有所有接收者 ID（recipients IDs）的事件（event），服务器接收后立即通知所有活跃的（active）客户端，只有 ID 在接收者 ID 序列中的客户端才会处理这个事件。
+#### 1）原理
 
-- 特点：
-  - 支持双向通信，实时性更强
-  - 可以发送文本，也可以发送二进制数据
-  - 建立在 TCP 协议之上，服务端的实现比较容易
-  - 数据格式比较轻量，性能开销小，通信高效
-  - 没有同源限制，客户端可以与任意服务器通信
-  - 协议标识符是 ws（如果加密，则为 wss），服务器网址就是 URL
-  - 与 HTTP 协议有着良好的兼容性。默认端口也是 80 和 443，并且握手阶段采用 HTTP 协议，因此握手时不容易屏蔽，能通过各种 HTTP 代理服务器。
+客户端向 WebSocket 服务器通知（notify）一个带有所有接收者 ID（recipients IDs）的事件（event），服务器接收后立即通知所有活跃的（active）客户端，只有 ID 在接收者 ID 序列中的客户端才会处理这个事件。
+
+#### 2）特点
+
+- 支持双向通信，实时性更强
+- 可以发送文本，也可以发送二进制数据
+- 建立在 TCP 协议之上，服务端的实现比较容易
+- 数据格式比较轻量，性能开销小，通信高效
+- 没有同源限制，客户端可以与任意服务器通信
+- 协议标识符是 ws（如果加密，则为 wss），服务器网址就是 URL
+- 与 HTTP 协议有着良好的兼容性。默认端口也是 80 和 443，并且握手阶段采用 HTTP 协议，因此握手时不容易屏蔽，能通过各种 HTTP 代理服务器。
+
+### 8. 正向代理和反向代理
+
+- **正向代理**
+
+客户端想获得一个服务器的数据，但是因为种种原因无法直接获取。于是客户端设置了一个代理服务器，并且指定目标服务器，之后代理服务器向目标服务器转交请求并将获得的内容发送给客户端。这样本质上起到了对真实服务器隐藏真实客户端的目的。实现正向代理需要修改客户端，比如修改浏览器配置。
+
+- **反向代理**
+
+服务器为了能够将工作负载分不到多个服务器来提高网站性能 (负载均衡)等目的，当其受到请求后，会首先根据转发规则来确定请求应该被转发到哪个服务器上，然后将请求转发到对应的真实服务器上。这样本质上起到了对客户端隐藏真实服务器的作用。
+
+一般使用反向代理后，需要通过修改 DNS 让域名解析到代理服务器 IP，这时浏览器无法察觉到真正服务器的存在，当然也就不需要修改配置了。
+
+正向代理和反向代理的结构是一样的，都是 client-proxy-server 的结构，它们主要的区别就在于**中间这个 proxy 是哪一方设置的。在正向代理中，proxy 是 client 设置的，用来隐藏 client；而在反向代理中，proxy 是 server 设置的，用来隐藏 server。**
+
+### 9. Nginx
+
+Nginx 是一款轻量级的 Web 服务器，也可以用于反向代理、负载平衡和 HTTP 缓存等。Nginx 使用异步事件驱动的方法来处理请求，是一款面向性能设计的 HTTP 服务器。
+
+传统的 Web 服务器如 Apache 是 **process-based(基于过程)** 模型的，而 Nginx 是基于 **event-driven(事件驱动)** 模型的。正是这个主要的区别带给了 Nginx 在性能上的优势。
+
+Nginx 架构的最顶层是一个 **master process(主进程)**，这个 master process 用于产生其他的 **worker process(工作进程)**，这一点和 Apache 非常像，但是 Nginx 的 worker process 可以同时处理大量的 HTTP 请求，而每个 Apache process 只能处理一个。
 
 ## 八、浏览器事件
 
-### 1. 事件触发
+### 1. 事件 & 事件模型
+
+事件是用户操作网页时发生的交互动作，比如 click/move， 事件除了用户触发的动作外，还可以是文档加载，窗口滚动和大小调整。事件被封装成一个 event 对象，包含了该事件发生时的所有相关信息（ event 的属性）以及可以对事件进行的操作（ event 的方法）。
+
+事件是用户操作网页时发生的交互动作或者网页本身的一些操作，现代浏览器一共有三种事件模型：
+
+- **原始(DOM 0 级)事件模型**，这种模型不会传播，所以没有事件流的概念，但是现在有的浏览器支持以冒泡的方式实现，它可以在网页中直接定义监听函数，也可以通过 js 属性来指定监听函数。所有浏览器都兼容这种方式。直接在 dom 对象上注册事件名称，就是 DOM0 写法。
+- **标准(DOM 2 级)事件模型**，在该事件模型中，一次事件共有三个过程。这种事件模型，事件绑定的函数是 addEventListener，其中第三个参数可以指定事件是否在捕获阶段执行。
+  - 事件**捕获阶段**：事件从 document 一直向下传播到目标元素，依次检查经过的节点是否绑定了事件监听函数，如果有则执行
+  - 事件**处理阶段**：事件到达目标元素，触发目标元素的监听函数
+  - 事件**冒泡阶段**：事件从目标元素冒泡到 document，依次检查经过的节点是否绑定了事件监听函数，如果有则执行
+- **IE 事件模型**，在该事件模型中，一次事件共有两个过程，事件处理阶段和事件冒泡阶段。这种模型通过 attachEvent 来添加监听函数，可以添加多个监听函数，会按顺序依次执行。<small>(基本不用)</small>
+
+### 2. 事件触发
 
 事件触发有三个阶段：
 
@@ -764,11 +931,179 @@ WebSocket 的出现就解决了半双工通信的弊端。它最大的特点是�
 
 冒泡的流程为：目标元素 -> ... -> body -> html -> document -> window。
 
-### 2. 事件委托
+### 3. 事件委托
 
-**事件委托** 本质上是利用了浏览器事件冒泡的机制。因为事件在冒泡过程中会上传到父节点，并且父节点可以通过事件对象获取到 目标节点，因此可以把子节点的监听函数定义在父节点上，由父节点的监听函数统一处理多个子元素的事件，这种方式称为**事件代理**。
+#### 1）概念
 
-使用事件代理我们可以不必要为每一个子元素都绑定一个监听事件，这样**减少了内存上的消耗**。并且使用事件代理我们还可以实现**事件的动态绑定**，比如说新增了一个子节点，我们并不需要单独地为它添加一个监听事件，它所发生的事件会交给父元素中的监听函数来处理。
+本质上是利用了**浏览器事件冒泡**的机制。因为事件在冒泡过程中会上传到父节点，并且父节点可以通过事件对象获取到 目标节点，因此可以把子节点的监听函数定义在父节点上，由父节点的监听函数统一处理多个子元素的事件，这种方式称为**事件委托（代理）**。
+
+#### 2）特点
+
+- **减少内存消耗**：不必要为每一个子元素都绑定一个监听事件，把这个事件绑定到他的父层，然后在执行事件时再去匹配判断目标元素
+- **动态绑定事件**：新增一个子节点，我们并不需要单独地为它添加一个监听事件，它所发生的事件会交给父元素中的监听函数来处理
+
+#### 3）局限性
+
+比如 focus、blur 之类的事件没有事件冒泡机制，所以无法实现事件委托；mousemove、mouseout 这样的事件，虽然有事件冒泡，但是只能不断通过位置去计算定位，对性能消耗高，因此也是不适合于事件委托的。
+
+事件委托会影响页面性能，主要影响因素有：
+
+- 元素中，绑定事件委托的次数；
+- 点击的最底层元素，到绑定事件元素之间的 DOM 层数；
+
+#### 4）注意事项
+
+- 只在必须的地方，使用事件委托，比如：ajax 的局部刷新区域
+- 尽量的减少绑定的层级，不在 body 元素上，进行绑定
+- 减少绑定的次数，如果可以，那么把多个事件的绑定，合并到一次事件委托中去，由这个事件委托的回调，来进行分发。
+
+### 4. 事件循环
+
+::: info 事件循环
+主线程从"任务队列"中读取事件，这个过程是循环不断的，所以整个的这种运行机制又称为 Event Loop（事件循环）
+:::
+
+1. 整体的 script(作为第一个宏任务)开始执行的时候，会把所有代码分为两部分：“同步任务”、“异步任务”；
+2. 同步任务会直接进入主线程依次执行；
+3. 异步任务会再分为宏任务和微任务；
+4. 宏任务进入到 Event Table 中，并在里面注册回调函数，每当指定的事件完成时，Event Table 会将这个函数移到 Event Queue 中；
+5. 微任务也会进入到另一个 Event Table 中，并在里面注册回调函数，每当指定的事件完成时，Event Table 会将这个函数移到 Event Queue 中；
+6. 当主线程内的任务执行完毕，主线程为空时，会检查微任务的 Event Queue，如果有任务，就全部执行，如果没有就执行下一个宏任务；
+7. 上述过程会不断重复，这就是 Event Loop 事件循环；
+
+### 5. 宏任务、微任务
+
+这里需要注意的是 new Promise 是会进入到主线程中立刻执行，而 promise.then 则属于微任务
+
+- 宏任务(macro-task)，ES6 规范称为 task：
+  - 整体代码 script
+  - setTimeOut
+  - setInterval
+  - setImmediate 一类的定时事件
+  - I/O 操作
+  - UI 渲染
+  - event listener
+- 微任务(micro-task)，ES6 规范称为 jobs：
+  - promise.then
+  - process.nextTick(node)
+  - Observer.observe
+  - 对 Dom 变化监听的 MutationObserver
+
+### 6. 执行栈
+
+::: info 执行栈
+可以把执行栈认为是一个存储函数调用的栈结构，遵循先进后出的原则
+:::
+
+![执行栈](/images/executionStack.gif)
+
+当开始执行 JS 代码时，根据先进后出的原则，后执行的函数会先弹出栈，可以看到，`foo`函数后执行，当执行完毕后就从栈中弹出了。
+
+平时在开发中，可以在报错中找到执行栈的痕迹：
+
+```js
+function foo() {
+  throw new Error('error')
+}
+function bar() {
+  foo()
+}
+bar()
+
+// 控制台报错
+❌ Uncaught Error: error   VM60961:2  // [!code error]
+    at foo (<anonymous>:2:9)          // [!code error]
+    at bar (<anonymous>:5:3)          // [!code error]
+    at <anonymous>:7:1                // [!code error]
+```
+
+可以看到报错在 `foo` 函数，`foo` 函数又是在 `bar` 函数中调用的。当使用递归时，因为栈可存放的函数是有限制的，一旦存放了过多的函数且没有得到释放的话，就会出现爆栈的问题
+
+```js
+function bar() {
+  bar()
+}
+bar()
+
+// 控制台报错
+❌ Uncaught RangeError: Maximum call stack size exceeded VM70054:2 // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+    at bar (<anonymous>:2:3)                                       // [!code error]
+```
+
+### 7. Node 中的 Event Loop
+
+#### 1）浏览器
+
+在浏览器里，每当一个被监听的事件发生时，事件监听器绑定的相关任务就会被添加进回调队列。通过事件产生的任务是异步任务，常见的事件任务包括：
+
+- 用户交互事件产生的事件任务，比如输入操作；
+- 计时器产生的事件任务，比如 setTimeout；
+- 异步请求产生的事件任务，比如 HTTP 请求。
+
+主线程运行的时候，会产生堆（heap）和栈（stack），其中堆为内存、栈为函数调用栈。我们能看到，Event Loop 负责执行代码、收集和处理事件以及执行队列中的子任务，具体包括以下过程：
+
+- JavaScript 有一个主线程和调用栈，所有的任务最终都会被放到调用栈等待主线程执行。
+- 同步任务会被放在调用栈中，按照顺序等待主线程依次执行。
+- 主线程之外存在一个回调队列，回调队列中的异步任务最终会在主线程中以调用栈的方式运行。
+- 同步任务都在主线程上执行，栈中代码在执行的时候会调用浏览器的 API，此时会产生一些异步任务。
+- 异步任务会在有了结果（比如被监听的事件发生时）后，将异步任务以及关联的回调函数放入回调队列中。
+- 调用栈中任务执行完毕后，此时主线程处于空闲状态，会从回调队列中获取任务进行处理。
+- 上述过程会不断重复，这就是 JavaScript 的运行机制，称为事件循环机制（Event Loop）。
+
+#### 2）NodeJs
+
+![NodeJs中的事件循环](/images/nodeEventLoop.webp)
+
+- **Timers（计时器阶段）**：初次进入事件循环，会从计时器阶段开始。此阶段会判断是否存在过期的计时器回调（包含 setTimeout 和 setInterval），如果存在则会执行所有过期的计时器回调，执行完毕后，如果回调中触发了相应的微任务，会接着执行所有微任务，执行完微任务后再进入 Pending callbacks 阶段。
+- **Pending callbacks**：执行推迟到下一个循环迭代的 I/O 回调（系统调用相关的回调）。
+- **Idle/Prepare**：仅供内部使用。
+- **Poll（轮询阶段）**：
+  - 当回调队列不为空时：会执行回调，若回调中触发了相应的微任务，这里的微任务执行时机和其他地方有所不同，不会等到所有回调执行完毕后才执行，而是针对每一个回调执行完毕后，就执行相应微任务。执行完所有的回调后，变为下面的情况。
+  - 当回调队列为空时（没有回调或所有回调执行完毕）：但如果存在有计时器（setTimeout、setInterval 和 setImmediate）没有执行，会结束轮询阶段，进入 Check 阶段。否则会阻塞并等待任何正在执行的 I/O 操作完成，并马上执行相应的回调，直到所有回调执行完毕。
+- **Check（查询阶段）**：会检查是否存在 setImmediate 相关的回调，如果存在则执行所有回调，执行完毕后，如果回调中触发了相应的微任务，会接着执行所有微任务，执行完微任务后再进入 Close callbacks 阶段。
+- **Close callbacks**：执行一些关闭回调，比如 socket.on('close', ...)等。
+
+**区别**：
+
+- 浏览器环境下，microTask 的任务队列是每个 macroTask 执行完之后执行。
+- 而在 Node.js 中，microTask 会在事件循环的各个阶段之间执行，也就是一个阶段执行完毕，就会去执行 microTask 队列的任务。
+  如果是 node11 版本一旦执行一个阶段里的一个宏任务(setTimeout,setInterval 和 setImmediate)就立刻执行微任务队列，这就跟浏览器端运行一致。
+
+```js
+setTimeout(() => {
+  console.log('timer1');
+  Promise.resolve().then(function () {
+    console.log('promise1');
+  });
+}, 0);
+setTimeout(() => {
+  console.log('timer2');
+  Promise.resolve().then(function () {
+    console.log('promise2');
+  });
+}, 0);
+
+// 浏览器环境：
+(timer1) => (promise1) => (timer2) => promise2;
+
+// node V11之后
+(timer1) => (promise1) => (timer2) => promise2;
+
+// node 10及其之前
+(timer1) => (promise1) => (timer2) =>
+  promise2(如果是第二个定时器还未在完成队列中);
+(timer1) => (timer2) => (promise1) =>
+  promise2(如果是第二个定时器已经在完成队列中);
+```
 
 ## 九、新 API
 

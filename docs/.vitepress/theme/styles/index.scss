@@ -1,3 +1,9 @@
 @import './rainbow.scss';
 @import './vars.scss';
 @import './overrides.scss';
+
+html.dark{
+  strong {
+    color: var(--vp-c-brand);
+  }
+}

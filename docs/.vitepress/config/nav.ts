@@ -23,10 +23,6 @@ export const nav: DefaultTheme.Config['nav'] = [
       {
         text: '异步编程',
         link: '/basic/async',
-      },
-      {
-        text: '事件循环',
-        link: '/basic/eventLoop',
       }
     ],
     activeMatch: '^/basic'

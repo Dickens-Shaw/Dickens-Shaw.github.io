@@ -11,7 +11,6 @@ export const sidebar: DefaultTheme.Config['sidebar'] = {
         { text: 'JS基础', link: '/basic/js' },
         { text: 'ES6+', link: '/basic/es6' },
         { text: '异步编程', link: '/basic/async' },
-        { text: '事件循环', link: '/basic/eventLoop' },
       ],
     },
   ],
