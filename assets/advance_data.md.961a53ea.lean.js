@@ -1,1 +1,0 @@
-import{_ as s,o as n,c as a,Q as l}from"./chunks/framework.058c99df.js";const A=JSON.parse('{"title":"数据结构&算法","description":"","frontmatter":{},"headers":[],"relativePath":"advance/data.md"}'),p={name:"advance/data.md"},o=l("",108),e=[o];function t(c,r,y,F,D,i){return n(),a("div",null,e)}const E=s(p,[["render",t]]);export{A as __pageData,E as default};
