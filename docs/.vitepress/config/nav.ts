@@ -57,7 +57,15 @@ export const nav: DefaultTheme.Config['nav'] = [
         link: '/advance/network'
       },
       {
-        text: 'TS',
+        text: '手撸代码',
+        link: '/advance/handwriting'
+      },
+      {
+        text: '代码输出',
+        link: '/advance/output'
+      },
+      {
+        text: 'Typescript',
         link: '/advance/typescript'
       },
       {
@@ -65,8 +73,12 @@ export const nav: DefaultTheme.Config['nav'] = [
         link: '/advance/design'
       },
       {
-        text: '数据结构&算法',
+        text: '数据结构',
         link: '/advance/data'
+      },
+      {
+        text: '算法',
+        link: '/advance/arithmetic'
       },
     ],
     activeMatch: '^/advance'

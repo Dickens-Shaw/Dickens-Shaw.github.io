@@ -21,9 +21,12 @@ export const sidebar: DefaultTheme.Config['sidebar'] = {
       items: [
         { text: '浏览器', link: '/advance/browser' },
         { text: '网络', link: '/advance/network' },
-        { text: 'TS', link: '/advance/typescript' },
+        { text: '手撸代码', link: '/advance/handwriting' },
+        { text: '代码输出', link: '/advance/output' },
+        { text: 'Typescript', link: '/advance/typescript' },
         { text: '设计模式', link: '/advance/design' },
         { text: '数据结构', link: '/advance/data' },
+        { text: '算法', link: '/advance/arithmetic' },
       ],
     },
   ],
