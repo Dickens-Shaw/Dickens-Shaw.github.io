@@ -4,6 +4,15 @@
   "private": true,
   "version": "1.0.0",
   "license": "MIT",
+  "keywords": [
+    "前端面经",
+    "个人知识库",
+    "前端知识总结"
+  ],
+  "author": "Shaw",
+  "dependencies": {
+    "xmind-embed-viewer": "^1.1.0"
+  },
   "devDependencies": {
     "sass": "^1.63.6",
     "vitepress": "1.0.0-alpha.60",

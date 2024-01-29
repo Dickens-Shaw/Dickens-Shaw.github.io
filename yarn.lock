@@ -690,3 +690,8 @@ vue@^3.2.47, vue@^3.3.4:
     "@vue/runtime-dom" "3.4.15"
     "@vue/server-renderer" "3.4.15"
     "@vue/shared" "3.4.15"
+
+xmind-embed-viewer@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.npmmirror.com/xmind-embed-viewer/-/xmind-embed-viewer-1.2.0.tgz#d5b6ca784b0ede11fdf638c880a9c35e6c620211"
+  integrity sha512-dtsxbeePxhSy3g/Kyc4Oe1K3hfdCmkiyRtvONN2KZ2MqeL/QBFTvL4imCiXfAiLpincl42r87OOA3V3Shcza4A==

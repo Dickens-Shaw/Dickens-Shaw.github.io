@@ -1,6 +1,7 @@
 import { h, watch } from 'vue'
 import { useData, EnhanceAppContext } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
+import XmindViewer from './components/XmindViewer.vue'
 
 import './styles/index.scss'
 
@@ -49,6 +50,7 @@ export default {
     })
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
+    app.component('XMind', XmindViewer)
 
     if (typeof window !== 'undefined') {
       watch(

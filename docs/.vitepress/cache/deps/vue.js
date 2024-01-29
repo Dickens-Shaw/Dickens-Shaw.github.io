@@ -1,3 +1,5 @@
+import "./chunk-2B2CG5KL.js";
+
 // node_modules/@vue/shared/dist/shared.esm-bundler.js
 function makeMap(str, expectsLowerCase) {
   const set2 = new Set(str.split(","));
