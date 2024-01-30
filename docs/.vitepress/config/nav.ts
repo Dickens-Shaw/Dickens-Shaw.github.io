@@ -1,4 +1,4 @@
-import type { DefaultTheme } from 'vitepress'
+import type { DefaultTheme } from 'vitepress';
 
 export const nav: DefaultTheme.Config['nav'] = [
   {
@@ -23,9 +23,9 @@ export const nav: DefaultTheme.Config['nav'] = [
       {
         text: '异步编程',
         link: '/basic/async',
-      }
+      },
     ],
-    activeMatch: '^/basic'
+    activeMatch: '^/basic',
   },
   {
     text: '框架',
@@ -43,88 +43,92 @@ export const nav: DefaultTheme.Config['nav'] = [
         link: '/frame/vue',
       },
     ],
-    activeMatch: '^/frame'
+    activeMatch: '^/frame',
   },
   {
     text: '进阶',
     items: [
       {
         text: '浏览器',
-        link: '/advance/browser'
+        link: '/advance/browser',
       },
       {
         text: '网络',
-        link: '/advance/network'
+        link: '/advance/network',
       },
       {
         text: '手撸代码',
-        link: '/advance/handwriting'
+        link: '/advance/handwriting',
       },
       {
         text: '代码输出',
-        link: '/advance/output'
+        link: '/advance/output',
       },
       {
         text: 'Typescript',
-        link: '/advance/typescript'
+        link: '/advance/typescript',
       },
       {
         text: '设计模式',
-        link: '/advance/design'
+        link: '/advance/design',
       },
       {
         text: '数据结构',
-        link: '/advance/data'
+        link: '/advance/data',
       },
       {
         text: '算法',
-        link: '/advance/arithmetic'
+        link: '/advance/arithmetic',
       },
     ],
-    activeMatch: '^/advance'
+    activeMatch: '^/advance',
   },
   {
     text: '架构',
     items: [
       {
         text: '项目优化',
-        link: '/architecture/optimize'
+        link: '/architecture/optimize',
       },
       {
         text: '工程化',
-        link: '/architecture/engineering'
+        link: '/architecture/engineering',
       },
       {
         text: '微前端',
-        link: '/architecture/micro'
+        link: '/architecture/micro',
       },
       {
         text: '大前端',
-        link: '/architecture/cross'
+        link: '/architecture/cross',
       },
       {
         text: '低代码',
-        link: '/architecture/lowcode'
+        link: '/architecture/lowcode',
       },
     ],
-    activeMatch: '^/architecture'
+    activeMatch: '^/architecture',
   },
   {
-    text: '收藏夹',
+    text: '其它',
     items: [
       {
         text: '格式化',
-        link: '/bookmark/formatter',
+        link: '/others/formatter',
       },
       {
         text: '掘金',
-        link: '/bookmark/juejin'
+        link: '/others/juejin',
       },
       {
         text: '微信',
-        link: '/bookmark/wechat'
+        link: '/others/wechat',
+      },
+      {
+        text: 'xmind',
+        link: '/others/xmind/css',
       },
     ],
-    activeMatch: '^/bookmark'
+    activeMatch: '^/others',
   },
-]
+];

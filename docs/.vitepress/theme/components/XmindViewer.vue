@@ -49,5 +49,6 @@ onMounted(async () => {
   height: 80vh;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 </style>
