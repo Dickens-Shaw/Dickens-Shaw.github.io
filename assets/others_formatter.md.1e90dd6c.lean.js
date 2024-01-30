@@ -1,0 +1,1 @@
+import{_ as s,o as n,c as a,Q as l}from"./chunks/framework.058c99df.js";const A=JSON.parse('{"title":"格式化","description":"","frontmatter":{},"headers":[],"relativePath":"others/formatter.md"}'),p={name:"others/formatter.md"},o=l("",7),t=[o];function e(c,r,F,y,D,B){return n(),a("div",null,t)}const E=s(p,[["render",e]]);export{A as __pageData,E as default};
