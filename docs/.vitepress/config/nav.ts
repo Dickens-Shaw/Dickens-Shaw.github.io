@@ -125,7 +125,7 @@ export const nav: DefaultTheme.Config['nav'] = [
         link: '/others/wechat',
       },
       {
-        text: 'xmind',
+        text: 'Xmind',
         link: '/others/xmind/css',
       },
     ],
