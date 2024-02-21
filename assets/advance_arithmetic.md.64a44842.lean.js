@@ -1,1 +1,0 @@
-import{_ as s,o as a,c as n,Q as l}from"./chunks/framework.058c99df.js";const A=JSON.parse('{"title":"算法","description":"","frontmatter":{},"headers":[],"relativePath":"advance/arithmetic.md"}'),p={name:"advance/arithmetic.md"},o=l("",50),e=[o];function t(c,r,F,y,D,i){return a(),n("div",null,e)}const h=s(p,[["render",t]]);export{A as __pageData,h as default};
