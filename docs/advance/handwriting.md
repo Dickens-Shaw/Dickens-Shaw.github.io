@@ -2,7 +2,7 @@
 
 ## 一、Javascript 基础
 
-### 1）Object.is
+### 1. Object.is
 
 ```js
 /**
@@ -25,7 +25,7 @@ Object.is = function (x, y) {
 };
 ```
 
-### 2）Object.create
+### 2. Object.create
 
 ```js
 /**
@@ -50,7 +50,7 @@ Object.create = function (proto) {
 };
 ```
 
-### 3）instanceof
+### 3. instanceof
 
 ```js
 /**
@@ -72,7 +72,7 @@ function myInstanceof(left, right) {
 
 ```
 
-### 4）new
+### 4. new
 
 1. 创建一个空对象
 2. 设置原型，将对象的原型设置为函数的 prototype 对象
@@ -105,7 +105,7 @@ function objectFactory() {
 }
 ```
 
-### 5）防抖
+### 5. 防抖
 
 ```js
 /**
@@ -130,7 +130,7 @@ function debounce(fn, delay) {
 }
 ```
 
-### 6）节流
+### 6. 节流
 
 ```js
 /**
@@ -152,7 +152,7 @@ function throttle(fn, delay) {
 }
 ```
 
-### 7）类型判断
+### 7. 类型判断
 
 ```js
 /**
@@ -171,7 +171,7 @@ function getType(obj) {
 }
 ```
 
-### 8）call
+### 8. call
 
 - 判断调用对象是否为函数，即使我们是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。
 - 判断传入上下文对象是否存在，如果不存在，则设置为 window 。
@@ -202,7 +202,7 @@ Function.prototype.myCall = function (context) {
 };
 ```
 
-### 9）apply
+### 9. apply
 
 ```js
 Function.prototype.myApply = function (context) {
@@ -227,7 +227,7 @@ Function.prototype.myApply = function (context) {
 };
 ```
 
-### 10）bind
+### 10. bind
 
 ```js
 Function.prototype.myBind = function (context) {
@@ -248,7 +248,7 @@ Function.prototype.myBind = function (context) {
 };
 ```
 
-### 11）柯里化
+### 11. 柯里化
 
 ```js
 /**
@@ -285,7 +285,7 @@ function curry(fn, ...args) {
 }
 ```
 
-### 12）浅拷贝
+### 12. 浅拷贝
 
 ```js
 function shallowCopy(object) {
@@ -306,7 +306,7 @@ function shallowCopy(object) {
 }
 ```
 
-### 13）深拷贝
+### 13. 深拷贝
 
 ```js
 function deepCopy(object) {
@@ -325,7 +325,7 @@ function deepCopy(object) {
 }
 ```
 
-### 14）sleep
+### 14. sleep
 
 ```js
 function sleep(time) {
@@ -333,34 +333,7 @@ function sleep(time) {
 }
 ```
 
-### 15）setTimeout 实现 setInterval
-
-```js
-/**
- * 
- * 使用 setTimeout 实现 setInterval 的根本原因是：
- * setTimeout 不管上次异步任务是否完成，它都会将当前异步任务推入队列（很容易理解，setTimeout本身就是一次调用一次执行）
- * 而 setInterval 则会在任务推入异步队列时判断上次异步任务是否被执行。
- * 这就导致 setInterval 在做定时轮训时，出现耗时操作，或者调用的异步操作耗时会导致异步任务不按照期待的时间间隔执行。
- * setTimeout 保证调用的时间间隔是一致的，setInterval的设定的间隔时间包括了执行回调的时间。
- */
-
-function mySetInterval(fn, time) {
-  let timer = null;
-  let intervalFn = () => {
-    fn();
-    timer = setTimeout(intervalFn, time);
-  };
-  intervalFn();
-  return {
-    cancel: () => {
-      clearTimeout(timer);
-    },
-  };
-}
-```
-
-### 16）Object.assign
+### 15. Object.assign
 
 ```js
 Object.myAssign = function (target, ...sources) {
@@ -383,3 +356,362 @@ Object.myAssign = function (target, ...sources) {
   return to;
 };
 ```
+
+## 二、数据处理
+
+### 1. 字符串反转
+
+```js
+function reverseString(str) {
+  return str.split('').reverse().join('');
+}
+```
+
+### 2. 字符串 repeat
+
+```js
+function repeatString(str, n) {
+  return new Array(n + 1).join(str);
+}
+```
+
+### 3. 模版字符串解析
+
+```js
+function render(template, data) {
+  return template.replace(/\{\{(\w+)\}\}/g, function (_, key) {
+    return data[key];
+  });
+}
+```
+
+### 4. 数字千分位
+
+```js
+function formatNumber(num) {
+  return num.toString().replace(/\d+/, function (n) {
+    return n.replace(/(\d)(?=(\d{3})+$)/g, function ($1) {
+      return $1 + ',';
+    });
+  });
+}
+```
+
+### 5. 手机号脱敏
+
+```js
+function desensitizationPhone(phone) {
+  return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+}
+```
+
+### 6. URL 参数解析
+
+```js
+function parseQuery(url) {
+  let query = url.split('?')[1];
+  let queryArr = query.split('&');
+  let params = {};
+  queryArr.forEach((item) => {
+    if (!/\=/.test(item)) {
+      // 处理没有值的情况
+      params[item] = true;
+      return;
+    }
+    let [key, value] = item.split('=');
+    // 解码
+    value = decodeURIComponent(value);
+    // 数字
+    if (/^\d+$/.test(value)) {
+      value = parseFloat(value);
+    }
+    if (params.hasOwnProperty(key)) {
+      params[key] = [].concat(params[key], value);
+    } else {
+      params[key] = value;
+    }
+  });
+  return params;
+}
+```
+
+### 7. 版本号排序
+
+```js
+function sortVersion(versions) {
+  return versions.sort((a, b) => {
+    let i = 0;
+    const arr1 = a.split('.');
+    const arr2 = b.split('.');
+
+    while (true) {
+      const s1 = arr1[i];
+      const s2 = arr2[i];
+      i++;
+      if (s1 === undefined || s2 === undefined) {
+        return arr2.length - arr1.length;
+      }
+
+      if (s1 === s2) continue;
+
+      return s2 - s1;
+    }
+  });
+}
+sortVersion(['0.1.1', '2.3.3', '0.302.1', '4.2', '4.3.5', '4.3.4.5']);
+// ['4.3.5', '4.3.4.5', '4.2', '2.3.3', '0.302.1', '0.1.1']
+```
+
+### 8. 数组扁平化
+
+```js
+// 递归
+let arr = [1, [2, [3, 4, 5]]];
+function flatten(arr) {
+  let result = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    if (Array.isArray(arr[i])) {
+      result = result.concat(flatten(arr[i]));
+    } else {
+      result.push(arr[i]);
+    }
+  }
+  return result;
+}
+
+// reduce
+function flatten(arr) {
+  return arr.reduce(function (prev, next) {
+    return prev.concat(Array.isArray(next) ? flatten(next) : next);
+  }, []);
+}
+
+// 扩展运算符
+function flatten(arr) {
+  if (!arr.length) return;
+  while (arr.some((item) => Array.isArray(item))) {
+    arr = [].concat(...arr);
+  }
+  return arr;
+}
+
+// split 和 toString
+function flatten(arr) {
+  return arr.toString().split(',');
+}
+
+// 正则和 JSON 方法
+function flatten(arr) {
+  return JSON.parse('[' + JSON.stringify(arr).replace(/\[|\]/g, '') + ']');
+}
+```
+
+### 9. 数组去重
+
+```js
+// Set
+function unique(arr) {
+  return Array.from(new Set(arr));
+}
+
+// map
+function unique(arr) {
+  let map = new Map();
+  let result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (!map.has(arr[i])) {
+      map.set(arr[i], true);
+      result.push(arr[i]);
+    }
+  }
+  return result;
+}
+```
+
+### 10. 类数组转换
+
+```js
+/**
+ * 类数组拥有 length 属性 可以使用下标来访问元素 但是不能使用数组的方法 如何把类数组转化为数组?
+ */
+
+const arrayLike = document.querySelectorAll('div');
+
+// 1.扩展运算符
+const array = [...arrayLike];
+// 2.Array.from
+Array.from(arrayLike);
+// 3.Array.apply
+Array.apply(null, arrayLike);
+// 4.Array.prototype.concat
+Array.prototype.concat.apply([], arrayLike);
+// 5.Array.prototype.slice
+Array.prototype.slice.call(arrayLike);
+// 6.Array.prototype.splice
+Array.prototype.splice.call(arrayLike, 0);
+```
+
+### 11. 列表转树形结构
+
+```js
+/**
+  [
+      {
+          id: 1,
+          text: '节点1',
+          parentId: 0 //这里用0表示为顶级节点
+      },
+      {
+          id: 2,
+          text: '节点1_1',
+          parentId: 1 //通过这个字段来确定子父级
+      }
+      ...
+  ]
+
+  转成
+  [
+      {
+          id: 1,
+          text: '节点1',
+          parentId: 0,
+          children: [
+              {
+                  id:2,
+                  text: '节点1_1',
+                  parentId:1
+              }
+          ]
+      }
+  ]
+ */
+
+function listToTree(data) {
+  let temp = {};
+  let treeData = [];
+  for (let i = 0; i < data.length; i++) {
+    temp[data[i].id] = data[i];
+  }
+  for (let i in temp) {
+    if (+temp[i].parentId != 0) {
+      if (!temp[temp[i].parentId].children) {
+        temp[temp[i].parentId].children = [];
+      }
+      temp[temp[i].parentId].children.push(temp[i]);
+    } else {
+      treeData.push(temp[i]);
+    }
+  }
+  return treeData;
+}
+```
+
+### 12. 有序二维数组查找目标值
+
+```js
+function findInOrderedSet(matrix, target) {
+  if (matrix == null || matrix.length == 0) {
+    return false;
+  }
+  let row = 0;
+  let col = matrix[0].length - 1;
+  while (row < matrix.length && col >= 0) {
+    if (matrix[row][col] === target) {
+      return true;
+    } else if (matrix[row][col] > target) {
+      col--;
+    } else {
+      row++;
+    }
+  }
+  return false;
+}
+```
+
+### 13. 对象扁平化
+
+```js
+/**
+  const obj = {
+  a: {
+          b: 1,
+          c: 2,
+          d: {e: 5}
+      },
+  b: [1, 3, {a: 2, b: 3}],
+  c: 3
+  }
+
+  flatten(obj) 结果返回如下
+  // {
+  //  'a.b': 1,
+  //  'a.c': 2,
+  //  'a.d.e': 5,
+  //  'b[0]': 1,
+  //  'b[1]': 3,
+  //  'b[2].a': 2,
+  //  'b[2].b': 3
+  //   c: 3
+  // }
+ */
+function isObject(val) {
+  return typeof val === 'object' && val !== null;
+}
+
+function flatten(obj) {
+  if (!isObject(obj)) {
+    return;
+  }
+  let res = {};
+  const dfs = (cur, prefix) => {
+    if (isObject(cur)) {
+      if (Array.isArray(cur)) {
+        cur.forEach((item, index) => {
+          dfs(item, `${prefix}[${index}]`);
+        });
+      } else {
+        for (let k in cur) {
+          dfs(cur[k], `${prefix}${prefix ? '.' : ''}${k}`);
+        }
+      }
+    } else {
+      res[prefix] = cur;
+    }
+  };
+  dfs(obj, '');
+
+  return res;
+}
+```
+
+## 三、场景应用
+
+
+### . setTimeout 实现 setInterval
+
+```js
+/**
+ *
+ * 使用 setTimeout 实现 setInterval 的根本原因是：
+ * setTimeout 不管上次异步任务是否完成，它都会将当前异步任务推入队列（很容易理解，setTimeout本身就是一次调用一次执行）
+ * 而 setInterval 则会在任务推入异步队列时判断上次异步任务是否被执行。
+ * 这就导致 setInterval 在做定时轮训时，出现耗时操作，或者调用的异步操作耗时会导致异步任务不按照期待的时间间隔执行。
+ * setTimeout 保证调用的时间间隔是一致的，setInterval的设定的间隔时间包括了执行回调的时间。
+ */
+
+function mySetInterval(fn, time) {
+  let timer = null;
+  let intervalFn = () => {
+    fn();
+    timer = setTimeout(intervalFn, time);
+  };
+  intervalFn();
+  return {
+    cancel: () => {
+      clearTimeout(timer);
+    },
+  };
+}
+```
+
