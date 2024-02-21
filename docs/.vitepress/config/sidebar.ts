@@ -21,7 +21,7 @@ export const sidebar: DefaultTheme.Config['sidebar'] = {
       items: [
         { text: '浏览器', link: '/advance/browser' },
         { text: '网络', link: '/advance/network' },
-        { text: '手撸代码', link: '/advance/handwriting' },
+        { text: '代码实现', link: '/advance/handwriting' },
         { text: '代码输出', link: '/advance/output' },
         { text: 'Typescript', link: '/advance/typescript' },
         { text: '设计模式', link: '/advance/design' },

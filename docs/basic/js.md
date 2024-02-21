@@ -1916,20 +1916,26 @@ function structuralClone(obj) {
 - 递归
 
 ```js
-// 简单实现
-function deepClone(obj) {
-  function isObject(o) {
-    return (typeof o === 'object' || typeof o === 'function') && o !== null;
+function isObject(val) {
+  return typeof val === "object" && val !== null;
+}
+
+function deepClone(obj, hash = new WeakMap()) {
+  if (!isObject(obj)) return obj;
+  if (hash.has(obj)) {
+    return hash.get(obj);
   }
-  if (!isObject(obj)) {
-    throw new Error('非对象');
-  }
-  let isArray = Array.isArray(obj);
-  let newObj = isArray ? [...obj] : { ...obj };
-  Reflect.ownKeys(newObj).forEach((key) => {
-    newObj[key] = isObject(obj[key]) ? deepClone(obj[key]) : obj[key];
+  let target = Array.isArray(obj) ? [] : {};
+  hash.set(obj, target);
+  Reflect.ownKeys(obj).forEach((item) => {
+    if (isObject(obj[item])) {
+      target[item] = deepClone(obj[item], hash);
+    } else {
+      target[item] = obj[item];
+    }
   });
-  return newObj;
+
+  return target;
 }
 ```
 

@@ -57,7 +57,7 @@ export const nav: DefaultTheme.Config['nav'] = [
         link: '/advance/network',
       },
       {
-        text: '手撸代码',
+        text: '代码实现',
         link: '/advance/handwriting',
       },
       {
