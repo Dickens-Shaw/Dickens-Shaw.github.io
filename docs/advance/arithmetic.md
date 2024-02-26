@@ -53,13 +53,13 @@ function fib(n) {
  * 输入: coins = [1, 2, 5], amount = 11
  * 输出: 3
  * 解释: 11 = 5 + 5 + 1
- * 
+ *
  * 示例2：
- * 输入: coins = [2], amount = 3 
+ * 输入: coins = [2], amount = 3
  * 输出: -1
  */
 
- const coinChange = function (coins, amount) {
+const coinChange = function (coins, amount) {
   // 用于保存每个目标总额对应的最小硬币个数
   const f = [];
   // 提前定义已知情况
@@ -148,6 +148,9 @@ function insertSort(arr) {
 优化：大量重复数据时采用三路快排，增加与基准值相等区域
 
 ```js
+// filter
+// 遍历整个数组，将小于等于当前元素的值放入左侧数组，将大于当前元素的值放入右侧数组。创建两个新数组，并在每次递归调用时进行过滤操作。
+// 代码量相对较少，易于理解和维护，每次递归调用时都会创建新的数组，可能会造成一些额外的内存开销
 function quickSort(arr) {
   if (arr.length < 2) {
     return arr;
@@ -156,6 +159,25 @@ function quickSort(arr) {
   const left = arr.filter((v, i) => v <= cur && i !== arr.length - 1);
   const right = arr.filter((v) => v > cur);
   return [...quickSort(left), cur, ...quickSort(right)];
+}
+
+// splice
+// 选择数组的中间元素作为基准值（pivot），然后将小于基准值的元素放入左侧数组，大于等于基准值的元素放入右侧数组。
+// 直接修改原始数组（存在一些潜在的副作用），减少了内存分配和垃圾回收的开销，处理大规模数据时可能会更高效一些
+function quickSort(arr) {
+  if (arr.length <= 1) return arr;
+  const pivotIndex = Math.floor(arr.length / 2);
+  const pivot = arr.splice(pivotIndex, 1)[0];
+  const left = [];
+  const right = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] < pivot) {
+      left.push(arr[i]);
+    } else {
+      right.push(arr[i]);
+    }
+  }
+  return quickSort(left).concat([pivot], quickSort(right));
 }
 ```
 
@@ -391,4 +413,84 @@ function radixSort(arr, maxDigit) {
   }
   return arr;
 }
+```
+
+## 其它
+
+### 二分查找
+
+```js
+// 确定一个数在一个有序数组中的位置
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return -1;
+}
+```
+
+### LRU 缓存
+
+```js
+// 运用你所掌握的数据结构，设计和实现—个 LRU(最近最少使用)缓存机制。它应该支持以下操作：获取数据get 和写入数据put
+// 获取数据
+// get (key) - 如果密钥 (key)存在于缓存中，则获取密钥的值（总是正数），否则返回-1。
+// 写入数据 out (key, value) - 如果密钥己经存在，则变更其数据值;如果密钥不存在，则插入该组「密钥/数据值」。
+// 当缓存容量达到上限时，它应该在写入新数据之前删除最久末使用的数据值，从而为新的数据值留出空间。
+// 进阶：
+// 你是否可以在 O(1) 时间复杂度内完成这两种操作？
+
+// 一个Map对象在迭代时会根据对象中元素的插入顺序来进行
+// 新添加的元素会被插入到map的末尾，整个栈倒序查看
+class LRUCache {
+  constructor(capacity) {
+    this.secretKey = new Map();
+    this.capacity = capacity;
+  }
+  get(key) {
+    if (this.secretKey.has(key)) {
+      let tempValue = this.secretKey.get(key);
+      this.secretKey.delete(key);
+      this.secretKey.set(key, tempValue);
+      return tempValue;
+    } else return -1;
+  }
+  put(key, value) {
+    // key存在，仅修改值
+    if (this.secretKey.has(key)) {
+      this.secretKey.delete(key);
+      this.secretKey.set(key, value);
+    }
+    // key不存在，cache未满
+    else if (this.secretKey.size < this.capacity) {
+      this.secretKey.set(key, value);
+    }
+    // 添加新key，删除旧key
+    else {
+      this.secretKey.set(key, value);
+      // 删除map的第一个元素，即为最长未使用的
+      this.secretKey.delete(this.secretKey.keys().next().value);
+    }
+  }
+}
+
+// LRUCache cache = new LRuCache （ 2 /* 缓存容量*/)；
+// cache.put (1, 1);
+// cache.put (2, 2) ;
+// cache.get (1); // 返回1
+// cache.put (3, 3); // 该操作会使得密钥 2作废
+// cache.get (2); // 返回 -1未找到
+// cache.put (4, 4); // 该操作会使得密钥 1作废
+// cache.get (1); // 返回 -1（末找到）
+// cache.get (3); // 返回3
+// cache.get (4); // 返回4
 ```

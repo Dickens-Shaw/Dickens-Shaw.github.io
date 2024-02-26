@@ -928,6 +928,7 @@ const isCycleObject = (obj,parent) => {
     for(let i in obj) {
         if(typeof obj[i] === 'object') {
             let flag = false;
+            
             parentArr.forEach((pObj) => {
                 if(pObj === obj[i]){
                     flag = true;

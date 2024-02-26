@@ -2,7 +2,7 @@
 
 ## 栈
 
-栈是一个线性结构，在计算机中是一个相当常见的数据结构。
+栈是一个线性结构`（有且仅有一个前驱、有且仅有一个后继）`，在计算机中是一个相当常见的数据结构。
 
 栈的特点是只能在某一端添加或删除数据，遵循**先进后出**的原则
 
@@ -11,53 +11,53 @@
 ```js
 class Stack {
   constructor() {
-    this.items = []
+    this.items = [];
   }
 
   // 入栈
   push(element) {
-    this.items.push(element)
+    this.items.push(element);
   }
 
   // 出栈
   pop() {
-    return this.items.pop()
+    return this.items.pop();
   }
 
   // 末位
   get peek() {
-    return this.items[this.items.length - 1]
+    return this.items[this.items.length - 1];
   }
 
   // 是否为空栈
   get isEmpty() {
-    return !this.items.length
+    return !this.items.length;
   }
 
   // 长度
   get size() {
-    return this.items.length
+    return this.items.length;
   }
 
   // 清空栈
   clear() {
-    this.items = []
+    this.items = [];
   }
 }
 
 // 实例化一个栈
-const stack = new Stack()
-console.log(stack.isEmpty) // true
+const stack = new Stack();
+console.log(stack.isEmpty); // true
 
 // 添加元素
-stack.push(5)
-stack.push(8)
+stack.push(5);
+stack.push(8);
 
 // 读取属性再添加
-console.log(stack.peek) // 8
-stack.push(11)
-console.log(stack.size) // 3
-console.log(stack.isEmpty) // false
+console.log(stack.peek); // 8
+stack.push(11);
+console.log(stack.size); // 3
+console.log(stack.isEmpty); // false
 ```
 
 ## 队列
@@ -67,55 +67,55 @@ console.log(stack.isEmpty) // false
 ```js
 class Queue {
   constructor(items) {
-    this.items = items || []
+    this.items = items || [];
   }
 
   // 入队
   enqueue(element) {
-    this.items.push(element)
+    this.items.push(element);
   }
 
   // 出队
   dequeue() {
-    return this.items.shift()
+    return this.items.shift();
   }
 
   // 返回队列第一个元素
   front() {
-    return this.items[0]
+    return this.items[0];
   }
 
   // 清空队列
   clear() {
-    this.items = []
+    this.items = [];
   }
 
   // 返回队列长度
   get size() {
-    return this.items.length
+    return this.items.length;
   }
 
   // 判断队列是否为空
   get isEmpty() {
-    return !this.items.length
+    return !this.items.length;
   }
 
   // 打印队列
   print() {
-    console.log(this.items.toString())
+    console.log(this.items.toString());
   }
 }
 
-const queue = new Queue()
-console.log(queue.isEmpty) // true
+const queue = new Queue();
+console.log(queue.isEmpty); // true
 
-queue.enqueue('John')
-queue.enqueue('Jack')
-queue.enqueue('Jason')
-console.log(queue.size) // 3
-console.log(queue.isEmpty) // false
-queue.dequeue()
-queue.dequeue()
+queue.enqueue('John');
+queue.enqueue('Jack');
+queue.enqueue('Jason');
+console.log(queue.size); // 3
+console.log(queue.isEmpty); // false
+queue.dequeue();
+queue.dequeue();
 ```
 
 ## 链表
@@ -136,130 +136,130 @@ queue.dequeue()
 ```js
 class Node {
   constructor(element) {
-    this.element = element
-    this.next = null
+    this.element = element;
+    this.next = null;
   }
 }
 
 // 链表
 class LinkedList {
   constructor() {
-    this.head = null
-    this.length = 0
+    this.head = null;
+    this.length = 0;
   }
 
   // 追加元素
   append(element) {
-    const node = new Node(element)
-    let current = null
+    const node = new Node(element);
+    let current = null;
     if (this.head === null) {
-      this.head = node
+      this.head = node;
     } else {
-      current = this.head
+      current = this.head;
       while (current.next) {
-        current = current.next
+        current = current.next;
       }
-      current.next = node
+      current.next = node;
     }
-    this.length++
+    this.length++;
   }
 
   // 任意位置插入元素
   insert(position, element) {
     if (position >= 0 && position <= this.length) {
-      const node = new Node(element)
-      let current = this.head
-      let previous = null
-      let index = 0
+      const node = new Node(element);
+      let current = this.head;
+      let previous = null;
+      let index = 0;
       if (position === 0) {
-        this.head = node
-        node.next = current
+        this.head = node;
+        node.next = current;
       } else {
         while (index++ < position) {
-          previous = current
-          current = current.next
+          previous = current;
+          current = current.next;
         }
-        node.next = current
-        previous.next = node
+        node.next = current;
+        previous.next = node;
       }
-      this.length++
-      return true
+      this.length++;
+      return true;
     }
-    return false
+    return false;
   }
 
   // 移除指定位置元素
   removeAt(position) {
     // 检查越界值
     if (position > -1 && position < this.length) {
-      let current = this.head
-      let previous = null
-      let index = 0
+      let current = this.head;
+      let previous = null;
+      let index = 0;
       if (position === 0) {
-        this.head = current.next
+        this.head = current.next;
       } else {
         while (index++ < position) {
-          previous = current
-          current = current.next
+          previous = current;
+          current = current.next;
         }
-        previous.next = current.next
+        previous.next = current.next;
       }
-      this.length--
-      return current.element
+      this.length--;
+      return current.element;
     }
-    return null
+    return null;
   }
 
   // 寻找元素下标
   findIndex(element) {
-    let current = this.head
-    let index = -1
+    let current = this.head;
+    let index = -1;
     while (current) {
       if (element === current.element) {
-        return index + 1
+        return index + 1;
       }
-      index++
-      current = current.next
+      index++;
+      current = current.next;
     }
-    return -1
+    return -1;
   }
 
   // 删除指定文档
   remove(element) {
-    const index = this.findIndex(element)
-    return this.removeAt(index)
+    const index = this.findIndex(element);
+    return this.removeAt(index);
   }
 
   isEmpty() {
-    return !this.length
+    return !this.length;
   }
 
   size() {
-    return this.length
+    return this.length;
   }
 
   // 转为字符串
   toString() {
-    let current = this.head
-    let string = ''
+    let current = this.head;
+    let string = '';
     while (current) {
-      string += ` ${current.element}`
-      current = current.next
+      string += ` ${current.element}`;
+      current = current.next;
     }
-    return string
+    return string;
   }
 }
-const linkedList = new LinkedList()
+const linkedList = new LinkedList();
 
-console.log(linkedList)
-linkedList.append(2)
-linkedList.append(6)
-linkedList.append(24)
-linkedList.append(152)
+console.log(linkedList);
+linkedList.append(2);
+linkedList.append(6);
+linkedList.append(24);
+linkedList.append(152);
 
-linkedList.insert(3, 18)
-console.log(linkedList)
-console.log(linkedList.findIndex(24))
+linkedList.insert(3, 18);
+console.log(linkedList);
+console.log(linkedList.findIndex(24));
 ```
 
 ### 反转单向链表
@@ -268,22 +268,22 @@ console.log(linkedList.findIndex(24))
 
 ```js
 function reverseList(head) {
-  if (!head || !head.next) return head // 如果链表为空或只有一个节点，直接返回
+  if (!head || !head.next) return head; // 如果链表为空或只有一个节点，直接返回
   // 初始设置为空，因为第一个节点反转后就是尾部，尾部节点指向 null
-  let prev = null
-  let current = head
-  let next = null
+  let prev = null;
+  let current = head;
+  let next = null;
   // 判断当前节点是否为空
   // 不为空就先获取当前节点的下一节点
   // 然后把当前节点的 next 设为上一个节点
   // 然后把  current 设为下一个节点，prev设为当前节点
   while (current) {
-    next = current.next
-    current.next = prev
-    prev = current
-    current = next
+    next = current.next;
+    current.next = prev;
+    prev = current;
+    current = next;
   }
-  return prev
+  return prev;
 }
 ```
 
@@ -294,22 +294,22 @@ function reverseList(head) {
 ```js
 class Dictionary {
   constructor() {
-    this.items = {}
+    this.items = {};
   }
   set(key, value) {
-    this.items[key] = value
+    this.items[key] = value;
   }
 
   get(key) {
-    return this.items[key]
+    return this.items[key];
   }
 
   remove(key) {
-    delete this.items[key]
+    delete this.items[key];
   }
 
   get keys() {
-    return Object.keys(this.items)
+    return Object.keys(this.items);
   }
 
   get values() {
@@ -320,31 +320,21 @@ class Dictionary {
 
     // 在这里我们通过循环生成一个数组并输出
     return Object.keys(this.items).reduce((r, c, i) => {
-      r.push(this.items[c])
-      return r
-    }, [])
+      r.push(this.items[c]);
+      return r;
+    }, []);
   }
 }
-const dictionary = new Dictionary()
-dictionary.set('Gandalf', 'gandalf@email.com')
-dictionary.set('John', 'johnsnow@email.com')
-dictionary.set('Tyrion', 'tyrion@email.com')
+const dictionary = new Dictionary();
+dictionary.set('Gandalf', 'gandalf@email.com');
+dictionary.set('John', 'johnsnow@email.com');
+dictionary.set('Tyrion', 'tyrion@email.com');
 
-console.log(dictionary)
-console.log(dictionary.keys)
-console.log(dictionary.values)
-console.log(dictionary.items)
+console.log(dictionary);
+console.log(dictionary.keys);
+console.log(dictionary.values);
+console.log(dictionary.items);
 ```
-
-## 堆
-
-堆通常是一个可以被看做一棵树的数组对象。
-
-堆的实现通过构造二叉堆，实为二叉树的一种。这种数据结构具有以下性质。
-
-- 任意节点小于（或大于）它的所有子节点
-- 堆总是一棵完全树。即除了最底层，其他层的节点都被元素填满，且最底层从左到右填入。
-  将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆
 
 ## 树
 
@@ -373,18 +363,18 @@ console.log(dictionary.items)
 ```js
 // 递归遍历树
 function treeNode(val) {
-  this.val = val
-  this.left = null
-  this.right = null
+  this.val = val;
+  this.left = null;
+  this.right = null;
 }
 function traversal(root) {
-  if (!root) return
+  if (!root) return;
   // 先序
-  console.log(root.val)
-  traversal(root.left)
+  console.log(root.val);
+  traversal(root.left);
   // 中序
   // console.log(root)
-  traversal(root.right)
+  traversal(root.right);
   // 后序
   // console.log(root)
 }
@@ -405,25 +395,25 @@ function traversal(root) {
 
 ```js
 function preOrder(root) {
-  if (!root) return []
-  let stack = []
-  let result = []
-  stack.push(root) // 先将根节点放入栈中
+  if (!root) return [];
+  let stack = [];
+  let result = [];
+  stack.push(root); // 先将根节点放入栈中
   while (stack.length) {
     // 判断栈中是否为空
-    root = stack.pop() // 取出栈顶元素
-    console.log(root) // 访问根节点
-    result.push(top.val)
+    root = stack.pop(); // 取出栈顶元素
+    console.log(root); // 访问根节点
+    result.push(top.val);
     // 因为先序遍历是先左后右，栈是先进后出结构
     // 所以先 push 右边再 push 左边
     if (root.right) {
-      stack.push(root.right)
+      stack.push(root.right);
     }
     if (root.left) {
-      stack.push(root.left)
+      stack.push(root.left);
     }
   }
-  return result
+  return result;
 }
 ```
 
@@ -437,21 +427,21 @@ function preOrder(root) {
 
 ```js
 function inOrder(root) {
-  if (!root) return []
-  let stack = []
-  let result = []
+  if (!root) return [];
+  let stack = [];
+  let result = [];
   while (stack.length || root) {
     if (root) {
-      stack.push(root)
-      root = root.left
+      stack.push(root);
+      root = root.left;
     } else {
-      root = stack.pop()
-      console.log(root)
-      result.push(root)
-      root = root.right
+      root = stack.pop();
+      console.log(root);
+      result.push(root);
+      root = root.right;
     }
   }
-  return result
+  return result;
 }
 ```
 
@@ -466,21 +456,21 @@ function inOrder(root) {
 
 ```js
 function postOrder(root) {
-  if (!root) return []
-  let stack = []
-  let result = []
-  stack.push(root)
+  if (!root) return [];
+  let stack = [];
+  let result = [];
+  stack.push(root);
   while (stack.length) {
-    root = stack.pop()
-    result.push(root)
+    root = stack.pop();
+    result.push(root);
     if (root.left) {
-      stack.push(root.left)
+      stack.push(root.left);
     }
     if (root.right) {
-      stack.push(root.right)
+      stack.push(root.right);
     }
   }
-  return result
+  return result;
 }
 ```
 
@@ -514,7 +504,17 @@ BFS 从一个节点开始，尝试访问尽可能靠近它的目标节点。本�
 
 ```js
 function getDepth(root) {
-  if (!root) return 0
-  return Math.max(getDepth(root.left), getDepth(root.right)) + 1
+  if (!root) return 0;
+  return Math.max(getDepth(root.left), getDepth(root.right)) + 1;
 }
 ```
+
+## 堆
+
+堆通常是一个可以被看做一棵树的数组对象。
+
+堆的实现通过构造二叉堆，实为二叉树的一种。这种数据结构具有以下性质。
+
+- 任意节点小于（或大于）它的所有子节点
+- 堆总是一棵完全树。即除了最底层，其他层的节点都被元素填满，且最底层从左到右填入。
+  将根节点最大的堆叫做最大堆或大根堆，根节点最小的堆叫做最小堆或小根堆
