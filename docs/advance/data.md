@@ -346,10 +346,29 @@ console.log(dictionary.items);
 - 二分搜索树
   也是二叉树，拥有二叉树的特性。但是区别在于二分搜索树每个节点的值都比他的左子树的值大，比右子树的值小
 
-- 二分搜索算法：
+### 二分搜索算法
   - 计算数组中间点的位置，取到中间点的值
   - 根据中间点的值与查找值的大小关系，确定往数组的左半部分或者右半部分查找
   - 重复上面两步，直到查找到所需的值，或者查找完整个数组， 确认值不存在
+
+```js
+// 确定一个数在一个有序数组中的位置
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return -1;
+}
+```
 
 ### 遍历树
 

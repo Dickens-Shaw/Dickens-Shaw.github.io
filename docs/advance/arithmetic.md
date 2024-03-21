@@ -417,27 +417,6 @@ function radixSort(arr, maxDigit) {
 
 ## 其它
 
-### 二分查找
-
-```js
-// 确定一个数在一个有序数组中的位置
-function binarySearch(arr, target) {
-  let left = 0;
-  let right = arr.length - 1;
-  while (left <= right) {
-    let mid = Math.floor((left + right) / 2);
-    if (arr[mid] === target) {
-      return mid;
-    } else if (arr[mid] < target) {
-      left = mid + 1;
-    } else {
-      right = mid - 1;
-    }
-  }
-  return -1;
-}
-```
-
 ### LRU 缓存
 
 ```js
@@ -494,3 +473,11 @@ class LRUCache {
 // cache.get (3); // 返回3
 // cache.get (4); // 返回4
 ```
+
+## 算法思想
+
+- 分治法：将一个问题分解为相同的子问题，然后递归的解决这些子问题，最后合并这些子问题的解
+- 动态规划：将一个问题分解为相同的子问题，然后递归的解决这些子问题，但是不同的是，动态规划会存储这些子问题的解，避免重复计算
+- 贪心算法：总是会选择当下最优解，通过一系列最优选择带来整体的最优选择
+- 回溯法：通过不断的尝试，找到问题的解
+- 分支限界法：通过不断的尝试，找到问题的解，但是会通过一些条件来限制尝试的次数
