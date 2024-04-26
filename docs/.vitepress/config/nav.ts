@@ -80,6 +80,10 @@ export const nav: DefaultTheme.Config['nav'] = [
         text: '算法',
         link: '/advance/arithmetic',
       },
+      {
+        text: 'LeetCode',
+        link: '/advance/leetcode',
+      },
     ],
     activeMatch: '^/advance',
   },

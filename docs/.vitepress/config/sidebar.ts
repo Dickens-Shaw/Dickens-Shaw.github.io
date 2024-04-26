@@ -27,6 +27,7 @@ export const sidebar: DefaultTheme.Config['sidebar'] = {
         { text: '设计模式', link: '/advance/design' },
         { text: '数据结构', link: '/advance/data' },
         { text: '算法', link: '/advance/arithmetic' },
+        { text: 'LeetCode高频题', link: '/advance/leetcode' },
       ],
     },
   ],
