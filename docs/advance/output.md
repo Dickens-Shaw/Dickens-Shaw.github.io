@@ -2,12 +2,6 @@
 
 涉及知识点：**异步编程、事件循环、this 指向、作用域、变量提升、闭包、原型、继承**等
 
-::: details 点我查看输出
-
-```js
-console.log("Hello, VitePress!");
-```
-
 :::
 
 ## 一、异步&事件循环
@@ -1119,10 +1113,10 @@ new Promise(function (resolve) {
   console.log(4);
   new Promise((resove, reject) => {
     console.log(5);
-    setTimeout(() =>  {
+    setTimeout(() => {
       console.log(6);
     }, 10);
-  })
+  });
 });
 console.log(7);
 console.log(8);
@@ -1144,10 +1138,1079 @@ console.log(8);
 代码执行过程如下：
 
 1. 首先遇到定时器，将其加入到宏任务队列；
-2. 遇到Promise，首先执行里面的同步代码，打印出2，遇到resolve，将其加入到微任务队列，执行后面同步代码，打印出3；
-3. 继续执行script中的代码，打印出7和8，至此第一轮代码执行完成；
-4. 执行微任务队列中的代码，首先打印出4，如遇到Promise，执行其中的同步代码，打印出5，遇到定时器，将其加入到宏任务队列中，此时宏任务队列中有两个定时器；
-5. 执行宏任务队列中的代码，这里我们需要注意是的第一个定时器的时间为100ms，第二个定时器的时间为10ms，所以先执行第二个定时器，打印出6；
-6. 此时微任务队列为空，继续执行宏任务队列，打印出1
+2. 遇到 Promise，首先执行里面的同步代码，打印出 2，遇到 resolve，将其加入到微任务队列，执行后面同步代码，打印出 3；
+3. 继续执行 script 中的代码，打印出 7 和 8，至此第一轮代码执行完成；
+4. 执行微任务队列中的代码，首先打印出 4，如遇到 Promise，执行其中的同步代码，打印出 5，遇到定时器，将其加入到宏任务队列中，此时宏任务队列中有两个定时器；
+5. 执行宏任务队列中的代码，这里我们需要注意是的第一个定时器的时间为 100ms，第二个定时器的时间为 10ms，所以先执行第二个定时器，打印出 6；
+6. 此时微任务队列为空，继续执行宏任务队列，打印出 1
+
+:::
+
+## 二、This 指向
+
+### 1. 题一
+
+```js
+function foo() {
+  console.log(this.a);
+}
+
+function doFoo() {
+  foo();
+}
+
+var obj = {
+  a: 1,
+  doFoo: doFoo,
+};
+
+var a = 2;
+obj.doFoo();
+```
+
+::: details 点我查看输出
+
+```shell
+2
+```
+
+在 Javascript 中，this 指向函数执行时的当前对象。在执行 foo 的时候，执行环境就是 doFoo 函数，执行环境为全局。所以，foo 中的 this 是指向 window 的，所以会打印出 2。
+
+:::
+
+### 2. 题二
+
+```js
+var a = 10;
+var obj = {
+  a: 20,
+  say: () => {
+    console.log(this.a);
+  },
+};
+obj.say();
+
+var anotherObj = { a: 30 };
+obj.say.apply(anotherObj);
+```
+
+::: details 点我查看输出
+
+```shell
+10
+10
+```
+
+箭头函数是不绑定 this 的，它的 this 来自原其父级所处的上下文，所以首先会打印全局中的 a 的值 10。后面虽然让 say 方法指向了另外一个对象，但是仍不能改变箭头函数的特性，它的 this 仍然是指向全局的，所以依旧会输出 10。
+
+如果不是箭头，
+
+:::
+
+### 3. 题三
+
+```js
+function a() {
+  console.log(this);
+}
+a.call(null);
+```
+
+::: details 点我查看输出
+
+```shell
+Window
+```
+
+根据 ECMAScript262 规范规定：如果第一个参数传入的对象调用者是 null 或者 undefined，call 方法将把全局对象（浏览器上是 window 对象）作为 this 的值。所以，不管传入 null 还是 undefined，其 this 都是全局对象 window。所以，在浏览器上答案是输出 window 对象。
+
+要注意的是，在严格模式中，null 就是 null，undefined 就是 undefined。
+
+:::
+
+### 4. 题四
+
+```js
+var obj = {
+  name: "xxx",
+  fun: function () {
+    console.log(this.name);
+  },
+};
+obj.fun();
+new obj.fun();
+```
+
+::: details 点我查看输出
+
+```shell
+xxx
+undefined
+```
+
+:::
+
+### 5. 题五
+
+```js
+var obj = {
+  say: function () {
+    var f1 = () => {
+      console.log("1111", this);
+    };
+    f1();
+  },
+  pro: {
+    getPro: () => {
+      console.log(this);
+    },
+  },
+};
+var o = obj.say;
+o();
+obj.say();
+obj.pro.getPro();
+```
+
+::: details 点我查看输出
+
+```shell
+1111 window对象
+1111 obj对象
+window对象
+```
+
+解析：
+
+1. o()，o 是在全局执行的，而 f1 是箭头函数，它是没有绑定 this 的，它的 this 指向其父级的 this，其父级 say 方法的 this 指向的是全局作用域，所以会打印出 window；
+2. obj.say()，谁调用 say，say 的 this 就指向谁，所以此时 this 指向的是 obj 对象；
+3. obj.pro.getPro()，我们知道，箭头函数时不绑定 this 的，getPro 处于 pro 中，而对象不构成单独的作用域，所以箭头的函数的 this 就指向了全局作用域 window。
+
+:::
+
+### 6. 题六
+
+```js
+var myObject = {
+  foo: "bar",
+  func: function () {
+    var self = this;
+    console.log(this.foo);
+    console.log(self.foo);
+    (function () {
+      console.log(this.foo);
+      console.log(self.foo);
+    })();
+  },
+};
+myObject.func();
+```
+
+::: details 点我查看输出
+
+```shell
+bar
+bar
+undefined
+bar
+```
+
+解析：
+
+1. 首先 func 是由 myObject 调用的，this 指向 myObject。又因为 var self = this;所以 self 指向 myObject。
+2. 这个立即执行匿名函数表达式是由 window 调用的，this 指向 window 。立即执行匿名函数的作用域处于 myObject.func 的作用域中，在这个作用域找不到 self 变量，沿着作用域链向上查找 self 变量，找到了指向 myObject 对象的 self。
+
+:::
+
+### 7. 题七
+
+```js
+window.number = 2;
+var obj = {
+  number: 3,
+  db1: (function () {
+    console.log(this);
+    this.number *= 4;
+    return function () {
+      console.log(this);
+      this.number *= 5;
+    };
+  })(),
+};
+var db1 = obj.db1;
+db1();
+obj.db1();
+console.log(obj.number);
+console.log(window.number);
+```
+
+::: details 点我查看输出
+
+```shell
+15
+40
+```
+
+解析：
+
+1. 执行 db1()时，this 指向全局作用域，所以 window.number _ 4 = 8，然后执行匿名函数， 所以 window.number _ 5 = 40；
+2. 执行 obj.db1();时，this 指向 obj 对象，执行匿名函数，所以 obj.number \* 5 = 15。
+
+:::
+
+### 8. 题八
+
+```js
+var length = 10;
+function fn() {
+  console.log(this.length);
+}
+
+var obj = {
+  length: 5,
+  method: function (fn) {
+    fn();
+    arguments[0]();
+  },
+};
+
+obj.method(fn, 1);
+```
+
+::: details 点我查看输出
+
+```shell
+10
+2
+```
+
+解析：
+
+1. 第一次执行 fn()，this 指向 window 对象，输出 10。
+2. 第二次执行 arguments[0]()，相当于 arguments 调用方法，this 指向 arguments，而这里传了两个参数，故输出 arguments 长度为 2。
+
+:::
+
+### 9. 题九
+
+```js
+var a = 1;
+function printA() {
+  console.log(this.a);
+}
+var obj = {
+  a: 2,
+  foo: printA,
+  bar: function () {
+    printA();
+  },
+};
+
+obj.foo(); // 2
+obj.bar(); // 1
+var foo = obj.foo;
+foo(); // 1
+```
+
+::: details 点我查看输出
+
+```shell
+2
+1
+1
+```
+
+解析：
+
+1. obj.foo()，foo 的 this 指向 obj 对象，所以 a 会输出 2；
+2. obj.bar()，printA 在 bar 方法中执行，所以此时 printA 的 this 指向的是 window，所以会输出 1；
+3. foo()，foo 是在全局对象中执行的，所以其 this 指向的是 window，所以会输出 1；
+
+:::
+
+### 10. 题十
+
+```js
+var x = 3;
+var y = 4;
+var obj = {
+  x: 1,
+  y: 6,
+  getX: function () {
+    var x = 5;
+    return (function () {
+      return this.x;
+    })();
+  },
+  getY: function () {
+    var y = 7;
+    return this.y;
+  },
+};
+console.log(obj.getX());
+console.log(obj.getY());
+```
+
+::: details 点我查看输出
+
+```shell
+3
+6
+```
+
+解析：
+
+1. 匿名函数的 this 是指向全局对象的，所以 this 指向 window，会打印出 3；
+2. getY 是由 obj 调用的，所以其 this 指向的是 obj 对象，会打印出 6。
+
+:::
+
+### 11. 题十一
+
+```js
+var a = 10;
+var obt = {
+  a: 20,
+  fn: function () {
+    var a = 30;
+    console.log(this.a);
+  },
+};
+obt.fn();
+obt.fn.call();
+obt.fn();
+```
+
+::: details 点我查看输出
+
+```shell
+20
+10
+10
+```
+
+解析：
+
+1. obt.fn()，fn 是由 obt 调用的，所以其 this 指向 obt 对象，会打印出 20；
+2. obt.fn.call()，这里 call 的参数啥都没写，就表示 null，我们知道如果 call 的参数为 undefined 或 null，那么 this 就会指向全局对象 this，所以会打印出 10；
+3. (obt.fn)()， 这里给表达式加了括号，而括号的作用是改变表达式的运算顺序，而在这里加与不加括号并无影响；相当于 obt.fn()，所以会打印出 20；
+
+:::
+
+### 12. 题十二
+
+```js
+function a(xx) {
+  this.x = xx;
+  return this;
+}
+var x = a(5);
+var y = a(6);
+
+console.log(x.x);
+console.log(y.x);
+```
+
+::: details 点我查看输出
+
+```shell
+undefined
+6
+```
+
+解析：
+
+1. 最关键的就是 var x = a(5)，函数 a 是在全局作用域调用，所以函数内部的 this 指向 window 对象。所以 this.x = 5 就相当于：window.x = 5。之后 return this，也就是说 var x = a(5) 中的 x 变量的值是 window，这里的 x 将函数内部的 x 的值覆盖了。然后执行 console.log(x.x)， 也就是 console.log(window.x)，而 window 对象中没有 x 属性，所以会输出 undefined。
+2. 当指向 y.x 时，会给全局变量中的 x 赋值为 6，所以会打印出 6。
+
+:::
+
+### 13. 题十三
+
+```js
+function foo(something) {
+  this.a = something;
+}
+
+var obj1 = {
+  foo: foo,
+};
+
+var obj2 = {};
+
+obj1.foo(2);
+console.log(obj1.a);
+
+obj1.foo.call(obj2, 3);
+console.log(obj2.a);
+
+var bar = new obj1.foo(4);
+console.log(obj1.a);
+console.log(bar.a);
+```
+
+::: details 点我查看输出
+
+```shell
+2
+3
+2
+4
+```
+
+解析：
+
+1. 首先执行 obj1.foo(2); 会在 obj 中添加 a 属性，其值为 2。之后执行 obj1.a，a 是右 obj1 调用的，所以 this 指向 obj，打印出 2；
+2. 执行 obj1.foo.call(obj2, 3) 时，会将 foo 的 this 指向 obj2，后面就和上面一样了，所以会打印出 3；
+3. obj1.a 会打印出 2；
+4. 最后就是考察 this 绑定的优先级了，new 绑定是比隐式绑定优先级高，所以会输出 4。
+
+:::
+
+### 14. 题十四
+
+```js
+function foo(something) {
+  this.a = something;
+}
+
+var obj1 = {};
+
+var bar = foo.bind(obj1);
+bar(2);
+console.log(obj1.a);
+
+var baz = new bar(3);
+console.log(obj1.a);
+console.log(baz.a);
+```
+
+::: details 点我查看输出
+
+```shell
+2
+2
+3
+```
+
+this 绑定的优先级：`new绑定 > 显式绑定 > 隐式绑定 > 默认绑定`
+
+:::
+
+## 三、作用域&变量提升&闭包
+
+### 1. 题一
+
+```js
+(function () {
+  var x = (y = 1);
+})();
+var z;
+
+console.log(y);
+console.log(z);
+console.log(x);
+```
+
+::: details 点我查看输出
+
+```shell {3}
+1
+undefined
+Uncaught ReferenceError: x is not defined
+```
+
+关键在于：var x = y = 1; 实际上这里是从右往左执行的，首先执行 y = 1, 因为 y 没有使用 var 声明，所以它是一个全局变量，然后第二步是将 y 赋值给 x，讲一个全局变量赋值给了一个局部变量，最终，x 是一个局部变量，y 是一个全局变量，所以打印 x 是报错。
+
+:::
+
+### 2. 题二
+
+```js
+var a, b;
+(function () {
+  console.log(a);
+  console.log(b);
+  var a = (b = 3);
+  console.log(a);
+  console.log(b);
+})();
+console.log(a);
+console.log(b);
+```
+
+::: details 点我查看输出
+
+```shell
+undefined
+undefined
+3
+3
+undefined
+3
+```
+
+b 赋值为 3，b 此时是一个全局变量，而将 3 赋值给 a，a 是一个局部变量，所以最后打印的时候，a 仍旧是 undefined。
+
+:::
+
+### 3. 题三
+
+```js
+var friendName = "World";
+(function () {
+  if (typeof friendName === "undefined") {
+    var friendName = "Jack";
+    console.log("Goodbye " + friendName);
+  } else {
+    console.log("Hello " + friendName);
+  }
+})();
+```
+
+::: details 点我查看输出
+
+```shell
+Goodbye Jack
+```
+
+在 JavaScript 中，Function 和 var 都会被提升（变量提升），所以上面的代码就相当于：
+
+```js
+var friendName = "World";
+(function () {
+  var friendName;
+  if (typeof friendName === "undefined") {
+    friendName = "Jack";
+    console.log("Goodbye " + friendName);
+  } else {
+    console.log("Hello " + friendName);
+  }
+})();
+```
+
+:::
+
+### 4. 题四
+
+```js
+function fn1() {
+  console.log("fn1");
+}
+var fn2;
+
+fn1();
+fn2();
+
+fn2 = function () {
+  console.log("fn2");
+};
+
+fn2();
+```
+
+::: details 点我查看输出
+
+```shell {2}
+fn1
+Uncaught TypeError: fn2 is not a function
+fn2
+```
+
+关键在于第一个 fn2()，这时 fn2 仍是一个 undefined 的变量，所以会报错 fn2 不是一个函数
+
+:::
+
+### 5. 题五
+
+```js
+// 一
+function a() {
+  var temp = 10;
+  function b() {
+    console.log(temp);
+  }
+  b();
+}
+a();
+
+// 二
+function a() {
+  var temp = 10;
+  b();
+}
+function b() {
+  console.log(temp);
+}
+a();
+```
+
+::: details 点我查看输出
+
+```shell {2}
+10
+Uncaught ReferenceError: temp is not defined
+```
+
+:::
+
+### 6. 题六
+
+```js
+var a = 3;
+function c() {
+  console.log(a);
+}
+(function () {
+  var a = 4;
+  c();
+})();
+```
+
+::: details 点我查看输出
+
+```shell
+3
+```
+
+js 中变量的作用域链与定义时的环境有关，与执行时无关。执行环境只会改变 this、传递的参数、全局变量等
+
+:::
+
+### 7. 题七
+
+```js
+function fun(n, o) {
+  console.log(o);
+  return {
+    fun: function (m) {
+      return fun(m, n);
+    },
+  };
+}
+var a = fun(0);
+a.fun(1);
+a.fun(2);
+a.fun(3);
+var b = fun(0).fun(1).fun(2).fun(3);
+var c = fun(0).fun(1);
+c.fun(2);
+c.fun(3);
+```
+
+::: details 点我查看输出
+
+```shell
+undefined  0  0  0
+undefined  0  1  2
+undefined  0  1  1
+```
+
+这是一道关于闭包的题目，对于 fun 方法，调用之后返回的是一个对象。我们知道，当调用函数的时候传入的实参比函数声明时指定的形参个数要少，剩下的形参都将设置为 undefined 值。所以 console.log(o); 会输出 undefined。而 a 就是是 fun(0)返回的那个对象。也就是说，函数 fun 中参数 n 的值是 0，而返回的那个对象中，需要一个参数 n，而这个对象的作用域中没有 n，它就继续沿着作用域向上一级的作用域中寻找 n，最后在函数 fun 中找到了 n，n 的值是 0。了解了这一点，其他运算就很简单了，以此类推
+
+:::
+
+### 8. 题八
+
+```js
+f = function () {
+  return true;
+};
+g = function () {
+  return false;
+};
+(function () {
+  if (g() && [] == ![]) {
+    f = function f() {
+      return false;
+    };
+    function g() {
+      return true;
+    }
+  }
+})();
+console.log(f());
+```
+
+::: details 点我查看输出
+
+```shell
+false
+```
+
+这里首先定义了两个变量 f 和 g，我们知道变量是可以重新赋值的。后面是一个匿名自执行函数，在 if 条件中调用了函数 g()，由于在匿名函数中，又重新定义了函数 g，就覆盖了外部定义的变量 g，所以，这里调用的是内部函数 g 方法，返回为 true。第一个条件通过，进入第二个条件。
+
+第二个条件是[] == ![]，先看 ![] ，在 JavaScript 中，当用于布尔运算时，比如在这里，对象的非空引用被视为 true，空引用 null 则被视为 false。由于这里不是一个 null, 而是一个没有元素的数组，所以 [] 被视为 true, 而 ![] 的结果就是 false 了。当一个布尔值参与到条件运算的时候，true 会被看作 1, 而 false 会被看作 0。现在条件变成了 [] == 0 的问题了，当一个对象参与条件比较的时候，它会被求值，求值的结果是数组成为一个字符串，[] 的结果就是 '' ，而 '' 会被当作 0 ，所以，条件成立。
+
+两个条件都成立，所以会执行条件中的代码， f 在定义是没有使用 var，所以他是一个全局变量。因此，这里会通过闭包访问到外部的变量 f, 重新赋值，现在执行 f 函数返回值已经成为 false 了。而 g 则不会有这个问题，这里是一个函数内定义的 g，不会影响到外部的 g 函数。所以最后的结果就是 false。
+
+:::
+
+## 四、原型&继承
+
+### 1. 题一
+
+```js
+function Person(name) {
+  this.name = name;
+}
+var p2 = new Person("king");
+console.log(p2.__proto__); //Person.prototype
+console.log(p2.__proto__.__proto__); //Object.prototype
+console.log(p2.__proto__.__proto__.__proto__); // null
+console.log(p2.__proto__.__proto__.__proto__.__proto__); //null后面没有了，报错
+console.log(p2.__proto__.__proto__.__proto__.__proto__.__proto__); //null后面没有了，报错
+console.log(p2.constructor); //Person
+console.log(p2.prototype); //undefined p2是实例，没有prototype属性
+console.log(Person.constructor); //Function 一个空函数
+console.log(Person.prototype); //打印出Person.prototype这个对象里所有的方法和属性
+console.log(Person.prototype.constructor); //Person
+console.log(Person.prototype.__proto__); // Object.prototype
+console.log(Person.__proto__); //Function.prototype
+console.log(Function.prototype.__proto__); //Object.prototype
+console.log(Function.__proto__); //Function.prototype
+console.log(Object.__proto__); //Function.prototype
+console.log(Object.prototype.__proto__); //null
+```
+
+### 2. 题二
+
+```js
+// a
+function Foo() {
+  getName = function () {
+    console.log(1);
+  };
+  return this;
+}
+// b
+Foo.getName = function () {
+  console.log(2);
+};
+// c
+Foo.prototype.getName = function () {
+  console.log(3);
+};
+// d
+var getName = function () {
+  console.log(4);
+};
+// e
+function getName() {
+  console.log(5);
+}
+
+Foo.getName();
+getName();
+Foo().getName();
+getName();
+new Foo.getName();
+new Foo().getName();
+new new Foo().getName();
+```
+
+::: details 点我查看输出
+
+```shell
+2
+4
+1
+1
+2
+3
+3
+```
+
+解析：
+
+1. Foo.getName()，Foo 为一个函数对象，对象都可以有属性，b 处定义 Foo 的 getName 属性为函数，输出 2；
+2. getName()，这里看 d、e 处，d 为函数表达式，e 为函数声明，两者区别在于变量提升，函数声明的 5 会被后边函数表达式的 4 覆盖；
+3. Foo().getName()，这里要看 a 处，在 Foo 内部将全局的 getName 重新赋值为 console.log(1) 的函数，执行 Foo()返回 this，这个 this 指向 window，Foo().getName() 即为 window.getName()，输出 1；
+4. getName()，上面 3 中，全局的 getName 已经被重新赋值，所以这里依然输出 1；
+5. new Foo.getName()，这里等价于 new (Foo.getName())，先执行 Foo.getName()，输出 2，然后 new 一个实例；
+6. new Foo().getName()，这里等价于 (new Foo()).getName(), 先 new 一个 Foo 的实例，再执行这个实例的 getName 方法，但是这个实例本身没有这个方法，所以去原型链**proto**上边找，实例.**proto** === Foo.prototype，所以输出 3；
+7. new new Foo().getName()，这里等价于 new (new Foo().getName())，如上述 6，先输出 3，然后 new 一个 new Foo().getName() 的实例。
+
+:::
+
+### 3. 题三
+
+```js
+var F = function () {};
+Object.prototype.a = function () {
+  console.log("a");
+};
+Function.prototype.b = function () {
+  console.log("b");
+};
+var f = new F();
+f.a();
+f.b();
+F.a();
+F.b();
+```
+
+::: details 点我查看输出
+
+```shell {2}
+a
+Uncaught TypeError: f.b is not a function
+a
+b
+```
+
+解析：
+
+1
+f 并不是 Function 的实例，因为它本来就不是构造函数，调用的是 Function 原型链上的相关属性和方法，只能访问到 Object 原型链。所以 f.a() 输出 a ，而 f.b() 就报错了。
+2
+F 是个构造函数，而 F 是构造函数 Function 的一个实例。因为 F instanceof Object === true，F instanceof Function === true，由此可以得出结论：F 是 Object 和 Function 两个的实例，即 F 能访问到 a， 也能访问到 b。所以 F.a() 输出 a ，F.b() 输出 b。
+
+:::
+
+### 4. 题四
+
+```js
+function Foo() {
+  Foo.a = function () {
+    console.log(1);
+  };
+  this.a = function () {
+    console.log(2);
+  };
+}
+
+Foo.prototype.a = function () {
+  console.log(3);
+};
+
+Foo.a = function () {
+  console.log(4);
+};
+
+Foo.a();
+let obj = new Foo();
+obj.a();
+Foo.a();
+```
+
+::: details 点我查看输出
+
+```shell
+4
+2
+1
+```
+
+解析：
+
+1. Foo.a() 这个是调用 Foo 函数的静态方法 a，虽然 Foo 中有优先级更高的属性方法 a，但 Foo 此时没有被调用，所以此时输出 Foo 的静态方法 a 的结果：4
+2. let obj = new Foo(); 使用了 new 方法调用了函数，返回了函数实例对象，此时 Foo 函数内部的属性方法初始化，原型链建立。
+3. obj.a() ; 调用 obj 实例上的方法 a，该实例上目前有两个 a 方法：一个是内部属性方法，另一个是原型上的方法。当这两者都存在时，首先查找 ownProperty ，如果没有才去原型链上找，所以调用实例上的 a 输出：2
+4. Foo.a() ; 根据第 2 步可知 Foo 函数内部的属性方法已初始化，覆盖了同名的静态方法，所以输出：1
+
+:::
+
+### 5. 题五
+
+```js
+function Dog() {
+  this.name = "puppy";
+}
+Dog.prototype.bark = () => {
+  console.log("woof!woof!");
+};
+const dog = new Dog();
+console.log(
+  Dog.prototype.constructor === Dog &&
+    dog.constructor === Dog &&
+    dog instanceof Dog
+);
+```
+
+::: details 点我查看输出
+
+```shell
+true
+```
+
+解析：
+
+因为 constructor 是 prototype 上的属性，所以 dog.constructor 实际上就是指向 Dog.prototype.constructor；constructor 属性指向构造函数。instanceof 而实际检测的是类型是否在实例的原型链上。
+
+constructor 是 prototype 上的属性，这一点很容易被忽略掉。constructor 和 instanceof 的作用是不同的，感性地来说，constructor 的限制比较严格，它只能严格对比对象的构造函数是不是指定的值；而 instanceof 比较松散，只要检测的类型在原型链上，就会返回 true。
+
+:::
+
+### 6. 题六
+
+```js
+var A = { n: 4399 };
+var B = function () {
+  this.n = 9999;
+};
+var C = function () {
+  var n = 8888;
+};
+B.prototype = A;
+C.prototype = A;
+var b = new B();
+var c = new C();
+A.n++;
+console.log(b.n);
+console.log(c.n);
+```
+
+::: details 点我查看输出
+
+```shell
+9999
+4400
+```
+
+解析：
+
+1. console.log(b.n)，在查找 b.n 是首先查找 b 对象自身有没有 n 属性，如果没有会去原型（prototype）上查找，当执行 var b = new B()时，函数内部 this.n=9999(此时 this 指向 b) 返回 b 对象，b 对象有自身的 n 属性，所以返回 9999。
+2. console.log(c.n)，同理，当执行 var c = new C()时，c 对象没有自身的 n 属性，向上查找，找到原型 （prototype）上的 n 属性，因为 A.n++(此时对象 A 中的 n 为 4400)， 所以返回 4400。
+
+:::
+
+### 7. 题七
+
+```js
+function A() {}
+function B(a) {
+  this.a = a;
+}
+function C(a) {
+  if (a) {
+    this.a = a;
+  }
+}
+A.prototype.a = 1;
+B.prototype.a = 1;
+C.prototype.a = 1;
+
+console.log(new A().a);
+console.log(new B().a);
+console.log(new C(2).a);
+```
+
+::: details 点我查看输出
+
+```shell
+1
+undefined
+2
+```
+
+解析：
+
+1. console.log(new A().a)，new A()为构造函数创建的对象，本身没有 a 属性，所以向它的原型去找，发现原型的 a 属性的属性值为 1，故该输出值为 1；
+2. console.log(new B().a)，ew B()为构造函数创建的对象，该构造函数有参数 a，但该对象没有传参，故该输出值为 undefined;
+3. console.log(new C(2).a)，new C()为构造函数创建的对象，该构造函数有参数 a，且传的实参为 2，执行函数内部，发现 if 为真，执行 this.a = 2,故属性 a 的值为 2。
+
+:::
+
+### 8. 题八
+
+```js
+function Parent() {
+  this.a = 1;
+  this.b = [1, 2, this.a];
+  this.c = { demo: 5 };
+  this.show = function () {
+    console.log(this.a, this.b, this.c.demo);
+  };
+}
+
+function Child() {
+  this.a = 2;
+  this.change = function () {
+    this.b.push(this.a);
+    this.a = this.b.length;
+    this.c.demo = this.a++;
+  };
+}
+
+Child.prototype = new Parent();
+var parent = new Parent();
+var child1 = new Child();
+var child2 = new Child();
+child1.a = 11;
+child2.a = 12;
+parent.show();
+child1.show();
+child2.show();
+child1.change();
+child2.change();
+parent.show();
+child1.show();
+child2.show();
+```
+
+::: details 点我查看输出
+
+```js
+parent.show(); // 1  [1,2,1] 5
+
+child1.show(); // 11 [1,2,1] 5
+child2.show(); // 12 [1,2,1] 5
+
+parent.show(); // 1 [1,2,1] 5
+
+child1.show(); // 5 [1,2,1,11,12] 5
+
+child2.show(); // 6 [1,2,1,11,12] 5
+```
+
+解析：
+
+1. parent.show()，可以直接获得所需的值，没啥好说的；
+2. child1.show()，Child 的构造函数原本是指向 Child 的，题目显式将 Child 类的原型对象指向了 Parent 类的一个实例，需要注意 Child.prototype 指向的是 Parent 的实例 parent，而不是指向 Parent 这个类。
+3. child2.show()，这个也没啥好说的；
+4. parent.show()，parent 是一个 Parent 类的实例，Child.prorotype 指向的是 Parent 类的另一个实例，两者在堆内存中互不影响，所以上述操作不影响 parent 实例，所以输出结果不变；
+5. child1.show()，child1 执行了 change()方法后，发生了怎样的变化呢?
+   - this.b.push(this.a)，由于 this 的动态指向特性，this.b 会指向 Child.prototype 上的 b 数组,this.a 会指向 child1 的 a 属性,所以 Child.prototype.b 变成了[1,2,1,11];
+   - this.a = this.b.length，这条语句中 this.a 和 this.b 的指向与上一句一致，故结果为 child1.a 变为 4;
+   - this.c.demo = this.a++，由于 child1 自身属性并没有 c 这个属性，所以此处的 this.c 会指向 Child.prototype.c，this.a 值为 4，为原始类型，故赋值操作时会直接赋值，Child.prototype.c.demo 的结果为 4，而 this.a 随后自增为 5(4 + 1 = 5)。
+6. child2 执行了 change()方法, 而 child2 和 child1 均是 Child 类的实例，所以他们的原型链指向同一个原型对象 Child.prototype,也就是同一个 parent 实例，所以 child2.change()中所有影响到原型对象的语句都会影响 child1 的最终输出结果。
+   - this.b.push(this.a)，由于 this 的动态指向特性，this.b 会指向 Child.prototype 上的 b 数组,this.a 会指向 child2 的 a 属性,所以 Child.prototype.b 变成了[1,2,1,11,12];
+   - this.a = this.b.length，这条语句中 this.a 和 this.b 的指向与上一句一致，故结果为 child2.a 变为 5;
+   - this.c.demo = this.a++，由于 child2 自身属性并没有 c 这个属性，所以此处的 this.c 会指向 Child.prototype.c，故执行结果为 Child.prototype.c.demo 的值变为 child2.a 的值 5，而 child2.a 最终自增为 6(5 + 1 = 6)。
+
+:::
+
+### 9. 题九
+
+```js
+function SuperType() {
+  this.property = true;
+}
+
+SuperType.prototype.getSuperValue = function () {
+  return this.property;
+};
+
+function SubType() {
+  this.subProperty = false;
+}
+
+SubType.prototype = new SuperType();
+SubType.prototype.getSubValue = function () {
+  return this.subProperty;
+};
+
+var instance = new SubType();
+console.log(instance.getSuperValue());
+```
+
+::: details 点我查看输出
+
+```shell
+true
+```
+
+实际上，这段代码就是在实现原型链继承，SubType 继承了 SuperType，本质是重写了 SubType 的原型对象，代之以一个新类型的实例。SubType 的原型被重写了，所以 instance.constructor 指向的是 SuperType。
 
 :::
