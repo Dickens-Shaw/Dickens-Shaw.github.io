@@ -1387,7 +1387,7 @@ obj.method(fn, 1);
 解析：
 
 1. 第一次执行 fn()，this 指向 window 对象，输出 10。
-2. 第二次执行 arguments[0]()，相当于 arguments 调用方法，this 指向 arguments，而这里传了两个参数，故输出 arguments 长度为 2。
+2. 第二次执行 `arguments[0]()`，相当于 arguments 调用方法，this 指向 arguments，而这里传了两个参数，故输出 arguments 长度为 2。
 
 :::
 
