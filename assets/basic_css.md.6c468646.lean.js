@@ -1,1 +1,0 @@
-import{_ as s,o as a,c as l,Q as n}from"./chunks/framework.058c99df.js";const p="/images/stackingOrder.png",C=JSON.parse('{"title":"CSS","description":"","frontmatter":{},"headers":[],"relativePath":"basic/css.md"}'),o={name:"basic/css.md"},e=n("",181),t=[e];function c(r,D,i,F,y,B){return a(),l("div",null,t)}const A=s(o,[["render",c]]);export{C as __pageData,A as default};

@@ -1,1 +1,0 @@
-import{_ as s,o as a,c as n,Q as l}from"./chunks/framework.058c99df.js";const A=JSON.parse('{"title":"ES6+","description":"","frontmatter":{},"headers":[],"relativePath":"basic/es6.md"}'),o={name:"basic/es6.md"},p=l("",267),e=[p];function t(c,r,y,D,F,B){return a(),n("div",null,e)}const E=s(o,[["render",t]]);export{A as __pageData,E as default};
