@@ -1,17 +1,17 @@
 {
-  "hash": "7038ac45",
-  "browserHash": "ebc0b833",
+  "hash": "ef72ab79",
+  "browserHash": "3c30e169",
   "optimized": {
     "vue": {
       "src": "../../../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "deb28123",
+      "fileHash": "914403c0",
       "needsInterop": false
     },
     "xmind-embed-viewer": {
       "src": "../../../../node_modules/xmind-embed-viewer/dist/esm/index.js",
       "file": "xmind-embed-viewer.js",
-      "fileHash": "8bde6f5f",
+      "fileHash": "79466358",
       "needsInterop": false
     }
   },
