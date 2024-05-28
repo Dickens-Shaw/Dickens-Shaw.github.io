@@ -2211,6 +2211,8 @@ console.log(instance.getSuperValue());
 true
 ```
 
-实际上，这段代码就是在实现原型链继承，SubType 继承了 SuperType，本质是重写了 SubType 的原型对象，代之以一个新类型的实例。SubType 的原型被重写了，所以 instance.constructor 指向的是 SuperType。
+实际上，这段代码就是在实现原型链继承，SubType 继承了 SuperType，本质是重写了 SubType 的原型对象，代之以一个新类型的实例。
+
+SubType 的原型被重写了，所以 instance.constructor 指向的是 SuperType。
 
 :::
