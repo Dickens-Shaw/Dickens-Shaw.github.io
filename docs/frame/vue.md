@@ -857,7 +857,7 @@ function queueWatcher(watcher) {
 }
 ```
 
-这里使用一个叫做 `has` 的 map，里面存放 id -> true(false) 的形式，用力啊判断是否已经存在相同的 `Watcher` 对象（这样比每次都去遍历 queue 效率上会高很多）。
+这里使用一个叫做 `has` 的 map，里面存放 `id -> true(false)` 的形式，用力啊判断是否已经存在相同的 `Watcher` 对象（这样比每次都去遍历 queue 效率上会高很多）。
 
 如果目前队列 `queue` 中还没有这个 `Watcher` 对象，则该对象会被 `push` 进队列 `queue` 中去。
 
@@ -1078,7 +1078,7 @@ directives: {
   - `oldValue`：指令绑定的前一个值，仅在 update 和 componentUpdated 钩子中可用。无论值是否改变都可用。
   - `expression`：字符串形式的指令表达式。例如 v-my-directive="1 + 1" 中，表达式为 "1 + 1"。
   - `arg`：传给指令的参数，可选。例如 v-my-directive:foo 中，参数为 "foo"。
-  - `modifiers`：一个包含修饰符的对象。例如：v-my-directive.foo.bar 中，修饰符对象为 { foo: true, bar: true }
+  - `modifiers`：一个包含修饰符的对象。例如：v-my-directive.foo.bar 中，修饰符对象为 `{ foo: true, bar: true }`
 - `vnode`：Vue 编译生成的虚拟节点
 - `oldVnode`：上一个虚拟节点，仅在 update 和 componentUpdated 钩子中可用
 
