@@ -112,3 +112,21 @@ server {
 - pushState() 通过 stateObject 参数可以添加任意类型的数据到记录中；而 hash 只可添加短字符串；
 - pushState() 可额外设置 title 属性供后续使用。
 - hash 模式下，仅 hash 符号之前的 url 会被包含在请求中，后端如果没有做到对路由的全覆盖，也不会返回 404 错误；history 模式下，前端的 url 必须和实际向后端发起请求的 url 一致，如果没有对用的路由处理，将返回 404 错误。
+
+## 四、Vue 和 React 对比
+
+### 1. 相同点
+
+- 都有组件化思想
+- 都支持服务器端渲染
+- 都有 Virtual DOM（虚拟 dom）
+- 数据驱动视图
+- 都有支持 native 的方案：Vue 的 Weex、React 的 React native
+- 都有自己的构建工具：Vue 的 vue-cli、React 的 Create React App
+
+### 2. 不同点
+
+- 数据流向的不同。react 从诞生开始就推崇单向数据流，而 Vue 是双向数据流
+- 数据变化的实现原理不同。react 使用的是不可变数据，而 Vue 使用的是可变的数据
+- 组件化通信的不同。react 中我们通过使用回调函数来进行通信的，而 Vue 中子组件向父组件传递消息有两种方式：事件和回调函数
+- diff 算法不同。react 主要使用 diff 队列保存需要更新哪些 DOM，得到 patch 树，再统一操作批量更新 DOM。Vue 使用双向指针，边对比，边更新 DOM
