@@ -81,6 +81,38 @@ window.onhashchange = function (event) {
 
 使用`onhashchange()`事件的好处就是，在页面的 hash 值发生变化时，无需向后端发起请求，window 就可以监听事件的改变，并按规则加载相应的代码。除此之外，hash 值变化对应的 URL 都会被浏览器记录下来，这样浏览器就能实现页面的前进和后退。虽然是没有请求后端服务器，但是页面的 hash 值和对应的 URL 关联起来了
 
+**实现：**
+
+```js
+// 定义 Router
+class Router {
+  constructor() {
+    this.routes = {}; // 存放路由path及callback
+    this.currentUrl = "";
+
+    // 监听路由change调用相对应的路由回调
+    window.addEventListener("load", this.refresh, false);
+    window.addEventListener("hashchange", this.refresh, false);
+  }
+
+  route(path, callback) {
+    this.routes[path] = callback;
+  }
+
+  push(path) {
+    this.routes[path] && this.routes[path]();
+  }
+}
+
+// 使用 router
+window.miniRouter = new Router();
+miniRouter.route("/", () => console.log("page1"));
+miniRouter.route("/page2", () => console.log("page2"));
+
+miniRouter.push("/"); // page1
+miniRouter.push("/page2"); // page2
+```
+
 ### 2. history 模式
 
 **简介：** history 模式的 URL 中没有#，它使用的是传统的路由分发模式，即用户在输入一个 URL 时，服务器会接收这个请求，并解析这个 URL，然后做出相应的逻辑处理。
@@ -102,6 +134,48 @@ server {
 - **修改历史状态：** 包括了 HTML5 History Interface 中新增的 `pushState()` 和 `replaceState()` 方法，这两个方法应用于浏览器的历史记录栈，提供了对历史记录进行修改的功能。只是当他们进行修改时，虽然修改了 url，但浏览器不会立即向后端发送请求。如果要做到改变 url 但又不刷新页面的效果，就需要前端用上这两个 API。
 - **切换历史状态：** 包括`forward()、back()、go()`三个方法，对应浏览器的前进，后退，跳转操作。
   虽然 history 模式丢弃了丑陋的#。但是，它也有自己的缺点，就是在刷新页面的时候，如果没有相应的路由或资源，就会刷出 404 来。
+
+**实现：**
+
+```js
+// 定义 Router
+class Router {
+  constructor() {
+    this.routes = {};
+    this.listerPopState();
+  }
+
+  init(path) {
+    history.replaceState({ path: path }, null, path);
+    this.routes[path] && this.routes[path]();
+  }
+
+  route(path, callback) {
+    this.routes[path] = callback;
+  }
+
+  push(path) {
+    history.pushState({ path: path }, null, path);
+    this.routes[path] && this.routes[path]();
+  }
+
+  listerPopState() {
+    window.addEventListener("popstate", (e) => {
+      const path = e.state && e.state.path;
+      this.routers[path] && this.routers[path]();
+    });
+  }
+}
+
+// 使用 Router
+
+window.miniRouter = new Router();
+miniRouter.route("/", () => console.log("page1"));
+miniRouter.route("/page2", () => console.log("page2"));
+
+// 跳转
+miniRouter.push("/page2"); // page2
+```
 
 ### 3. 对比
 
