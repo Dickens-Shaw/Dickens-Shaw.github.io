@@ -15,7 +15,7 @@ class Vue {
   }
 }
 function observer(value) {
-  if (!value || typeof value !== 'object') {
+  if (!value || typeof value !== "object") {
     return;
   }
 
@@ -98,7 +98,7 @@ export function defineReactive(
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return;
       }
-      if (process.env.NODE_ENV !== 'production' && customSetter) {
+      if (process.env.NODE_ENV !== "production" && customSetter) {
         customSetter();
       }
       if (setter) {
@@ -357,16 +357,72 @@ Vue 的渲染都是基于这个响应式系统的。在 Vue 的创建过程中�
 ### 8. v-if / -show / -html 原理
 
 - **v-if：** 调用`addIfCondition`方法，生成 vNode 的时候会忽略对应节点，`render`的时候就不会渲染；
+
+```js
+// https://github.com/vuejs/vue-next/blob/cdc9f336fd/packages/compiler-core/src/transforms/vIf.ts
+export const transformIf = createStructuralDirectiveTransform(
+  /^(if|else|else-if)$/,
+  (node, dir, context) => {
+    return processIf(node, dir, context, (ifNode, branch, isRoot) => {
+      // ...
+      return () => {
+        if (isRoot) {
+          ifNode.codegenNode = createCodegenNodeForBranch(
+            branch,
+            key,
+            context
+          ) as IfConditionalExpression
+        } else {
+          // attach this branch's codegen node to the v-if root.
+          const parentCondition = getParentCondition(ifNode.codegenNode!)
+          parentCondition.alternate = createCodegenNodeForBranch(
+            branch,
+            key + ifNode.branches.length - 1,
+            context
+          )
+        }
+      }
+    })
+  }
+)
+```
+
 - **v-show：** 生成 vNode，`render`的时候也会渲染成真实节点，只是在`render`过程中会在节点的属性中修改`show`属性值，也就是常说的`display`；
+
+```js
+// https://github.com/vuejs/vue-next/blob/3cd30c5245da0733f9eb6f29d220f39c46518162/packages/runtime-dom/src/directives/vShow.ts
+export const vShow: ObjectDirective<VShowElement> = {
+  beforeMount(el, { value }, { transition }) {
+    el._vod = el.style.display === "none" ? "" : el.style.display;
+    if (transition && value) {
+      transition.beforeEnter(el);
+    } else {
+      setDisplay(el, value);
+    }
+  },
+  mounted(el, { value }, { transition }) {
+    if (transition && value) {
+      transition.enter(el);
+    }
+  },
+  updated(el, { value, oldValue }, { transition }) {
+    // ...
+  },
+  beforeUnmount(el, { value }) {
+    setDisplay(el, value);
+  },
+};
+```
+
 - **v-html：** 先移除节点下的所有节点，调用`html`方法，通过`addProp`添加`innerHTML`属性，归根结底还是设置`innerHTML`为 v-html 的值。
 
 ### 9. v-if 和 v-show 区别
 
-- **手段：** v-if 是动态的向 DOM 树内添加或者删除 DOM 元素；v-show 是通过设置 DOM 元素的 display 样式属性控制显隐；
+- **控制手段：** v-if 是动态的向 DOM 树内添加或者删除 DOM 元素；v-show 是通过设置 DOM 元素的 display 样式属性控制显隐；
 - **编译过程：** v-if 切换有一个局部编译/卸载的过程，切换过程中合适地销毁和重建内部的事件监听和子组件；v-show 只是简单的基于 css 切换；
-- **编译条件：** v-if 是惰性的，如果初始条件为假，则什么也不做；只有在条件第一次变为真时才开始局部编译; v-show 是在任何条件下，无论首次条件是否为真，都被编译，然后被缓存，而且 DOM 元素保留；
+- **编译条件：** v-if 是惰性的，如果初始条件为假，则什么也不做；只有在条件第一次变为真时才开始局部编译; v-show 是在任何条件下，无论首次条件是否为真，都被编译，然后被缓存，而且 DOM 元素保留，不会触发组件的生命周期钩子函数；
 - **性能消耗：** v-if 有更高的切换消耗；v-show 有更高的初始渲染消耗；
-- **使用场景：** v-if 适合运营条件不大可能改变；v-show 适合频繁切换。
+- **使用场景：** v-if 适合运行时条件很少改变；v-show 适合频繁切换。
 
 ### 10. v-model
 
@@ -451,7 +507,7 @@ keep-alive 是 Vue 内置组件，主要用于保留组件状态或避免重新�
 const patternTypes: Array<Function> = [String, RegExp, Array];
 
 export default {
-  name: 'keep-alive',
+  name: "keep-alive",
   abstract: true, // 抽象组件，是一个抽象组件：它自身不会渲染一个 DOM 元素，也不会出现在父组件链中。
 
   props: {
@@ -476,10 +532,10 @@ export default {
   mounted() {
     // prune 削减精简[v.]
     // 去监控include和exclude的改变，根据最新的include和exclude的内容，来实时削减缓存的组件的内容
-    this.$watch('include', (val) => {
+    this.$watch("include", (val) => {
       pruneCache(this, (name) => matches(val, name));
     });
-    this.$watch('exclude', (val) => {
+    this.$watch("exclude", (val) => {
       pruneCache(this, (name) => !matches(val, name));
     });
   },
@@ -667,7 +723,7 @@ nextTick 是典型的将底层 JavaScript 执行原理应用 `EventLoop` 到具�
 
 ```js
 // 修改数据
-vm.message = '修改后的值';
+vm.message = "修改后的值";
 // DOM 还没有更新
 console.log(vm.$el.textContent); // 原始的值
 Vue.nextTick(function () {
@@ -679,7 +735,7 @@ Vue.nextTick(function () {
 组件内使用 `vm.$nextTick()` 实例方法只需要通过`this.$nextTick()`，并且回调函数中的 this 将自动绑定到当前的 Vue 实例上
 
 ```js
-this.message = '修改后的值';
+this.message = "修改后的值";
 console.log(this.$el.textContent); // => '原始的值'
 this.$nextTick(function () {
   console.log(this.$el.textContent); // => '修改后的值'
@@ -689,7 +745,7 @@ this.$nextTick(function () {
 `$nextTick()` 会返回一个 `Promise` 对象，可以是用`async/await`完成相同作用的事情
 
 ```js
-this.message = '修改后的值';
+this.message = "修改后的值";
 console.log(this.$el.textContent); // => '原始的值'
 await this.$nextTick();
 console.log(this.$el.textContent); // => '修改后的值'
@@ -717,7 +773,7 @@ export function nextTick(cb?: Function, ctx?: Object) {
       try {
         cb.call(ctx);
       } catch (e) {
-        handleError(e, ctx, 'nextTick');
+        handleError(e, ctx, "nextTick");
       }
     } else if (_resolve) {
       _resolve(ctx);
@@ -731,7 +787,7 @@ export function nextTick(cb?: Function, ctx?: Object) {
   }
 
   // 当 nextTick 没有传入函数参数的时候，返回一个 Promise 化的调用
-  if (!cb && typeof Promise !== 'undefined') {
+  if (!cb && typeof Promise !== "undefined") {
     return new Promise((resolve) => {
       _resolve = resolve;
     });
@@ -747,7 +803,7 @@ export function nextTick(cb?: Function, ctx?: Object) {
 
 ```js
 export let isUsingMicroTask = false;
-if (typeof Promise !== 'undefined' && isNative(Promise)) {
+if (typeof Promise !== "undefined" && isNative(Promise)) {
   //判断1：是否原生支持Promise
   const p = Promise.resolve();
   timerFunc = () => {
@@ -757,9 +813,9 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
   isUsingMicroTask = true;
 } else if (
   !isIE &&
-  typeof MutationObserver !== 'undefined' &&
+  typeof MutationObserver !== "undefined" &&
   (isNative(MutationObserver) ||
-    MutationObserver.toString() === '[object MutationObserverConstructor]')
+    MutationObserver.toString() === "[object MutationObserverConstructor]")
 ) {
   //判断2：是否原生支持MutationObserver
   let counter = 1;
@@ -773,7 +829,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
     textNode.data = String(counter);
   };
   isUsingMicroTask = true;
-} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
+} else if (typeof setImmediate !== "undefined" && isNative(setImmediate)) {
   //判断3：是否原生支持setImmediate
   timerFunc = () => {
     setImmediate(flushCallbacks);
@@ -825,11 +881,11 @@ class Watcher {
     this.id = ++uid;
   }
   update() {
-    console.log('watch' + this.id + ' update');
+    console.log("watch" + this.id + " update");
     queueWatcher(this);
   }
   run() {
-    console.log('watch' + this.id + ' ViewRendering');
+    console.log("watch" + this.id + " ViewRendering");
   }
 }
 ```
@@ -879,11 +935,11 @@ function flushSchedulerQueue() {
     has[id] = null;
     watcher.run();
     // in dev build, check and stop circular updates.
-    if (process.env.NODE_ENV !== 'production' && has[id] != null) {
+    if (process.env.NODE_ENV !== "production" && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1;
       if (circular[id] > MAX_UPDATE_COUNT) {
         warn(
-          'You may have an infinite update loop ' +
+          "You may have an infinite update loop " +
             (watcher.user
               ? `in watcher with expression "${watcher.expression}"`
               : `in a component render function.`),
@@ -918,13 +974,13 @@ const arrayProto = Array.prototype;
 export const arrayMethods = Object.create(arrayProto);
 // 需要进行功能拓展的方法
 const methodsToPatch = [
-  'push',
-  'pop',
-  'shift',
-  'unshift',
-  'splice',
-  'sort',
-  'reverse',
+  "push",
+  "pop",
+  "shift",
+  "unshift",
+  "splice",
+  "sort",
+  "reverse",
 ];
 
 /**
@@ -941,12 +997,12 @@ methodsToPatch.forEach(function (method) {
     let inserted;
     switch (method) {
       // push、unshift会新增索引，所以要手动observer
-      case 'push':
-      case 'unshift':
+      case "push":
+      case "unshift":
         inserted = args;
         break;
       // splice方法，如果传入了第三个参数，也会有索引加入，也要手动observer。
-      case 'splice':
+      case "splice":
         inserted = args.slice(2);
         break;
     }
@@ -1087,7 +1143,7 @@ directives: {
 ```html
 <div v-demo="{ color: 'white', text: 'hello!' }"></div>
 <script>
-  Vue.directive('demo', function (el, binding) {
+  Vue.directive("demo", function (el, binding) {
     console.log(binding.value.color); // "white"
     console.log(binding.value.text); // "hello!"
   });
@@ -1128,13 +1184,13 @@ directives: {
     install(Vue, options) {
       // 代替图片的loading图
       let defaultSrc = options.default;
-      Vue.directive('lazy', {
+      Vue.directive("lazy", {
         bind(el, binding) {
           LazyLoad.init(el, binding.value, defaultSrc);
         },
         inserted(el) {
           // 兼容处理
-          if ('IntersectionObserver' in window) {
+          if ("IntersectionObserver" in window) {
             LazyLoad.observe(el);
           } else {
             LazyLoad.listenerScroll(el);
@@ -1145,9 +1201,9 @@ directives: {
     // 初始化
     init(el, val, def) {
       // data-src 储存真实src
-      el.setAttribute('data-src', val);
+      el.setAttribute("data-src", val);
       // 设置src为loading图
-      el.setAttribute('src', def);
+      el.setAttribute("src", def);
     },
     // 利用IntersectionObserver监听el
     observe(el) {
@@ -1156,7 +1212,7 @@ directives: {
         if (entries[0].isIntersecting) {
           if (realSrc) {
             el.src = realSrc;
-            el.removeAttribute('data-src');
+            el.removeAttribute("data-src");
           }
         }
       });
@@ -1166,7 +1222,7 @@ directives: {
     listenerScroll(el) {
       let handler = LazyLoad.throttle(LazyLoad.load, 300);
       LazyLoad.load(el);
-      window.addEventListener('scroll', () => {
+      window.addEventListener("scroll", () => {
         handler(el);
       });
     },
@@ -1179,7 +1235,7 @@ directives: {
       if (elTop - windowHeight < 0 && elBtm > 0) {
         if (realSrc) {
           el.src = realSrc;
-          el.removeAttribute('data-src');
+          el.removeAttribute("data-src");
         }
       }
     },
@@ -1214,7 +1270,7 @@ directives: {
 - 一键 Copy 的功能
 
   ```js
-  import { Message } from 'ant-design-vue';
+  import { Message } from "ant-design-vue";
 
   const vCopy = {
     //
@@ -1228,15 +1284,15 @@ directives: {
       el.handler = () => {
         if (!el.$value) {
           // 值为空的时候，给出提示，我这里的提示是用的 ant-design-vue 的提示，你们随意
-          Message.warning('无复制内容');
+          Message.warning("无复制内容");
           return;
         }
         // 动态创建 textarea 标签
-        const textarea = document.createElement('textarea');
+        const textarea = document.createElement("textarea");
         // 将该 textarea 设为 readonly 防止 iOS 下自动唤起键盘，同时将 textarea 移出可视区域
-        textarea.readOnly = 'readonly';
-        textarea.style.position = 'absolute';
-        textarea.style.left = '-9999px';
+        textarea.readOnly = "readonly";
+        textarea.style.position = "absolute";
+        textarea.style.left = "-9999px";
         // 将要 copy 的值赋给 textarea 标签的 value 属性
         textarea.value = el.$value;
         // 将 textarea 插入到 body 中
@@ -1244,14 +1300,14 @@ directives: {
         // 选中值并复制
         textarea.select();
         // textarea.setSelectionRange(0, textarea.value.length);
-        const result = document.execCommand('Copy');
+        const result = document.execCommand("Copy");
         if (result) {
-          Message.success('复制成功');
+          Message.success("复制成功");
         }
         document.body.removeChild(textarea);
       };
       // 绑定点击事件，就是所谓的一键 copy 啦
-      el.addEventListener('click', el.handler);
+      el.addEventListener("click", el.handler);
     },
     // 当传进来的值更新的时候触发
     componentUpdated(el, { value }) {
@@ -1259,7 +1315,7 @@ directives: {
     },
     // 指令与元素解绑的时候，移除事件绑定
     unbind(el) {
-      el.removeEventListener('click', el.handler);
+      el.removeEventListener("click", el.handler);
     },
   };
 
@@ -1329,8 +1385,24 @@ SSR 的缺点：
 
 ### 21. 单 / 多页应用
 
-- SPA 单页面应用（`SinglePage Web Application`），指只有一个主页面的应用，一开始只需要加载一次 js、css 等相关资源。所有内容都包含在主页面，对每一个功能模块组件化。单页应用跳转，就是切换相关组件，仅仅刷新局部资源。
-- MPA 多页面应用 （`MultiPage Application`），指有多个独立页面的应用，每个页面必须重复加载 js、css 等相关资源。多页应用跳转，需要整页资源刷新。
+#### SPA 单页面应用（`SinglePage Web Application`）
+
+指只有一个主页面的应用，一开始只需要加载一次 js、css 等相关资源。所有内容都包含在主页面，对每一个功能模块组件化。单页应用跳转，就是切换相关组件，仅仅刷新局部资源。
+
+**优点：**
+
+- 具有桌面应用的即时性、网站的可移植性和可访问性
+- 用户体验好、快，内容的改变不需要重新加载整个页面
+- 良好的前后端分离，分工更明确
+
+**缺点：**
+
+- 不利于搜索引擎的抓取
+- 首次渲染速度相对较慢
+
+#### MPA 多页面应用 （`MultiPage Application`）
+
+指有多个独立页面的应用，每个页面必须重复加载 js、css 等相关资源。多页应用跳转，需要整页资源刷新。
 
 | 对比项 / 模式 | SPA                                                           | MPA                                                                |
 | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------ |
@@ -1344,7 +1416,527 @@ SSR 的缺点：
 | 数据传递      | 因为单页面，使用全局变量就好(vuex)                            | cookie,localStorage 等缓存方案，url 参数，调用接口保存等           |
 | 相关成本      | 前期开发成本较高，后期维护较为容易                            | 前期开发成本低，后期维护就比较麻烦，因为可能一个功能需要改很多地方 |
 
-## 二、生命周期
+## 二、实例挂载
+
+### 1. new Vue 的时候调用会调用\_init 方法
+
+首先找到 vue 的构造函数
+
+源码位置：src\core\instance\index.js
+
+```js
+function Vue(options) {
+  if (process.env.NODE_ENV !== "production" && !(this instanceof Vue)) {
+    warn("Vue is a constructor and should be called with the `new` keyword");
+  }
+  this._init(options);
+}
+```
+
+options 是用户传递过来的配置项，如 data、methods 等常用的方法
+
+vue 构建函数调用\_init 方法，但我们发现本文件中并没有此方法，但仔细可以看到文件下方定定义了很多初始化方法
+
+```js
+initMixin(Vue); // 定义 _init
+stateMixin(Vue); // 定义 $set $get $delete $watch 等
+eventsMixin(Vue); // 定义事件  $on  $once $off $emit
+lifecycleMixin(Vue); // 定义 _update  $forceUpdate  $destroy
+renderMixin(Vue); // 定义 _render 返回虚拟dom
+```
+
+首先可以看 initMixin 方法，发现该方法在 Vue 原型上定义了\_init 方法
+
+源码位置：src\core\instance\init.js
+
+```js
+Vue.prototype._init = function (options?: Object) {
+  const vm: Component = this;
+  // a uid
+  vm._uid = uid++;
+  let startTag, endTag;
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV !== "production" && config.performance && mark) {
+    startTag = `vue-perf-start:${vm._uid}`;
+    endTag = `vue-perf-end:${vm._uid}`;
+    mark(startTag);
+  }
+
+  // a flag to avoid this being observed
+  vm._isVue = true;
+  // merge options
+  // 合并属性，判断初始化的是否是组件，这里合并主要是 mixins 或 extends 的方法
+  if (options && options._isComponent) {
+    // optimize internal component instantiation
+    // since dynamic options merging is pretty slow, and none of the
+    // internal component options needs special treatment.
+    initInternalComponent(vm, options);
+  } else {
+    // 合并vue属性
+    vm.$options = mergeOptions(
+      resolveConstructorOptions(vm.constructor),
+      options || {},
+      vm
+    );
+  }
+  /* istanbul ignore else */
+  if (process.env.NODE_ENV !== "production") {
+    // 初始化proxy拦截器
+    initProxy(vm);
+  } else {
+    vm._renderProxy = vm;
+  }
+  // expose real self
+  vm._self = vm;
+  // 初始化组件生命周期标志位
+  initLifecycle(vm);
+  // 初始化组件事件侦听
+  initEvents(vm);
+  // 初始化渲染方法
+  initRender(vm);
+  callHook(vm, "beforeCreate");
+  // 初始化依赖注入内容，在初始化data、props之前
+  initInjections(vm); // resolve injections before data/props
+  // 初始化props/data/method/watch/methods
+  initState(vm);
+  initProvide(vm); // resolve provide after data/props
+  callHook(vm, "created");
+
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV !== "production" && config.performance && mark) {
+    vm._name = formatComponentName(vm, false);
+    mark(endTag);
+    measure(`vue ${vm._name} init`, startTag, endTag);
+  }
+  // 挂载元素
+  if (vm.$options.el) {
+    vm.$mount(vm.$options.el);
+  }
+};
+```
+
+仔细阅读上面的代码，我们得到以下结论：
+
+在调用 beforeCreate 之前，数据初始化并未完成，像 data、props 这些属性无法访问到
+
+到了 created 的时候，数据已经初始化完成，能够访问 data、props 这些属性，但这时候并未完成 dom 的挂载，因此无法访问到 dom 元素
+
+挂载方法是调用 vm.$mount 方法
+
+initState 方法是完成 props/data/method/watch/methods 的初始化
+
+源码位置：src\core\instance\state.js
+
+```js
+export function initState(vm: Component) {
+  // 初始化组件的watcher列表
+  vm._watchers = [];
+  const opts = vm.$options;
+  // 初始化props
+  if (opts.props) initProps(vm, opts.props);
+  // 初始化methods方法
+  if (opts.methods) initMethods(vm, opts.methods);
+  if (opts.data) {
+    // 初始化data
+    initData(vm);
+  } else {
+    observe((vm._data = {}), true /* asRootData */);
+  }
+  if (opts.computed) initComputed(vm, opts.computed);
+  if (opts.watch && opts.watch !== nativeWatch) {
+    initWatch(vm, opts.watch);
+  }
+}
+```
+
+我们和这里主要看初始化 data 的方法为 initData，它与 initState 在同一文件上
+
+```js
+function initData(vm: Component) {
+  let data = vm.$options.data;
+  // 获取到组件上的data
+  data = vm._data = typeof data === "function" ? getData(data, vm) : data || {};
+  if (!isPlainObject(data)) {
+    data = {};
+    process.env.NODE_ENV !== "production" &&
+      warn(
+        "data functions should return an object:\n" +
+          "https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function",
+        vm
+      );
+  }
+  // proxy data on instance
+  const keys = Object.keys(data);
+  const props = vm.$options.props;
+  const methods = vm.$options.methods;
+  let i = keys.length;
+  while (i--) {
+    const key = keys[i];
+    if (process.env.NODE_ENV !== "production") {
+      // 属性名不能与方法名重复
+      if (methods && hasOwn(methods, key)) {
+        warn(
+          `Method "${key}" has already been defined as a data property.`,
+          vm
+        );
+      }
+    }
+    // 属性名不能与state名称重复
+    if (props && hasOwn(props, key)) {
+      process.env.NODE_ENV !== "production" &&
+        warn(
+          `The data property "${key}" is already declared as a prop. ` +
+            `Use prop default value instead.`,
+          vm
+        );
+    } else if (!isReserved(key)) {
+      // 验证key值的合法性
+      // 将_data中的数据挂载到组件vm上,这样就可以通过this.xxx访问到组件上的数据
+      proxy(vm, `_data`, key);
+    }
+  }
+  // observe data
+  // 响应式监听data是数据的变化
+  observe(data, true /* asRootData */);
+}
+```
+
+仔细阅读上面的代码，我们可以得到以下结论：
+
+初始化顺序：props、methods、data
+
+data 定义的时候可选择函数形式或者对象形式（组件只能为函数形式）
+
+### 2. 调用$mount 进行页面的挂载
+
+```js
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  // 获取或查询元素
+  el = el && query(el);
+
+  /* istanbul ignore if */
+  // vue 不允许直接挂载到body或页面文档上
+  if (el === document.body || el === document.documentElement) {
+    process.env.NODE_ENV !== "production" &&
+      warn(
+        `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
+      );
+    return this;
+  }
+
+  const options = this.$options;
+  // resolve template/el and convert to render function
+  if (!options.render) {
+    let template = options.template;
+    // 存在template模板，解析vue模板文件
+    if (template) {
+      if (typeof template === "string") {
+        if (template.charAt(0) === "#") {
+          template = idToTemplate(template);
+          /* istanbul ignore if */
+          if (process.env.NODE_ENV !== "production" && !template) {
+            warn(
+              `Template element not found or is empty: ${options.template}`,
+              this
+            );
+          }
+        }
+      } else if (template.nodeType) {
+        template = template.innerHTML;
+      } else {
+        if (process.env.NODE_ENV !== "production") {
+          warn("invalid template option:" + template, this);
+        }
+        return this;
+      }
+    } else if (el) {
+      // 通过选择器获取元素内容
+      template = getOuterHTML(el);
+    }
+    if (template) {
+      /* istanbul ignore if */
+      if (process.env.NODE_ENV !== "production" && config.performance && mark) {
+        mark("compile");
+      }
+      /**
+       *  1.将temmplate解析ast tree
+       *  2.将ast tree转换成render语法字符串
+       *  3.生成render方法
+       */
+      const { render, staticRenderFns } = compileToFunctions(
+        template,
+        {
+          outputSourceRange: process.env.NODE_ENV !== "production",
+          shouldDecodeNewlines,
+          shouldDecodeNewlinesForHref,
+          delimiters: options.delimiters,
+          comments: options.comments,
+        },
+        this
+      );
+      options.render = render;
+      options.staticRenderFns = staticRenderFns;
+
+      /* istanbul ignore if */
+      if (process.env.NODE_ENV !== "production" && config.performance && mark) {
+        mark("compile end");
+        measure(`vue ${this._name} compile`, "compile", "compile end");
+      }
+    }
+  }
+  return mount.call(this, el, hydrating);
+};
+```
+
+阅读上面代码，我们能得到以下结论：
+
+- 不要将根元素放到 body 或者 html 上
+- 可以在对象中定义 template/render 或者直接使用 template、el 表示元素选择器
+- 最终都会解析成 render 函数，调用 compileToFunctions，会将 template 解析成 render 函数
+
+对 template 的解析步骤大致分为以下几步：
+
+- 将 html 文档片段解析成 ast 描述符
+- 将 ast 描述符解析成字符串
+- 生成 render 函数
+
+生成 render 函数，挂载到 vm 上后，会再次调用 mount 方法
+
+源码位置：src\platforms\web\runtime\index.js
+
+```js
+// public mount method
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  el = el && inBrowser ? query(el) : undefined;
+  // 渲染组件
+  return mountComponent(this, el, hydrating);
+};
+```
+
+### 3. 挂载的时候主要是通过 mountComponent 方法
+
+#### 定义 updateComponent 更新函数
+
+```js
+export function mountComponent(
+  vm: Component,
+  el: ?Element,
+  hydrating?: boolean
+): Component {
+  vm.$el = el;
+  // 如果没有获取解析的render函数，则会抛出警告
+  // render是解析模板文件生成的
+  if (!vm.$options.render) {
+    vm.$options.render = createEmptyVNode;
+    if (process.env.NODE_ENV !== "production") {
+      /* istanbul ignore if */
+      if (
+        (vm.$options.template && vm.$options.template.charAt(0) !== "#") ||
+        vm.$options.el ||
+        el
+      ) {
+        warn(
+          "You are using the runtime-only build of Vue where the template " +
+            "compiler is not available. Either pre-compile the templates into " +
+            "render functions, or use the compiler-included build.",
+          vm
+        );
+      } else {
+        // 没有获取到vue的模板文件
+        warn(
+          "Failed to mount component: template or render function not defined.",
+          vm
+        );
+      }
+    }
+  }
+  // 执行beforeMount钩子
+  callHook(vm, "beforeMount");
+
+  let updateComponent;
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV !== "production" && config.performance && mark) {
+    updateComponent = () => {
+      const name = vm._name;
+      const id = vm._uid;
+      const startTag = `vue-perf-start:${id}`;
+      const endTag = `vue-perf-end:${id}`;
+
+      mark(startTag);
+      const vnode = vm._render();
+      mark(endTag);
+      measure(`vue ${name} render`, startTag, endTag);
+
+      mark(startTag);
+      vm._update(vnode, hydrating);
+      mark(endTag);
+      measure(`vue ${name} patch`, startTag, endTag);
+    };
+  } else {
+    // 定义更新函数
+    updateComponent = () => {
+      // 实际调⽤是在lifeCycleMixin中定义的_update和renderMixin中定义的_render
+      vm._update(vm._render(), hydrating);
+    };
+  }
+  // we set this to vm._watcher inside the watcher's constructor
+  // since the watcher's initial patch may call $forceUpdate (e.g. inside child
+  // component's mounted hook), which relies on vm._watcher being already defined
+  // 监听当前组件状态，当有数据变化时，更新组件
+  new Watcher(
+    vm,
+    updateComponent,
+    noop,
+    {
+      before() {
+        if (vm._isMounted && !vm._isDestroyed) {
+          // 数据更新引发的组件更新
+          callHook(vm, "beforeUpdate");
+        }
+      },
+    },
+    true /* isRenderWatcher */
+  );
+  hydrating = false;
+
+  // manually mounted instance, call mounted on self
+  // mounted is called for render-created child components in its inserted hook
+  if (vm.$vnode == null) {
+    vm._isMounted = true;
+    callHook(vm, "mounted");
+  }
+  return vm;
+}
+```
+
+阅读上面代码，我们得到以下结论：
+
+- 会触发 beforeCreate 钩子
+- 定义 updateComponent 渲染页面视图的方法
+- 监听组件数据，一旦发生变化，触发 beforeUpdate 生命钩子
+
+updateComponent 方法主要执行在 vue 初始化时声明的 render，update 方法
+
+### 4. 执行 render 生成虚拟 DOM
+
+源码位置：src\core\instance\render.js
+
+```js
+// 定义vue 原型上的render方法
+Vue.prototype._render = function (): VNode {
+  const vm: Component = this;
+  // render函数来自于组件的option
+  const { render, _parentVnode } = vm.$options;
+
+  if (_parentVnode) {
+    vm.$scopedSlots = normalizeScopedSlots(
+      _parentVnode.data.scopedSlots,
+      vm.$slots,
+      vm.$scopedSlots
+    );
+  }
+
+  // set parent vnode. this allows render functions to have access
+  // to the data on the placeholder node.
+  vm.$vnode = _parentVnode;
+  // render self
+  let vnode;
+  try {
+    // There's no need to maintain a stack because all render fns are called
+    // separately from one another. Nested component's render fns are called
+    // when parent component is patched.
+    currentRenderingInstance = vm;
+    // 调用render方法，自己的独特的render方法， 传入createElement参数，生成vNode
+    vnode = render.call(vm._renderProxy, vm.$createElement);
+  } catch (e) {
+    handleError(e, vm, `render`);
+    // return error render result,
+    // or previous vnode to prevent render error causing blank component
+    /* istanbul ignore else */
+    if (process.env.NODE_ENV !== "production" && vm.$options.renderError) {
+      try {
+        vnode = vm.$options.renderError.call(
+          vm._renderProxy,
+          vm.$createElement,
+          e
+        );
+      } catch (e) {
+        handleError(e, vm, `renderError`);
+        vnode = vm._vnode;
+      }
+    } else {
+      vnode = vm._vnode;
+    }
+  } finally {
+    currentRenderingInstance = null;
+  }
+  // if the returned array contains only a single node, allow it
+  if (Array.isArray(vnode) && vnode.length === 1) {
+    vnode = vnode[0];
+  }
+  // return empty vnode in case the render function errored out
+  if (!(vnode instanceof VNode)) {
+    if (process.env.NODE_ENV !== "production" && Array.isArray(vnode)) {
+      warn(
+        "Multiple root nodes returned from render function. Render function " +
+          "should return a single root node.",
+        vm
+      );
+    }
+    vnode = createEmptyVNode();
+  }
+  // set parent
+  vnode.parent = _parentVnode;
+  return vnode;
+};
+```
+
+### 5. \_update 将虚拟 DOM 生成真实 DOM 结构，并且渲染到页面中
+
+源码位置：src\core\instance\lifecycle.js
+
+```js
+Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
+  const vm: Component = this;
+  const prevEl = vm.$el;
+  const prevVnode = vm._vnode;
+  // 设置当前激活的作用域
+  const restoreActiveInstance = setActiveInstance(vm);
+  vm._vnode = vnode;
+  // Vue.prototype.__patch__ is injected in entry points
+  // based on the rendering backend used.
+  if (!prevVnode) {
+    // initial render
+    // 执行具体的挂载逻辑
+    vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
+  } else {
+    // updates
+    vm.$el = vm.__patch__(prevVnode, vnode);
+  }
+  restoreActiveInstance();
+  // update __vue__ reference
+  if (prevEl) {
+    prevEl.__vue__ = null;
+  }
+  if (vm.$el) {
+    vm.$el.__vue__ = vm;
+  }
+  // if parent is an HOC, update its $el as well
+  if (vm.$vnode && vm.$parent && vm.$vnode === vm.$parent._vnode) {
+    vm.$parent.$el = vm.$el;
+  }
+  // updated hook is called by the scheduler to ensure that children are
+  // updated in a parent's updated hook.
+};
+```
+
+## 三、生命周期
 
 ### 1. 完整过程
 
@@ -1402,7 +1994,7 @@ Vue 实例有⼀个完整的⽣命周期，也就是从开始创建、初始化�
 - 能更快获取到服务端数据，减少页面加载时间，用户体验更好；
 - SSR 不支持 beforeMount 、mounted 钩子函数，放在 created 中有助于一致性。
 
-## 三、组件通信
+## 四、组件通信
 
 ### 1. props 传递
 
@@ -1447,7 +2039,7 @@ this.$emit('add', good)
 - 父组件通过设置子组件 ref 来获取数据
 
 ```js
-<Children ref='foo' />;
+<Children ref="foo" />;
 
 this.$refs.foo; // 获取子组件实例，通过子组件实例我们就能拿到对应的数据
 ```
@@ -1483,10 +2075,10 @@ Vue.prototype.$bus = new Bus(); // 将$bus挂载到vue实例的原型上
 Vue.prototype.$bus = new Vue(); // Vue已经实现了Bus的功能
 
 // Children1.vue
-this.$bus.$emit('foo');
+this.$bus.$emit("foo");
 
 // Children2.vue
-this.$bus.$on('foo', this.handle);
+this.$bus.$on("foo", this.handle);
 ```
 
 ### 5. $parent 或 $root
@@ -1495,10 +2087,10 @@ this.$bus.$on('foo', this.handle);
 
 ```js
 // Children1.vue
-this.$parent.on('add', this.add);
+this.$parent.on("add", this.add);
 
 // Children2.vue
-this.$parent.emit('add');
+this.$parent.emit("add");
 ```
 
 ### 6. $attrs 与$ listeners
@@ -1562,16 +2154,16 @@ inject:['foo'] // 获取到祖先组件传递过来的值
 - **祖先与后代**组件数据传递可选择 `$attrs` 与 `$listeners` 或者 `Provide` 与 `Inject`
 - **复杂关系**的组件数据传递可以通过 `vuex` 存放共享的变量
 
-## 四、Vue-router 路由
+## 五、Vue-router 路由
 
 ### 1. 懒加载
 
 **正常路由**
 
 ```js
-import List from '@/components/list.vue';
+import List from "@/components/list.vue";
 const router = new VueRouter({
-  routes: [{ path: '/list', component: List }],
+  routes: [{ path: "/list", component: List }],
 });
 ```
 
@@ -1579,7 +2171,7 @@ const router = new VueRouter({
 
 ```js
 const router = new VueRouter({
-  routes: [{ path: '/list', component: () => import('@/components/list.vue') }],
+  routes: [{ path: "/list", component: () => import("@/components/list.vue") }],
 });
 ```
 
@@ -1589,8 +2181,8 @@ const router = new VueRouter({
 const router = new VueRouter({
   routes: [
     {
-      path: '/list',
-      component: (resolve) => require(['@/components/list.vue'], resolve),
+      path: "/list",
+      component: (resolve) => require(["@/components/list.vue"], resolve),
     },
   ],
 });
@@ -1602,12 +2194,12 @@ const router = new VueRouter({
 const router = new VueRouter({
   routes: [
     {
-      path: '/list',
+      path: "/list",
       component: (resolve) =>
         require.ensure(
           [],
-          () => resolve(require('@/components/list.vue')),
-          'list'
+          () => resolve(require("@/components/list.vue")),
+          "list"
         ),
     },
   ],
@@ -1733,15 +2325,15 @@ this.$route.query.userName;
 - **`router.beforeEach`** 全局前置守卫 进入路由之前，可用做判断是否登陆，没有就跳转到登录页面
   ```js
   router.beforeEach((to, from, next) => {
-    let ifInfo = Vue.prototype.$common.getSession('userData'); // 判断是否登录的存储信息
+    let ifInfo = Vue.prototype.$common.getSession("userData"); // 判断是否登录的存储信息
     if (!ifInfo) {
       // sessionStorage里没有储存user信息
-      if (to.path == '/') {
+      if (to.path == "/") {
         //如果是登录页面路径，就直接next()
         next();
       } else {
         //不然就跳转到登录
-        Message.warning('请重新登录！');
+        Message.warning("请重新登录！");
         window.location.href = Vue.prototype.$loginUrl;
       }
     } else {
@@ -1765,11 +2357,11 @@ this.$route.query.userName;
 ```js
 export default [
   {
-    path: '/',
-    name: 'login',
+    path: "/",
+    name: "login",
     component: login,
     beforeEnter: (to, from, next) => {
-      console.log('即将进入登录页面');
+      console.log("即将进入登录页面");
       next();
     },
   },
@@ -1800,7 +2392,7 @@ beforeRouteEnter(to, from, next) {
 - 使用 `history.pushState(/url)` ，无刷新页面，静态跳转；
 - 引进 router ，然后使用 `router.push(/url)` 来跳转，使用了 `diff` 算法，实现了按需加载，减少了 dom 的消耗。其实使用 router 跳转和使用 `history.pushState()` 没什么差别的，因为 vue-router 就是用了 `history.pushState()` ，尤其是在 history 模式下。
 
-## 五、Vuex 状态管理
+## 六、Vuex 状态管理
 
 ### 1. 流程 / 原理
 
@@ -1859,7 +2451,7 @@ const store = new Vuex.Store({
 });
 
 // 触发调用
-store.commit('increment');
+store.commit("increment");
 ```
 
 **为什么 Vuex 的 mutation 中不能做异步操作？**
@@ -1886,7 +2478,7 @@ const store = new Vuex.Store({
   },
   actions: {
     increment(context) {
-      context.commit('increment');
+      context.commit("increment");
     },
   },
 });
@@ -1918,7 +2510,7 @@ action 函数接受一个与 store 实例具有相同方法和属性的 context 
 **本质上**：redux 与 vuex 都是对 mvvm 思想的服务，将数据从视图中抽离的一种方案;
 **形式上**：vuex 借鉴了 redux，将 store 作为全局的数据中心，进行 mode 管理;
 
-## 六、Vue 3.0
+## 七、Vue 3.0
 
 ### 1. 更新内容
 
@@ -1992,27 +2584,27 @@ export const enum PatchFlags {
 ```js
 // Vue2 vue-template-compiler
 with (this) {
-  return _c('div', { attrs: { id: 'app' } }, [
-    _c('div', [_v('沐华')]),
-    _c('p', [_v(_s(age))]),
+  return _c("div", { attrs: { id: "app" } }, [
+    _c("div", [_v("沐华")]),
+    _c("p", [_v(_s(age))]),
   ]);
 }
 
 // Vue3 vue-next-template-explorer
-const _hoisted_1 = { id: 'app' };
+const _hoisted_1 = { id: "app" };
 const _hoisted_2 = /*#__PURE__*/ _createElementVNode(
-  'div',
+  "div",
   null,
-  '沐华',
+  "沐华",
   -1 /* HOISTED */
 );
 
 export function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (
     _openBlock(),
-    _createElementBlock('div', _hoisted_1, [
+    _createElementBlock("div", _hoisted_1, [
       _hoisted_2,
-      _createElementVNode('p', null, _toDisplayString(_ctx.age), 1 /* TEXT */),
+      _createElementVNode("p", null, _toDisplayString(_ctx.age), 1 /* TEXT */),
     ])
   );
 }
@@ -2084,7 +2676,7 @@ Object.defineProperty 的优势如下:
 
 <script>
 // Composition API 将组件属性暴露为函数，因此第一步是导入所需的函数
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue";
 
 export default {
   setup() {
@@ -2096,7 +2688,7 @@ export default {
       count.value++;
     }
     // 对应于Vue2中的mounted声明周期
-    onMounted(() => console.log('component mounted!'));
+    onMounted(() => console.log("component mounted!"));
 
     return {
       count,
@@ -2121,7 +2713,7 @@ export default {
 - `Composition API` 的调用不需要顾虑调用顺序，也可以在循环、条件、嵌套函数中使用
 - 响应式系统自动实现了依赖收集，进而组件的部分的性能优化由 Vue 内部自己完成，而 `React Hook` 需要手动传入依赖，而且必须必须保证依赖的顺序，让 `useEffect、useMemo` 等函数正确的捕获依赖变量，否则会由于依赖不正确使得组件性能下降。
 
-## 七、虚拟 DOM
+## 八、虚拟 DOM
 
 ### 1. Diff
 
@@ -2200,8 +2792,8 @@ return function patch(oldVnode, vnode, hydrating, removeOnly) {
           if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
             invokeInsertHook(vnode, insertedVnodeQueue, true);
             return oldVnode;
-          } else if (process.env.NODE_ENV !== 'production') {
-            warn('这是一段很长的警告信息');
+          } else if (process.env.NODE_ENV !== "production") {
+            warn("这是一段很长的警告信息");
           }
         }
         // function emptyNodeAt (elm) {
@@ -2371,7 +2963,7 @@ function patchVnode(
       // 如果新节点有子节点的话，就是说老节点没有子节点
 
       // 如果老节点文本节点，就是说没有子节点，就清空
-      if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '');
+      if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, "");
       // 添加子节点
       addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
     } else if (isDef(oldCh)) {
@@ -2379,7 +2971,7 @@ function patchVnode(
       removeVnodes(oldCh, 0, oldCh.length - 1);
     } else if (isDef(oldVnode.text)) {
       // 如果老节点是文本节点，就清空
-      nodeOps.setTextContent(elm, '');
+      nodeOps.setTextContent(elm, "");
     }
   } else if (oldVnode.text !== vnode.text) {
     // 新老节点都是文本节点，且文本不一样，就更新文本
