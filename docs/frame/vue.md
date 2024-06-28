@@ -1152,175 +1152,177 @@ directives: {
 
 **应用场景**
 
-- 表单防止重复提交
-  ```js
-   // 1.设置v-throttle自定义指令
-   Vue.directive('throttle', {
-     bind: (el, binding) => {
-       let throttleTime = binding.value; // 节流时间
-       if (!throttleTime) { // 用户若不设置节流时间，则默认2s
-         throttleTime = 2000;
-       }
-       let cbFun;
-       el.addEventListener('click', event => {
-         if (!cbFun) { // 第一次执行
-           cbFun = setTimeout(() => {
-             cbFun = null;
-           }, throttleTime);
-         } else {
-           event && event.stopImmediatePropagation();
-         }
-       }, true);
-     },
-   });
-   // 2.为button标签设置v-throttle自定义指令
-   <button @click="sayHello" v-throttle>提交</button>
-  ```
-- 图片懒加载
+#### 表单防止重复提交
 
-  ```js
-  const LazyLoad = {
-    // install方法
-    install(Vue, options) {
-      // 代替图片的loading图
-      let defaultSrc = options.default;
-      Vue.directive("lazy", {
-        bind(el, binding) {
-          LazyLoad.init(el, binding.value, defaultSrc);
-        },
-        inserted(el) {
-          // 兼容处理
-          if ("IntersectionObserver" in window) {
-            LazyLoad.observe(el);
-          } else {
-            LazyLoad.listenerScroll(el);
-          }
-        },
-      });
-    },
-    // 初始化
-    init(el, val, def) {
-      // data-src 储存真实src
-      el.setAttribute("data-src", val);
-      // 设置src为loading图
-      el.setAttribute("src", def);
-    },
-    // 利用IntersectionObserver监听el
-    observe(el) {
-      let io = new IntersectionObserver((entries) => {
-        let realSrc = el.dataset.src;
-        if (entries[0].isIntersecting) {
-          if (realSrc) {
-            el.src = realSrc;
-            el.removeAttribute("data-src");
-          }
+```js
+ // 1.设置v-throttle自定义指令
+ Vue.directive('throttle', {
+   bind: (el, binding) => {
+     let throttleTime = binding.value; // 节流时间
+     if (!throttleTime) { // 用户若不设置节流时间，则默认2s
+       throttleTime = 2000;
+     }
+     let cbFun;
+     el.addEventListener('click', event => {
+       if (!cbFun) { // 第一次执行
+         cbFun = setTimeout(() => {
+           cbFun = null;
+         }, throttleTime);
+       } else {
+         event && event.stopImmediatePropagation();
+       }
+     }, true);
+   },
+ });
+ // 2.为button标签设置v-throttle自定义指令
+ <button @click="sayHello" v-throttle>提交</button>
+```
+
+#### 图片懒加载
+
+```js
+const LazyLoad = {
+  // install方法
+  install(Vue, options) {
+    // 代替图片的loading图
+    let defaultSrc = options.default;
+    Vue.directive("lazy", {
+      bind(el, binding) {
+        LazyLoad.init(el, binding.value, defaultSrc);
+      },
+      inserted(el) {
+        // 兼容处理
+        if ("IntersectionObserver" in window) {
+          LazyLoad.observe(el);
+        } else {
+          LazyLoad.listenerScroll(el);
         }
-      });
-      io.observe(el);
-    },
-    // 监听scroll事件
-    listenerScroll(el) {
-      let handler = LazyLoad.throttle(LazyLoad.load, 300);
-      LazyLoad.load(el);
-      window.addEventListener("scroll", () => {
-        handler(el);
-      });
-    },
-    // 加载真实图片
-    load(el) {
-      let windowHeight = document.documentElement.clientHeight;
-      let elTop = el.getBoundingClientRect().top;
-      let elBtm = el.getBoundingClientRect().bottom;
+      },
+    });
+  },
+  // 初始化
+  init(el, val, def) {
+    // data-src 储存真实src
+    el.setAttribute("data-src", val);
+    // 设置src为loading图
+    el.setAttribute("src", def);
+  },
+  // 利用IntersectionObserver监听el
+  observe(el) {
+    let io = new IntersectionObserver((entries) => {
       let realSrc = el.dataset.src;
-      if (elTop - windowHeight < 0 && elBtm > 0) {
+      if (entries[0].isIntersecting) {
         if (realSrc) {
           el.src = realSrc;
           el.removeAttribute("data-src");
         }
       }
-    },
-    // 节流
-    throttle(fn, delay) {
-      let timer;
-      let prevTime;
-      return function (...args) {
-        let currentTime = Date.now();
-        let context = this;
-        if (!prevTime) prevTime = currentTime;
+    });
+    io.observe(el);
+  },
+  // 监听scroll事件
+  listenerScroll(el) {
+    let handler = LazyLoad.throttle(LazyLoad.load, 300);
+    LazyLoad.load(el);
+    window.addEventListener("scroll", () => {
+      handler(el);
+    });
+  },
+  // 加载真实图片
+  load(el) {
+    let windowHeight = document.documentElement.clientHeight;
+    let elTop = el.getBoundingClientRect().top;
+    let elBtm = el.getBoundingClientRect().bottom;
+    let realSrc = el.dataset.src;
+    if (elTop - windowHeight < 0 && elBtm > 0) {
+      if (realSrc) {
+        el.src = realSrc;
+        el.removeAttribute("data-src");
+      }
+    }
+  },
+  // 节流
+  throttle(fn, delay) {
+    let timer;
+    let prevTime;
+    return function (...args) {
+      let currentTime = Date.now();
+      let context = this;
+      if (!prevTime) prevTime = currentTime;
+      clearTimeout(timer);
+
+      if (currentTime - prevTime > delay) {
+        prevTime = currentTime;
+        fn.apply(context, args);
         clearTimeout(timer);
+        return;
+      }
 
-        if (currentTime - prevTime > delay) {
-          prevTime = currentTime;
-          fn.apply(context, args);
-          clearTimeout(timer);
-          return;
-        }
+      timer = setTimeout(function () {
+        prevTime = Date.now();
+        timer = null;
+        fn.apply(context, args);
+      }, delay);
+    };
+  },
+};
+export default LazyLoad;
+```
 
-        timer = setTimeout(function () {
-          prevTime = Date.now();
-          timer = null;
-          fn.apply(context, args);
-        }, delay);
-      };
-    },
-  };
-  export default LazyLoad;
-  ```
+#### 一键 Copy 的功能
 
-- 一键 Copy 的功能
+```js
+import { Message } from "ant-design-vue";
 
-  ```js
-  import { Message } from "ant-design-vue";
+const vCopy = {
+  //
+  /*
+     bind 钩子函数，第一次绑定时调用，可以在这里做初始化设置
+     el: 作用的 dom 对象
+     value: 传给指令的值，也就是我们要 copy 的值
+   */
+  bind(el, { value }) {
+    el.$value = value; // 用一个全局属性来存传进来的值，因为这个值在别的钩子函数里还会用到
+    el.handler = () => {
+      if (!el.$value) {
+        // 值为空的时候，给出提示，我这里的提示是用的 ant-design-vue 的提示，你们随意
+        Message.warning("无复制内容");
+        return;
+      }
+      // 动态创建 textarea 标签
+      const textarea = document.createElement("textarea");
+      // 将该 textarea 设为 readonly 防止 iOS 下自动唤起键盘，同时将 textarea 移出可视区域
+      textarea.readOnly = "readonly";
+      textarea.style.position = "absolute";
+      textarea.style.left = "-9999px";
+      // 将要 copy 的值赋给 textarea 标签的 value 属性
+      textarea.value = el.$value;
+      // 将 textarea 插入到 body 中
+      document.body.appendChild(textarea);
+      // 选中值并复制
+      textarea.select();
+      // textarea.setSelectionRange(0, textarea.value.length);
+      const result = document.execCommand("Copy");
+      if (result) {
+        Message.success("复制成功");
+      }
+      document.body.removeChild(textarea);
+    };
+    // 绑定点击事件，就是所谓的一键 copy 啦
+    el.addEventListener("click", el.handler);
+  },
+  // 当传进来的值更新的时候触发
+  componentUpdated(el, { value }) {
+    el.$value = value;
+  },
+  // 指令与元素解绑的时候，移除事件绑定
+  unbind(el) {
+    el.removeEventListener("click", el.handler);
+  },
+};
 
-  const vCopy = {
-    //
-    /*
-       bind 钩子函数，第一次绑定时调用，可以在这里做初始化设置
-       el: 作用的 dom 对象
-       value: 传给指令的值，也就是我们要 copy 的值
-     */
-    bind(el, { value }) {
-      el.$value = value; // 用一个全局属性来存传进来的值，因为这个值在别的钩子函数里还会用到
-      el.handler = () => {
-        if (!el.$value) {
-          // 值为空的时候，给出提示，我这里的提示是用的 ant-design-vue 的提示，你们随意
-          Message.warning("无复制内容");
-          return;
-        }
-        // 动态创建 textarea 标签
-        const textarea = document.createElement("textarea");
-        // 将该 textarea 设为 readonly 防止 iOS 下自动唤起键盘，同时将 textarea 移出可视区域
-        textarea.readOnly = "readonly";
-        textarea.style.position = "absolute";
-        textarea.style.left = "-9999px";
-        // 将要 copy 的值赋给 textarea 标签的 value 属性
-        textarea.value = el.$value;
-        // 将 textarea 插入到 body 中
-        document.body.appendChild(textarea);
-        // 选中值并复制
-        textarea.select();
-        // textarea.setSelectionRange(0, textarea.value.length);
-        const result = document.execCommand("Copy");
-        if (result) {
-          Message.success("复制成功");
-        }
-        document.body.removeChild(textarea);
-      };
-      // 绑定点击事件，就是所谓的一键 copy 啦
-      el.addEventListener("click", el.handler);
-    },
-    // 当传进来的值更新的时候触发
-    componentUpdated(el, { value }) {
-      el.$value = value;
-    },
-    // 指令与元素解绑的时候，移除事件绑定
-    unbind(el) {
-      el.removeEventListener("click", el.handler);
-    },
-  };
-
-  export default vCopy;
-  ```
+export default vCopy;
+```
 
 ### 18. mixin 和 mixins 区别
 
@@ -1383,6 +1385,109 @@ SSR 的缺点：
 - PWA
 - 还可以使用缓存(客户端缓存、服务端缓存)优化、服务端开启 gzip 压缩等
 
+### 20. v-for 和 v-if 优先级
+
+v-if 与 v-for 都是 vue 模板系统中的指令
+
+在 vue 模板编译的时候，会将指令系统转化成可执行的 render 函数
+
+**示例**
+
+编写一个 p 标签，同时使用 v-if 与 v-for
+
+```html
+<div id="app">
+  <p v-if="isShow" v-for="item in items">{{ item.title }}</p>
+</div>
+```
+
+创建 vue 实例，存放 isShow 与 items 数据
+
+```js
+const app = new Vue({
+  el: "#app",
+  data() {
+    return {
+      items: [{ title: "foo" }, { title: "baz" }],
+    };
+  },
+  computed: {
+    isShow() {
+      return this.items && this.items.length > 0;
+    },
+  },
+});
+```
+
+模板指令的代码都会生成在 render 函数中，通过 app.$options.render 就能得到渲染函数
+
+```js
+ƒ anonymous() {
+  with (this) { return
+    _c('div', { attrs: { "id": "app" } },
+    _l((items), function (item)
+    { return (isShow) ? _c('p', [_v("\n" + _s(item.title) + "\n")]) : _e() }), 0) }
+}
+```
+
+\_l 是 vue 的列表渲染函数，函数内部都会进行一次 if 判断
+
+初步得到结论：v-for 优先级是比 v-if 高
+
+再将 v-for 与 v-if 置于不同标签
+
+```html
+<div id="app">
+  <template v-if="isShow">
+    <p v-for="item in items">{{item.title}}</p>
+  </template>
+</div>
+```
+
+再输出下 render 函数
+
+```js
+ƒ anonymous() {
+  with(this){return
+    _c('div',{attrs:{"id":"app"}},
+    [(isShow)?[_v("\n"),
+    _l((items),function(item){return _c('p',[_v(_s(item.title))])})]:_e()],2)}
+}
+```
+
+这时候我们可以看到，v-for 与 v-if 作用在不同标签时候，是先进行判断，再进行列表的渲染
+
+我们再在查看下 vue 源码
+
+源码位置：`\vue-dev\src\compiler\codegen\index.js`
+
+```js
+export function genElement (el: ASTElement, state: CodegenState): string {
+  if (el.parent) {
+    el.pre = el.pre || el.parent.pre
+  }
+  if (el.staticRoot && !el.staticProcessed) {
+    return genStatic(el, state)
+  } else if (el.once && !el.onceProcessed) {
+    return genOnce(el, state)
+  } else if (el.for && !el.forProcessed) {
+    return genFor(el, state)
+  } else if (el.if && !el.ifProcessed) {
+    return genIf(el, state)
+  } else if (el.tag === 'template' && !el.slotTarget && !state.pre) {
+    return genChildren(el, state) || 'void 0'
+  } else if (el.tag === 'slot') {
+    return genSlot(el, state)
+  } else {
+    // component or element
+    ...
+}
+```
+
+在进行 if 判断的时候，v-for 是比 v-if 先进行判断
+
+最终结论：**`v-for`优先级比`v-if`高**
+
 ### 21. 单 / 多页应用
 
 #### SPA 单页面应用（`SinglePage Web Application`）
@@ -1415,6 +1520,29 @@ SSR 的缺点：
 | 路由模式      | 可以使用 hash,也可以使用 history                              | 普通链接跳转                                                       |
 | 数据传递      | 因为单页面，使用全局变量就好(vuex)                            | cookie,localStorage 等缓存方案，url 参数，调用接口保存等           |
 | 相关成本      | 前期开发成本较高，后期维护较为容易                            | 前期开发成本低，后期维护就比较麻烦，因为可能一个功能需要改很多地方 |
+
+### 22. 首屏加载优化
+
+首屏时间计算
+
+```js
+performance.getEntriesByName("first-contentful-paint")[0]
+
+// 会返回一个 PerformancePaintTiming的实例，结构如下：
+{
+  name: "first-contentful-paint",
+  entryType: "paint",
+  startTime: 507.80000002123415,
+  duration: 0,
+};
+```
+
+**加载慢的原因**
+
+- 网络延时问题
+- 资源文件体积是否过大
+- 资源是否重复发送请求去加载了
+- 加载脚本的时候，渲染内容堵塞了
 
 ## 二、实例挂载
 
