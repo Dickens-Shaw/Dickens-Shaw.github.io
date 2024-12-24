@@ -1,0 +1,1 @@
+import{_ as t,B as a,o,c as r,D as s}from"./chunks/framework.ee5f5f8b.js";const g=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"others/walletTag.md"}'),n={name:"others/walletTag.md"};function l(c,p,_,d,m,i){const e=a("WalletTag",!0);return o(),r("div",null,[s(e)])}const u=t(n,[["render",l]]);export{g as __pageData,u as default};
