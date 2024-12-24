@@ -40,7 +40,7 @@ onMounted(() => {
     {
       name: 'MetaMask',
       web: window.ethereum?.isMetaMask,
-      mobile: window.metamask || window.ethereum?.isMetaMaskMobile
+      mobile: window.metamask || window.ethereum?.isMetaMaskMobile || window.ethereum
     },
     // Phantom
     {
