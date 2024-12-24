@@ -1,1 +1,0 @@
-import{_ as s,o as n,c as a,Q as l}from"./chunks/framework.493a4ac6.js";const A=JSON.parse('{"title":"微前端","description":"","frontmatter":{},"headers":[],"relativePath":"architecture/micro.md"}'),p={name:"architecture/micro.md"},o=l("",30),e=[o];function t(r,c,y,D,F,i){return n(),a("div",null,e)}const E=s(p,[["render",t]]);export{A as __pageData,E as default};
