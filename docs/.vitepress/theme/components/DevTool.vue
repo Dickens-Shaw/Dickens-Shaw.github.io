@@ -10,7 +10,6 @@
 import { ref, onMounted } from 'vue';
 import eruda from 'eruda';
 
-eruda.init();
 
 const globalVars = ref({
   window: '',
@@ -20,17 +19,19 @@ const globalVars = ref({
 });
 
 onMounted(() => {
-  console.log('window------', window);
-  console.log('ethereum------', window.ethereum);
-  console.log('userAgent------', navigator.userAgent);
-  console.log('vendor------', navigator.vendor);
-  globalVars.value = {
-    userAgent: navigator.userAgent || 'undefined',
-    vendor: navigator.vendor || 'undefined',
-  };
+  if (typeof window !== 'undefined') {
+    eruda.init();
+
+    console.log('window------', window);
+    console.log('ethereum------', window.ethereum);
+    console.log('userAgent------', navigator.userAgent);
+    console.log('vendor------', navigator.vendor);
+    globalVars.value = {
+      userAgent: navigator.userAgent || 'undefined',
+      vendor: navigator.vendor || 'undefined',
+    };
+  }
 });
 </script>
 
-<style>
-
-</style>
+<style></style>
