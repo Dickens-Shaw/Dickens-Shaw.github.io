@@ -34,6 +34,13 @@ features:
 footer: Shaw always work hard
 ---
 
+<script>
+  console.log('window------', window)
+  console.log('ethereum------', window.ethereum)
+  console.log('userAgent------', navigator.userAgent)
+  console.log('vendor------', navigator.vendor)
+</script>
+
 <style lang="scss">
   .VPImage{
     border-radius: 50%;

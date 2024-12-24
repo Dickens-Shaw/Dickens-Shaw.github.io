@@ -2,7 +2,7 @@ import {
   __publicField
 } from "./chunk-2B2CG5KL.js";
 
-// node_modules/xmind-embed-viewer/dist/esm/channel-controller.js
+// node_modules/.pnpm/xmind-embed-viewer@1.2.0/node_modules/xmind-embed-viewer/dist/esm/channel-controller.js
 var IframeEventChannelController = class {
   constructor(iFrameController, domain = "*") {
     __publicField(this, "channel", new MessageChannel());
@@ -70,7 +70,7 @@ var IframeEventChannelController = class {
   }
 };
 
-// node_modules/xmind-embed-viewer/dist/esm/iframe-controller.js
+// node_modules/.pnpm/xmind-embed-viewer@1.2.0/node_modules/xmind-embed-viewer/dist/esm/iframe-controller.js
 var IframeController = class {
   constructor(target, src) {
     __publicField(this, "iframe");
@@ -104,7 +104,7 @@ var IframeController = class {
   }
 };
 
-// node_modules/xmind-embed-viewer/dist/esm/index.js
+// node_modules/.pnpm/xmind-embed-viewer@1.2.0/node_modules/xmind-embed-viewer/dist/esm/index.js
 var XMindEmbedViewer = class {
   /**
    * Initialize a iframe element from a div/iframe html element.
