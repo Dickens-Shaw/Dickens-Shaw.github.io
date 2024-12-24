@@ -1,42 +1,48 @@
 name: Build and Deploy
 
-# 触发条件: push 到 master 分支后
+# 触发条件: push 到 master 分支或指定路径变更
 on:
   workflow_dispatch:
   push:
     branches:
       - master
-    # 只在下列路径变更时触发
+    # 只在指定路径发生变更时触发
     paths:
       - 'docs/**'
       - 'package.json'
+      - 'pnpm-lock.yaml'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+    # 检出代码
     - name: Checkout
       uses: actions/checkout@v4
       with:
         persist-credentials: false
 
-    - name: Install Yarn
+    # 安装 pnpm
+    - name: Install pnpm
       run: |
-        curl -o- -L https://yarnpkg.com/install.sh | bash
-        export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+        npm install -g pnpm
 
-    - name: Set node version to 20
+    # 设置 Node.js 版本
+    - name: Set Node.js version to 20
       uses: actions/setup-node@v4
       with:
         node-version: 20
-        cache: 'yarn'
+        cache: 'pnpm'
 
+    # 安装依赖并构建项目
     - name: Build
-      run: yarn install && yarn build
+      run: pnpm install && pnpm build
 
+    # 拷贝 README.md 到构建目录
     - name: Copy files
       run: cp README.md ./dist/
 
+    # 部署到 GitHub Pages
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
       with:
