@@ -1,0 +1,1 @@
+import{_ as o,B as t,o as a,c as r,D as s}from"./chunks/framework.ee5f5f8b.js";const f=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"others/devtool.md"}'),n={name:"others/devtool.md"};function c(l,d,p,_,m,i){const e=t("DevTool");return a(),r("div",null,[s(e)])}const h=o(n,[["render",c]]);export{f as __pageData,h as default};
