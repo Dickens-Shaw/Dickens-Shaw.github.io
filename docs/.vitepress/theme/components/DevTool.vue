@@ -1,5 +1,5 @@
 <template>
-  <h2>Global Variables</h2>
+  <h1>Global Variables</h1>
   <div>
     <p><strong>userAgent:</strong> {{ globalVars.userAgent }}</p>
     <p><strong>vendor:</strong> {{ globalVars.vendor }}</p>
@@ -8,8 +8,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import eruda from 'eruda';
-
 
 const globalVars = ref({
   window: '',
@@ -18,8 +16,9 @@ const globalVars = ref({
   vendor: '',
 });
 
-onMounted(() => {
+onMounted(async() => {
   if (typeof window !== 'undefined') {
+    const eruda = await import('eruda');
     eruda.init();
 
     console.log('window------', window);
