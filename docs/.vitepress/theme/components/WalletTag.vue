@@ -24,7 +24,7 @@ onMounted(() => {
       web: window.starknet || window.starknet_argentX,
       mobile: window.starknet_argentX // && window.starknet_argentX.isInAppBrowser
     },
-    // Bitget
+    // BitGet
     {
       name: 'Bitget',
       web: window.bitgetWallet || window.bitgetTonWallet || window.bitkeep || window.ethereum?.isBitKeep || window.ethereum?.isBitKeepChrome,
@@ -40,7 +40,7 @@ onMounted(() => {
     {
       name: 'MetaMask',
       web: window.ethereum?.isMetaMask,
-      mobile: window.metamask || window.ethereum?.isMetaMaskMobile || window.ethereum
+      mobile: window.metamask || window.ethereum
     },
     // Phantom
     {
