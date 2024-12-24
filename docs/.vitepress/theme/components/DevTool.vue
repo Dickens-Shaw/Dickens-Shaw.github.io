@@ -19,12 +19,15 @@ const globalVars = ref({
 onMounted(async() => {
   if (typeof window !== 'undefined') {
     const eruda = await import('eruda');
-    eruda.init();
+    if (!eruda._isInit) {
+      eruda.init();
+    }
 
     console.log('window------', window);
     console.log('ethereum------', window.ethereum);
     console.log('userAgent------', navigator.userAgent);
     console.log('vendor------', navigator.vendor);
+
     globalVars.value = {
       userAgent: navigator.userAgent || 'undefined',
       vendor: navigator.vendor || 'undefined',
