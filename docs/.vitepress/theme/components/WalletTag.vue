@@ -40,7 +40,7 @@ onMounted(() => {
     {
       name: 'MetaMask',
       web: window.ethereum?.isMetaMask,
-      mobile: window.ethereum?.isMetaMaskMobile
+      mobile: window.metamask || window.ethereum?.isMetaMaskMobile
     },
     // Phantom
     {
@@ -64,7 +64,7 @@ onMounted(() => {
     {
       name: 'TrustWallet',
       web: window.trustwallet || window.trustWallet || window.ethereum?.isTrust || window.ethereum?.isTrustWallet,
-      mobile: window.trustwallet || window.trustWallet,
+      mobile: window.trustwallet || window.trustWallet
     },
     // 欧意 OKX
     {
