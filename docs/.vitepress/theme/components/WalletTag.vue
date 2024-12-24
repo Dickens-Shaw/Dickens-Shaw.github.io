@@ -3,6 +3,9 @@
     <div v-for=" wallet in walletSupport" :key="wallet.name">
       {{ wallet.name }} web: {{ wallet.web ? '✔' : '✘' }} mobile: {{ wallet.mobile ? '✔' : '✘' }}
     </div>
+    <p></p>
+    <div>UserAgent: {{clientInfo.userAgent}}</div>
+    <div>Vendor: {{clientInfo.vendor}}</div>
   </div>
 </template>
 
@@ -10,6 +13,7 @@
 import { onMounted, ref } from 'vue'
 
 const walletSupport = ref([])
+const clientInfo = ref({})
 
 onMounted(() => {
   if (typeof window === 'undefined') return;
@@ -69,6 +73,11 @@ onMounted(() => {
       mobile:  window.okexchain || window.okxwallet
     },
   ]
+
+  clientInfo.value = {
+    userAgent: navigator.userAgent,
+    vendor: navigator.vendor
+  }
 })
 </script>
 
