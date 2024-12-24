@@ -2,7 +2,7 @@ import { h, watch } from 'vue'
 import { useData, EnhanceAppContext } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import XmindViewer from './components/XmindViewer.vue'
-
+import WalletTag from './components/WalletTag.vue'
 import './styles/index.scss'
 
 if (typeof window !== 'undefined') {
@@ -51,6 +51,7 @@ export default {
   },
   enhanceApp({ app, router }: EnhanceAppContext) {
     app.component('XMind', XmindViewer)
+    app.component('WalletTag', WalletTag)
 
     if (typeof window !== 'undefined') {
       watch(

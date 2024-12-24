@@ -20,7 +20,7 @@
     "vue": "^3.3.4"
   },
   "scripts": {
-    "dev": "vitepress dev docs --port=8732",
+    "dev": "vitepress dev docs --port=8732 --host",
     "build": "vitepress build docs",
     "deploy": "sh deploy.sh"
   }
