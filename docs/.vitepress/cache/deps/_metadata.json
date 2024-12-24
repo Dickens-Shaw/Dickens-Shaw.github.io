@@ -1,23 +1,29 @@
 {
-  "hash": "45be0f42",
-  "browserHash": "c695373c",
+  "hash": "40724c77",
+  "browserHash": "5025edbd",
   "optimized": {
     "vue": {
       "src": "../../../../node_modules/.pnpm/vue@3.5.13/node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "ba6e0cef",
+      "fileHash": "594c6f77",
       "needsInterop": false
     },
     "xmind-embed-viewer": {
       "src": "../../../../node_modules/.pnpm/xmind-embed-viewer@1.2.0/node_modules/xmind-embed-viewer/dist/esm/index.js",
       "file": "xmind-embed-viewer.js",
-      "fileHash": "4693b42d",
+      "fileHash": "99ca62c8",
       "needsInterop": false
+    },
+    "eruda": {
+      "src": "../../../../node_modules/.pnpm/eruda@3.4.1/node_modules/eruda/eruda.js",
+      "file": "eruda.js",
+      "fileHash": "22d10e0d",
+      "needsInterop": true
     }
   },
   "chunks": {
-    "chunk-2B2CG5KL": {
-      "file": "chunk-2B2CG5KL.js"
+    "chunk-XNHBATJA": {
+      "file": "chunk-XNHBATJA.js"
     }
   }
 }

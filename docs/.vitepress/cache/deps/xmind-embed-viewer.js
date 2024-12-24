@@ -1,6 +1,6 @@
 import {
   __publicField
-} from "./chunk-2B2CG5KL.js";
+} from "./chunk-XNHBATJA.js";
 
 // node_modules/.pnpm/xmind-embed-viewer@1.2.0/node_modules/xmind-embed-viewer/dist/esm/channel-controller.js
 var IframeEventChannelController = class {
